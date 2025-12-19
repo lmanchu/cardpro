@@ -1,5 +1,6 @@
 import SwiftUI
 import UIKit
+import CoreImage.CIFilterBuiltins
 
 struct ShareSheet: UIViewControllerRepresentable {
     let card: BusinessCard
@@ -90,8 +91,8 @@ struct QRCodeView: View {
 
         let context = CIContext()
         let filter = CIFilter.qrCodeGenerator()
-        filter.setValue(data, forKey: "inputMessage")
-        filter.setValue("H", forKey: "inputCorrectionLevel")
+        filter.message = data
+        filter.correctionLevel = "H"
 
         guard let outputImage = filter.outputImage else { return }
 
