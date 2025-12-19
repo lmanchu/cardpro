@@ -5,8 +5,10 @@ struct MyCardsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \BusinessCard.createdAt, order: .reverse) private var cards: [BusinessCard]
     @State private var showingAddCard = false
+    @State private var showingEditCard = false
     @State private var selectedCard: BusinessCard?
     @State private var showingShareSheet = false
+    @State private var showingQRCode = false
 
     var defaultCard: BusinessCard? {
         cards.first(where: { $0.isDefault }) ?? cards.first
@@ -18,27 +20,64 @@ struct MyCardsView: View {
                 VStack(spacing: 24) {
                     // Main card display
                     if let card = defaultCard {
-                        CardPreviewView(card: card)
-                            .padding(.horizontal)
+                        // Show card image if available, otherwise show preview
+                        if let cardImageData = card.cardImageData,
+                           let uiImage = UIImage(data: cardImageData) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .clipShape(RoundedRectangle(cornerRadius: 16))
+                                .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
+                                .padding(.horizontal)
+                                .onTapGesture {
+                                    selectedCard = card
+                                    showingEditCard = true
+                                }
+                        } else {
+                            CardPreviewView(card: card)
+                                .padding(.horizontal)
+                                .onTapGesture {
+                                    selectedCard = card
+                                    showingEditCard = true
+                                }
+                        }
+
+                        // Card info summary
+                        VStack(spacing: 4) {
+                            Text(card.displayName)
+                                .font(.title2)
+                                .fontWeight(.bold)
+                            if let title = card.title, let company = card.company {
+                                Text("\(title) @ \(company)")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            } else if let company = card.company {
+                                Text(company)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding(.top, 8)
 
                         // Share buttons
                         HStack(spacing: 16) {
-                            ShareButton(title: "AirDrop", icon: "airplayaudio", color: .blue) {
+                            ShareButton(title: "Share", icon: "square.and.arrow.up", color: .blue) {
                                 selectedCard = card
                                 showingShareSheet = true
                             }
 
                             ShareButton(title: "QR Code", icon: "qrcode", color: .purple) {
                                 selectedCard = card
-                                // TODO: Show QR code
+                                showingQRCode = true
                             }
 
-                            ShareButton(title: "NFC", icon: "wave.3.right", color: .orange) {
+                            ShareButton(title: "Edit", icon: "pencil", color: .orange) {
                                 selectedCard = card
-                                // TODO: NFC sharing
+                                showingEditCard = true
                             }
                         }
                         .padding(.horizontal)
+                        .padding(.top, 8)
                     } else {
                         // Empty state
                         VStack(spacing: 16) {
@@ -101,9 +140,19 @@ struct MyCardsView: View {
             .sheet(isPresented: $showingAddCard) {
                 CardEditorView(card: nil)
             }
+            .sheet(isPresented: $showingEditCard) {
+                if let card = selectedCard {
+                    CardEditorView(card: card)
+                }
+            }
             .sheet(isPresented: $showingShareSheet) {
                 if let card = selectedCard {
                     ShareSheet(card: card)
+                }
+            }
+            .sheet(isPresented: $showingQRCode) {
+                if let card = selectedCard {
+                    QRCodeView(card: card)
                 }
             }
         }

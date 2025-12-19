@@ -127,19 +127,34 @@ struct ReceivedContactDetailView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
+                    // Card image if available
+                    if let cardImageData = contact.cardImageData,
+                       let uiImage = UIImage(data: cardImageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .shadow(radius: 5)
+                            .padding(.horizontal)
+                            .padding(.top)
+                    }
+
                     // Header
                     VStack(spacing: 12) {
-                        if let photoData = contact.photoData,
-                           let uiImage = UIImage(data: photoData) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                        } else {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 100))
-                                .foregroundColor(.gray)
+                        if contact.cardImageData == nil {
+                            // Only show avatar if no card image
+                            if let photoData = contact.photoData,
+                               let uiImage = UIImage(data: photoData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 100))
+                                    .foregroundColor(.gray)
+                            }
                         }
 
                         Text(contact.displayName)
@@ -156,7 +171,7 @@ struct ReceivedContactDetailView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
-                    .padding(.top)
+                    .padding(.top, contact.cardImageData == nil ? 16 : 0)
 
                     // Contact actions
                     HStack(spacing: 24) {
@@ -260,8 +275,18 @@ struct ReceivedContactDetailView: View {
     }
 
     private func importToContacts() {
-        // TODO: Implement actual contact import using Contacts framework
-        contact.isImportedToContacts = true
+        Task {
+            do {
+                try await ContactsService.shared.importContact(contact)
+                await MainActor.run {
+                    contact.isImportedToContacts = true
+                }
+            } catch {
+                await MainActor.run {
+                    importError = error.localizedDescription
+                }
+            }
+        }
     }
 }
 
