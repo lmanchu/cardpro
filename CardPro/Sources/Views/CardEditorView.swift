@@ -76,6 +76,7 @@ struct CardEditorView: View {
                                 .frame(maxHeight: 200)
                                 .clipShape(RoundedRectangle(cornerRadius: 8))
                                 .shadow(radius: 4)
+                                .allowsHitTesting(false) // Allow scroll gestures to pass through
 
                             HStack {
                                 if let source = cardImageSource {
@@ -97,7 +98,6 @@ struct CardEditorView: View {
                                 .font(.caption)
                             }
                         }
-                        .listRowBackground(Color.clear)
                     } else {
                         // No card image yet
                         Button {
