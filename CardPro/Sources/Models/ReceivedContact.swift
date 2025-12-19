@@ -12,6 +12,7 @@ final class ReceivedContact {
     var email: String?
     var website: String?
     var photoData: Data?
+    var cardImageData: Data?       // 收到的名片設計圖
     var receivedAt: Date
     var receivedLocation: String?
     var receivedEvent: String?
@@ -30,6 +31,7 @@ final class ReceivedContact {
         email: String? = nil,
         website: String? = nil,
         photoData: Data? = nil,
+        cardImageData: Data? = nil,
         receivedAt: Date = Date(),
         receivedLocation: String? = nil,
         receivedEvent: String? = nil,
@@ -47,6 +49,7 @@ final class ReceivedContact {
         self.email = email
         self.website = website
         self.photoData = photoData
+        self.cardImageData = cardImageData
         self.receivedAt = receivedAt
         self.receivedLocation = receivedLocation
         self.receivedEvent = receivedEvent

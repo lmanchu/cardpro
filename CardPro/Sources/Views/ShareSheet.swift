@@ -6,23 +6,37 @@ struct ShareSheet: UIViewControllerRepresentable {
     let card: BusinessCard
 
     func makeUIViewController(context: Context) -> UIActivityViewController {
-        // Create vCard file
-        let vcardString = card.toVCard()
-        let fileName = "\(card.displayName).vcf"
-
-        // Create temporary file
+        var activityItems: [Any] = []
         let tempDir = FileManager.default.temporaryDirectory
-        let fileURL = tempDir.appendingPathComponent(fileName)
+        let safeName = card.displayName.replacingOccurrences(of: "/", with: "-")
+
+        // 1. Add card image if available (for 儀式感！)
+        if let cardImageData = card.cardImageData {
+            let imageFileName = "\(safeName)-card.jpg"
+            let imageURL = tempDir.appendingPathComponent(imageFileName)
+            do {
+                try cardImageData.write(to: imageURL)
+                activityItems.append(imageURL)
+            } catch {
+                print("Error writing card image: \(error)")
+            }
+        }
+
+        // 2. Add vCard file
+        let vcardString = card.toVCard()
+        let vcfFileName = "\(safeName).vcf"
+        let vcfURL = tempDir.appendingPathComponent(vcfFileName)
 
         do {
-            try vcardString.write(to: fileURL, atomically: true, encoding: .utf8)
+            try vcardString.write(to: vcfURL, atomically: true, encoding: .utf8)
+            activityItems.append(vcfURL)
         } catch {
             print("Error writing vCard: \(error)")
         }
 
         // Create activity view controller
         let activityVC = UIActivityViewController(
-            activityItems: [fileURL],
+            activityItems: activityItems,
             applicationActivities: nil
         )
 

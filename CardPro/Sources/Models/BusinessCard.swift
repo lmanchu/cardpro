@@ -11,7 +11,9 @@ final class BusinessCard {
     var phone: String?
     var email: String?
     var website: String?
-    var photoData: Data?
+    var photoData: Data?           // 個人照片
+    var cardImageData: Data?       // 名片設計圖（掃描/上傳/生成）
+    var cardImageSource: String?   // "scan" | "upload" | "generated"
     var notes: String?
     var isDefault: Bool
     var createdAt: Date
@@ -27,6 +29,8 @@ final class BusinessCard {
         email: String? = nil,
         website: String? = nil,
         photoData: Data? = nil,
+        cardImageData: Data? = nil,
+        cardImageSource: String? = nil,
         notes: String? = nil,
         isDefault: Bool = false,
         createdAt: Date = Date(),
@@ -41,6 +45,8 @@ final class BusinessCard {
         self.email = email
         self.website = website
         self.photoData = photoData
+        self.cardImageData = cardImageData
+        self.cardImageSource = cardImageSource
         self.notes = notes
         self.isDefault = isDefault
         self.createdAt = createdAt
