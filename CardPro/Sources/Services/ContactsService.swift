@@ -27,9 +27,9 @@ class ContactsService {
     /// Import a ReceivedContact to iOS Contacts
     func importContact(_ contact: ReceivedContact) async throws {
         // Check authorization
-        guard authorizationStatus == .authorized else {
+        if authorizationStatus != .authorized {
             let granted = await requestAccess()
-            guard granted else {
+            if !granted {
                 throw ContactsError.notAuthorized
             }
         }
@@ -96,9 +96,9 @@ class ContactsService {
     /// Import a BusinessCard to iOS Contacts
     func importCard(_ card: BusinessCard) async throws {
         // Check authorization
-        guard authorizationStatus == .authorized else {
+        if authorizationStatus != .authorized {
             let granted = await requestAccess()
-            guard granted else {
+            if !granted {
                 throw ContactsError.notAuthorized
             }
         }
