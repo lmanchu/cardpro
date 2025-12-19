@@ -29,6 +29,7 @@ struct CardEditorView: View {
     @State private var selectedCardImageItem: PhotosPickerItem?
     @State private var showingCardImageOptions = false
     @State private var showingCamera = false
+    @State private var showingPhotoPicker = false
     @State private var showingTemplateSelector = false
     @State private var selectedTemplate: CardImageGenerator.Template = .modern
 
@@ -229,7 +230,9 @@ struct CardEditorView: View {
                     }
                 }
 
-                PhotosPicker(selection: $selectedCardImageItem, matching: .images) {
+                Button {
+                    showingPhotoPicker = true
+                } label: {
                     Label("Upload from Photos", systemImage: "photo.fill")
                 }
 
@@ -248,6 +251,7 @@ struct CardEditorView: View {
 
                 Button("Cancel", role: .cancel) {}
             }
+            .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedCardImageItem, matching: .images)
             .sheet(isPresented: $showingCamera) {
                 CameraPicker(imageData: $cardImageData, source: $cardImageSource)
             }
