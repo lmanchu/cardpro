@@ -1,6 +1,7 @@
 import SwiftUI
 import SwiftData
 import PhotosUI
+import UIKit
 
 struct CardEditorView: View {
     @Environment(\.modelContext) private var modelContext
@@ -219,10 +220,13 @@ struct CardEditorView: View {
                 loadCard()
             }
             .confirmationDialog("Card Design", isPresented: $showingCardImageOptions) {
-                Button {
-                    showingCamera = true
-                } label: {
-                    Label("Scan Physical Card", systemImage: "camera.fill")
+                // Only show camera option if camera is available (not on simulator)
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    Button {
+                        showingCamera = true
+                    } label: {
+                        Label("Scan Physical Card", systemImage: "camera.fill")
+                    }
                 }
 
                 PhotosPicker(selection: $selectedCardImageItem, matching: .images) {
