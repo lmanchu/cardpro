@@ -33,6 +33,12 @@ struct CardEditorView: View {
     @State private var showingTemplateSelector = false
     @State private var selectedTemplate: CardImageGenerator.Template = .modern
 
+    // OCR
+    @State private var isProcessingOCR = false
+    @State private var showingOCRResults = false
+    @State private var ocrContactInfo: OCRService.ContactInfo?
+    @State private var ocrError: String?
+
     var isEditing: Bool { card != nil }
 
     var body: some View {
@@ -214,6 +220,16 @@ struct CardEditorView: View {
                     if let data = try? await newItem?.loadTransferable(type: Data.self) {
                         cardImageData = data
                         cardImageSource = "upload"
+                        // Run OCR on uploaded image
+                        await processOCR(imageData: data)
+                    }
+                }
+            }
+            .onChange(of: cardImageData) { oldValue, newValue in
+                // Run OCR when card image changes from camera scan
+                if let data = newValue, oldValue == nil, cardImageSource == "scan" {
+                    Task {
+                        await processOCR(imageData: data)
                     }
                 }
             }
@@ -262,6 +278,45 @@ struct CardEditorView: View {
                     cardImageData: $cardImageData,
                     cardImageSource: $cardImageSource
                 )
+            }
+            .sheet(isPresented: $showingOCRResults) {
+                OCRResultsSheet(
+                    contactInfo: ocrContactInfo,
+                    onApply: { info in
+                        applyOCRResults(info)
+                        showingOCRResults = false
+                    },
+                    onCancel: {
+                        showingOCRResults = false
+                    }
+                )
+            }
+            .overlay {
+                if isProcessingOCR {
+                    ZStack {
+                        Color.black.opacity(0.4)
+                        VStack(spacing: 16) {
+                            ProgressView()
+                                .scaleEffect(1.5)
+                                .tint(.white)
+                            Text("Scanning card...")
+                                .foregroundColor(.white)
+                                .font(.headline)
+                        }
+                        .padding(32)
+                        .background(.ultraThinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
+                    .ignoresSafeArea()
+                }
+            }
+            .alert("OCR Error", isPresented: .init(
+                get: { ocrError != nil },
+                set: { if !$0 { ocrError = nil } }
+            )) {
+                Button("OK") { ocrError = nil }
+            } message: {
+                Text(ocrError ?? "Unknown error")
             }
         }
     }
@@ -332,6 +387,119 @@ struct CardEditorView: View {
         }
 
         dismiss()
+    }
+
+    // MARK: - OCR
+
+    @MainActor
+    private func processOCR(imageData: Data) async {
+        isProcessingOCR = true
+
+        do {
+            let result = try await OCRService.shared.recognizeText(from: imageData)
+            ocrContactInfo = result
+
+            // Only show results if we found something useful
+            if result.firstName != nil || result.email != nil || result.phone != nil || result.company != nil {
+                showingOCRResults = true
+            }
+        } catch {
+            ocrError = error.localizedDescription
+        }
+
+        isProcessingOCR = false
+    }
+
+    private func applyOCRResults(_ info: OCRService.ContactInfo) {
+        // Only fill empty fields (don't overwrite existing data)
+        if firstName.isEmpty, let fn = info.firstName {
+            firstName = fn
+        }
+        if lastName.isEmpty, let ln = info.lastName {
+            lastName = ln
+        }
+        if company.isEmpty, let comp = info.company {
+            company = comp
+        }
+        if title.isEmpty, let t = info.title {
+            title = t
+        }
+        if phone.isEmpty, let p = info.phone {
+            phone = p
+        }
+        if email.isEmpty, let e = info.email {
+            email = e
+        }
+        if website.isEmpty, let w = info.website {
+            website = w
+        }
+    }
+}
+
+// MARK: - OCR Results Sheet
+
+struct OCRResultsSheet: View {
+    let contactInfo: OCRService.ContactInfo?
+    let onApply: (OCRService.ContactInfo) -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                if let info = contactInfo {
+                    Section("Detected Information") {
+                        if let firstName = info.firstName {
+                            LabeledContent("First Name", value: firstName)
+                        }
+                        if let lastName = info.lastName {
+                            LabeledContent("Last Name", value: lastName)
+                        }
+                        if let company = info.company {
+                            LabeledContent("Company", value: company)
+                        }
+                        if let title = info.title {
+                            LabeledContent("Title", value: title)
+                        }
+                        if let phone = info.phone {
+                            LabeledContent("Phone", value: phone)
+                        }
+                        if let email = info.email {
+                            LabeledContent("Email", value: email)
+                        }
+                        if let website = info.website {
+                            LabeledContent("Website", value: website)
+                        }
+                    }
+
+                    Section("Raw Text") {
+                        Text(info.rawText)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } else {
+                    Text("No text detected")
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .navigationTitle("OCR Results")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Skip") {
+                        onCancel()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Auto-Fill") {
+                        if let info = contactInfo {
+                            onApply(info)
+                        }
+                    }
+                    .disabled(contactInfo == nil)
+                }
+            }
+        }
+        .presentationDetents([.medium, .large])
     }
 }
 
