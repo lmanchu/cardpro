@@ -19,6 +19,11 @@ struct CardEditorView: View {
     @State private var website = ""
     @State private var notes = ""
 
+    // Custom fields
+    @State private var customFields: [CustomField] = []
+    @State private var showingAddFieldSheet = false
+    @State private var editingFieldIndex: Int?
+
     // Photos
     @State private var photoData: Data?
     @State private var selectedPhotoItem: PhotosPickerItem?
@@ -168,6 +173,51 @@ struct CardEditorView: View {
                         .textInputAutocapitalization(.never)
                 }
 
+                // Custom fields section
+                Section {
+                    ForEach(Array(customFields.enumerated()), id: \.element.id) { index, field in
+                        HStack {
+                            Image(systemName: field.type.icon)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 24)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(field.label)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Text(field.value)
+                                    .font(.body)
+                            }
+
+                            Spacer()
+
+                            Button {
+                                editingFieldIndex = index
+                                showingAddFieldSheet = true
+                            } label: {
+                                Image(systemName: "pencil")
+                                    .foregroundColor(.secondary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .onDelete { indexSet in
+                        customFields.remove(atOffsets: indexSet)
+                    }
+
+                    Button {
+                        editingFieldIndex = nil
+                        showingAddFieldSheet = true
+                    } label: {
+                        Label("Add Field", systemImage: "plus.circle.fill")
+                    }
+                } header: {
+                    Text("Additional Info")
+                } footer: {
+                    Text("Add social media, extra phones, or custom fields.")
+                }
+
                 // Notes section
                 Section("Notes") {
                     TextField("Notes", text: $notes, axis: .vertical)
@@ -291,6 +341,31 @@ struct CardEditorView: View {
                     }
                 )
             }
+            .sheet(isPresented: $showingAddFieldSheet) {
+                CustomFieldEditorSheet(
+                    field: editingFieldIndex.map { customFields[$0] },
+                    onSave: { field in
+                        if let index = editingFieldIndex {
+                            customFields[index] = field
+                        } else {
+                            customFields.append(field)
+                        }
+                        showingAddFieldSheet = false
+                        editingFieldIndex = nil
+                    },
+                    onDelete: editingFieldIndex.map { index in
+                        {
+                            customFields.remove(at: index)
+                            showingAddFieldSheet = false
+                            editingFieldIndex = nil
+                        }
+                    },
+                    onCancel: {
+                        showingAddFieldSheet = false
+                        editingFieldIndex = nil
+                    }
+                )
+            }
             .overlay {
                 if isProcessingOCR {
                     ZStack {
@@ -333,7 +408,8 @@ struct CardEditorView: View {
             photoData: photoData,
             cardImageData: cardImageData,
             cardImageSource: cardImageSource,
-            notes: notes.isEmpty ? nil : notes
+            notes: notes.isEmpty ? nil : notes,
+            customFields: customFields
         )
     }
 
@@ -347,6 +423,7 @@ struct CardEditorView: View {
         email = card.email ?? ""
         website = card.website ?? ""
         notes = card.notes ?? ""
+        customFields = card.customFields
         photoData = card.photoData
         cardImageData = card.cardImageData
         cardImageSource = card.cardImageSource
@@ -363,10 +440,11 @@ struct CardEditorView: View {
             card.email = email.isEmpty ? nil : email
             card.website = website.isEmpty ? nil : website
             card.notes = notes.isEmpty ? nil : notes
+            card.customFields = customFields
             card.photoData = photoData
             card.cardImageData = cardImageData
             card.cardImageSource = cardImageSource
-            card.updatedAt = Date()
+            card.incrementVersion() // Increment version on update
         } else {
             // Create new
             let newCard = BusinessCard(
@@ -381,6 +459,7 @@ struct CardEditorView: View {
                 cardImageData: cardImageData,
                 cardImageSource: cardImageSource,
                 notes: notes.isEmpty ? nil : notes,
+                customFields: customFields,
                 isDefault: true
             )
             modelContext.insert(newCard)
@@ -608,6 +687,208 @@ struct TemplateSelector: View {
             }
             dismiss()
         }
+    }
+}
+
+// MARK: - Custom Field Editor Sheet
+
+struct CustomFieldEditorSheet: View {
+    let field: CustomField?
+    let onSave: (CustomField) -> Void
+    let onDelete: (() -> Void)?
+    let onCancel: () -> Void
+
+    @State private var label = ""
+    @State private var value = ""
+    @State private var fieldType: CustomField.FieldType = .social
+    @State private var showingPresets = false
+
+    var isEditing: Bool { field != nil }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                // Presets section (only for new fields)
+                if !isEditing {
+                    Section {
+                        Button {
+                            showingPresets = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "list.bullet")
+                                Text("Choose from Presets")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                    } header: {
+                        Text("Quick Add")
+                    }
+                }
+
+                // Field details
+                Section {
+                    TextField("Label (e.g., LinkedIn)", text: $label)
+                        .textInputAutocapitalization(.words)
+
+                    Picker("Type", selection: $fieldType) {
+                        ForEach(CustomField.FieldType.allCases, id: \.self) { type in
+                            Label(type.rawValue, systemImage: type.icon)
+                                .tag(type)
+                        }
+                    }
+                } header: {
+                    Text("Field Info")
+                }
+
+                Section {
+                    TextField(placeholderForType, text: $value)
+                        .keyboardType(keyboardTypeForType)
+                        .textInputAutocapitalization(capitalizationForType)
+                } header: {
+                    Text("Value")
+                }
+
+                // Delete button (only for editing)
+                if let onDelete {
+                    Section {
+                        Button(role: .destructive) {
+                            onDelete()
+                        } label: {
+                            HStack {
+                                Spacer()
+                                Text("Delete Field")
+                                Spacer()
+                            }
+                        }
+                    }
+                }
+            }
+            .navigationTitle(isEditing ? "Edit Field" : "Add Field")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        onCancel()
+                    }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") {
+                        let newField = CustomField(
+                            id: field?.id ?? UUID(),
+                            label: label,
+                            value: value,
+                            type: fieldType
+                        )
+                        onSave(newField)
+                    }
+                    .disabled(label.isEmpty || value.isEmpty)
+                }
+            }
+            .onAppear {
+                if let field {
+                    label = field.label
+                    value = field.value
+                    fieldType = field.type
+                }
+            }
+            .sheet(isPresented: $showingPresets) {
+                PresetPickerSheet(
+                    onSelect: { preset in
+                        label = preset.label
+                        fieldType = preset.type
+                        showingPresets = false
+                    },
+                    onCancel: {
+                        showingPresets = false
+                    }
+                )
+            }
+        }
+        .presentationDetents([.medium, .large])
+    }
+
+    private var placeholderForType: String {
+        switch fieldType {
+        case .phone: return "+886-912-345-678"
+        case .email: return "email@example.com"
+        case .url: return "https://..."
+        case .social: return "Username or URL"
+        case .text: return "Value"
+        }
+    }
+
+    private var keyboardTypeForType: UIKeyboardType {
+        switch fieldType {
+        case .phone: return .phonePad
+        case .email: return .emailAddress
+        case .url: return .URL
+        case .social, .text: return .default
+        }
+    }
+
+    private var capitalizationForType: TextInputAutocapitalization {
+        switch fieldType {
+        case .phone, .email, .url, .social: return .never
+        case .text: return .sentences
+        }
+    }
+}
+
+// MARK: - Preset Picker Sheet
+
+struct PresetPickerSheet: View {
+    let onSelect: ((label: String, type: CustomField.FieldType)) -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Social Media") {
+                    ForEach(CustomField.presets.filter { $0.type == .social }, id: \.label) { preset in
+                        Button {
+                            onSelect(preset)
+                        } label: {
+                            Label(preset.label, systemImage: preset.type.icon)
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+
+                Section("Phone") {
+                    ForEach(CustomField.presets.filter { $0.type == .phone }, id: \.label) { preset in
+                        Button {
+                            onSelect(preset)
+                        } label: {
+                            Label(preset.label, systemImage: preset.type.icon)
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+
+                Section("Other") {
+                    ForEach(CustomField.presets.filter { $0.type == .text }, id: \.label) { preset in
+                        Button {
+                            onSelect(preset)
+                        } label: {
+                            Label(preset.label, systemImage: preset.type.icon)
+                        }
+                        .foregroundColor(.primary)
+                    }
+                }
+            }
+            .navigationTitle("Choose Preset")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        onCancel()
+                    }
+                }
+            }
+        }
+        .presentationDetents([.medium])
     }
 }
 

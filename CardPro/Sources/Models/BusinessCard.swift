@@ -1,6 +1,51 @@
 import Foundation
 import SwiftData
 
+// MARK: - Custom Field
+
+struct CustomField: Codable, Identifiable, Equatable {
+    var id: UUID = UUID()
+    var label: String
+    var value: String
+    var type: FieldType
+
+    enum FieldType: String, Codable, CaseIterable {
+        case text = "Text"
+        case phone = "Phone"
+        case email = "Email"
+        case url = "URL"
+        case social = "Social"
+
+        var icon: String {
+            switch self {
+            case .text: return "text.alignleft"
+            case .phone: return "phone.fill"
+            case .email: return "envelope.fill"
+            case .url: return "link"
+            case .social: return "person.2.fill"
+            }
+        }
+    }
+
+    // Common presets for quick add
+    static let presets: [(label: String, type: FieldType)] = [
+        ("LinkedIn", .social),
+        ("Twitter/X", .social),
+        ("Instagram", .social),
+        ("Facebook", .social),
+        ("WeChat", .social),
+        ("LINE", .social),
+        ("Telegram", .social),
+        ("WhatsApp", .phone),
+        ("Office Phone", .phone),
+        ("Fax", .phone),
+        ("Department", .text),
+        ("Employee ID", .text),
+    ]
+}
+
+// MARK: - Business Card
+
 @Model
 final class BusinessCard {
     var id: UUID
@@ -15,9 +60,22 @@ final class BusinessCard {
     var cardImageData: Data?       // 名片設計圖（掃描/上傳/生成）
     var cardImageSource: String?   // "scan" | "upload" | "generated"
     var notes: String?
+    var customFieldsData: Data?    // Encoded [CustomField]
+    var cardVersion: Int           // Version for tracking updates
     var isDefault: Bool
     var createdAt: Date
     var updatedAt: Date
+
+    // Computed property for custom fields
+    var customFields: [CustomField] {
+        get {
+            guard let data = customFieldsData else { return [] }
+            return (try? JSONDecoder().decode([CustomField].self, from: data)) ?? []
+        }
+        set {
+            customFieldsData = try? JSONEncoder().encode(newValue)
+        }
+    }
 
     init(
         id: UUID = UUID(),
@@ -32,6 +90,8 @@ final class BusinessCard {
         cardImageData: Data? = nil,
         cardImageSource: String? = nil,
         notes: String? = nil,
+        customFields: [CustomField] = [],
+        cardVersion: Int = 1,
         isDefault: Bool = false,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
@@ -48,6 +108,8 @@ final class BusinessCard {
         self.cardImageData = cardImageData
         self.cardImageSource = cardImageSource
         self.notes = notes
+        self.customFieldsData = try? JSONEncoder().encode(customFields)
+        self.cardVersion = cardVersion
         self.isDefault = isDefault
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -102,9 +164,35 @@ final class BusinessCard {
             vcard += "\nNOTE:\(notes)"
         }
 
+        // Custom fields
+        for field in customFields {
+            switch field.type {
+            case .phone:
+                vcard += "\nTEL;TYPE=\(field.label.uppercased()):\(field.value)"
+            case .email:
+                vcard += "\nEMAIL;TYPE=\(field.label.uppercased()):\(field.value)"
+            case .url:
+                vcard += "\nURL;TYPE=\(field.label.uppercased()):\(field.value)"
+            case .social:
+                // Use X-SOCIALPROFILE for social media
+                let socialType = field.label.lowercased().replacingOccurrences(of: "/", with: "").replacingOccurrences(of: " ", with: "")
+                vcard += "\nX-SOCIALPROFILE;TYPE=\(socialType):\(field.value)"
+            case .text:
+                // Use X- prefix for custom text fields
+                let fieldName = field.label.uppercased().replacingOccurrences(of: " ", with: "-")
+                vcard += "\nX-\(fieldName):\(field.value)"
+            }
+        }
+
         vcard += "\nEND:VCARD"
 
         return vcard
+    }
+
+    /// Increment version when card is updated
+    func incrementVersion() {
+        cardVersion += 1
+        updatedAt = Date()
     }
 
     /// Generate vCard data for sharing
