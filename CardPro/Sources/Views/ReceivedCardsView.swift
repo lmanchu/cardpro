@@ -68,24 +68,52 @@ struct ReceivedContactRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Avatar
-            if let photoData = contact.photoData,
-               let uiImage = UIImage(data: photoData) {
-                Image(uiImage: uiImage)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 50, height: 50)
-                    .clipShape(Circle())
-            } else {
-                Image(systemName: "person.circle.fill")
-                    .font(.system(size: 50))
-                    .foregroundColor(.gray)
+            // Avatar with update badge
+            ZStack(alignment: .topTrailing) {
+                if let photoData = contact.photoData,
+                   let uiImage = UIImage(data: photoData) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 50, height: 50)
+                        .clipShape(Circle())
+                } else {
+                    Image(systemName: "person.circle.fill")
+                        .font(.system(size: 50))
+                        .foregroundColor(.gray)
+                }
+
+                // Update badge
+                if contact.hasUnreadUpdate {
+                    Circle()
+                        .fill(Color.blue)
+                        .frame(width: 14, height: 14)
+                        .overlay(
+                            Image(systemName: "arrow.triangle.2.circlepath")
+                                .font(.system(size: 8, weight: .bold))
+                                .foregroundColor(.white)
+                        )
+                        .offset(x: 2, y: -2)
+                }
             }
 
             // Info
             VStack(alignment: .leading, spacing: 4) {
-                Text(contact.displayName)
-                    .font(.headline)
+                HStack(spacing: 6) {
+                    Text(contact.displayName)
+                        .font(.headline)
+
+                    if contact.hasUnreadUpdate {
+                        Text("Updated")
+                            .font(.caption2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.blue)
+                            .clipShape(Capsule())
+                    }
+                }
 
                 if let company = contact.company {
                     Text(company)
@@ -93,15 +121,28 @@ struct ReceivedContactRow: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Text(contact.receivedAt.formatted(date: .abbreviated, time: .shortened))
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
+                HStack(spacing: 4) {
+                    if contact.hasUnreadUpdate, let lastUpdated = contact.lastUpdatedAt {
+                        Text("Updated \(lastUpdated.formatted(date: .abbreviated, time: .shortened))")
+                            .font(.caption)
+                            .foregroundColor(.blue)
+                    } else {
+                        Text(contact.receivedAt.formatted(date: .abbreviated, time: .shortened))
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
+                }
             }
 
             Spacer()
 
             // Status indicators
             HStack(spacing: 8) {
+                if contact.isTracked {
+                    Image(systemName: "bell.fill")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+                }
                 if contact.isFavorite {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
@@ -127,6 +168,13 @@ struct ReceivedContactDetailView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
+                    // Update banner
+                    if contact.hasUnreadUpdate {
+                        UpdateBanner(contact: contact)
+                            .padding(.horizontal)
+                            .padding(.top)
+                    }
+
                     // Card image if available
                     if let cardImageData = contact.cardImageData,
                        let uiImage = UIImage(data: cardImageData) {
@@ -136,7 +184,7 @@ struct ReceivedContactDetailView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .shadow(radius: 5)
                             .padding(.horizontal)
-                            .padding(.top)
+                            .padding(.top, contact.hasUnreadUpdate ? 0 : 16)
                     }
 
                     // Header
@@ -231,6 +279,12 @@ struct ReceivedContactDetailView: View {
                         if let website = contact.website {
                             DetailRow(icon: "globe", label: "Website", value: website)
                         }
+
+                        // Custom fields
+                        ForEach(contact.customFields) { field in
+                            DetailRow(icon: field.type.icon, label: field.label, value: field.value)
+                        }
+
                         if let event = contact.receivedEvent {
                             DetailRow(icon: "calendar", label: "Event", value: event)
                         }
@@ -245,12 +299,42 @@ struct ReceivedContactDetailView: View {
                     .background(Color(.systemGray6))
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
+
+                    // Track updates toggle
+                    VStack(spacing: 12) {
+                        Toggle(isOn: Binding(
+                            get: { contact.isTracked },
+                            set: { contact.isTracked = $0 }
+                        )) {
+                            Label("Track Updates", systemImage: "bell.fill")
+                        }
+                        .tint(.blue)
+
+                        Text("Get notified when this contact updates their card")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .padding(.horizontal)
+
+                    // Version info
+                    if contact.senderCardVersion > 1 {
+                        Text("Card version \(contact.senderCardVersion)")
+                            .font(.caption)
+                            .foregroundStyle(.tertiary)
+                    }
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
+                        // Mark as read when dismissing
+                        if contact.hasUnreadUpdate {
+                            contact.markUpdateAsRead()
+                        }
                         dismiss()
                     }
                 }
@@ -331,6 +415,57 @@ struct DetailRow: View {
                     .font(.body)
             }
         }
+    }
+}
+
+// MARK: - Update Banner
+
+struct UpdateBanner: View {
+    let contact: ReceivedContact
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 12) {
+                Image(systemName: "arrow.triangle.2.circlepath.circle.fill")
+                    .font(.title)
+                    .foregroundColor(.blue)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Card Updated")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+
+                    if let lastUpdated = contact.lastUpdatedAt {
+                        Text(lastUpdated.formatted(date: .abbreviated, time: .shortened))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
+                Spacer()
+
+                Button {
+                    contact.markUpdateAsRead()
+                } label: {
+                    Text("Dismiss")
+                        .font(.caption)
+                        .fontWeight(.medium)
+                }
+                .buttonStyle(.bordered)
+            }
+
+            Text("This contact has updated their information. The latest version is shown below.")
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding()
+        .background(Color.blue.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.blue.opacity(0.3), lineWidth: 1)
+        )
     }
 }
 
