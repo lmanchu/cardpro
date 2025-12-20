@@ -59,4 +59,4 @@ MIT License
 
 ---
 
-Made with ❤️ by [IrisGo](https://irisgo.xyz)
+Made with ❤️ by Lman
