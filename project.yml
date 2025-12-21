@@ -45,15 +45,76 @@ targets:
           - UIInterfaceOrientationPortraitUpsideDown
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
-        NFCReaderUsageDescription: "CardPro uses NFC to share and receive business cards"
         NSContactsUsageDescription: "CardPro needs access to Contacts to save received business cards"
         NSCameraUsageDescription: "CardPro uses camera to scan QR codes"
+        NFCReaderUsageDescription: "CardPro uses NFC to read and write business cards to NFC tags"
         UIApplicationSceneManifest:
           UIApplicationSupportsMultipleScenes: true
           UISceneConfigurations: {}
+        UIBackgroundModes:
+          - remote-notification
+        LSSupportsOpeningDocumentsInPlace: false
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: vCard
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.vcard
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: public.vcard
+            UTTypeDescription: vCard Contact
+            UTTypeConformsTo:
+              - public.text
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - vcf
+              public.mime-type:
+                - text/vcard
+                - text/x-vcard
     entitlements:
       path: CardPro/Resources/CardPro.entitlements
+      # Both NFC and iCloud require paid Apple Developer Program ($99/year)
+      # Uncomment the properties below when you have a paid account:
+      properties: {}
+      # properties:
+      #   com.apple.developer.nfc.readersession.formats:
+      #     - NDEF
+      #     - TAG
+      #   com.apple.developer.icloud-services:
+      #     - CloudKit
+      #   com.apple.developer.icloud-container-identifiers:
+      #     - iCloud.com.lman.cardpro
+      #   com.apple.security.application-groups:
+      #     - group.com.lman.cardpro
+    dependencies:
+      - target: CardProWidget
+        embed: true
+
+  CardProWidget:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: CardProWidget
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.lman.cardpro.widget
+        INFOPLIST_FILE: CardProWidget/Info.plist
+        SKIP_INSTALL: YES
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    info:
+      path: CardProWidget/Info.plist
       properties:
-        com.apple.developer.nfc.readersession.formats:
-          - NDEF
-          - TAG
+        CFBundleDisplayName: CardPro Widget
+        CFBundleName: CardProWidget
+        CFBundleShortVersionString: "1.0.0"
+        CFBundleVersion: "1"
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    entitlements:
+      path: CardProWidget/CardProWidget.entitlements
+      # Uncomment when you have paid account:
+      properties: {}
+      # properties:
+      #   com.apple.security.application-groups:
+      #     - group.com.lman.cardpro

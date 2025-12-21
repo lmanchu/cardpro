@@ -13,10 +13,14 @@ struct CardChange: Identifiable {
 @Model
 final class ReceivedContact {
     var id: UUID
-    var firstName: String
+    var firstName: String           // Primary name (usually Western/English)
     var lastName: String
+    var localizedFirstName: String? // CJK name (中文/日文名)
+    var localizedLastName: String?
     var company: String?
+    var localizedCompany: String?   // 公司中文名
     var title: String?
+    var localizedTitle: String?     // 職稱中文名
     var phone: String?
     var email: String?
     var website: String?
@@ -53,8 +57,12 @@ final class ReceivedContact {
         id: UUID = UUID(),
         firstName: String = "",
         lastName: String = "",
+        localizedFirstName: String? = nil,
+        localizedLastName: String? = nil,
         company: String? = nil,
+        localizedCompany: String? = nil,
         title: String? = nil,
+        localizedTitle: String? = nil,
         phone: String? = nil,
         email: String? = nil,
         website: String? = nil,
@@ -75,8 +83,12 @@ final class ReceivedContact {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
+        self.localizedFirstName = localizedFirstName
+        self.localizedLastName = localizedLastName
         self.company = company
+        self.localizedCompany = localizedCompany
         self.title = title
+        self.localizedTitle = localizedTitle
         self.phone = phone
         self.email = email
         self.website = website
@@ -97,15 +109,54 @@ final class ReceivedContact {
         self.hasUnreadUpdate = false
     }
 
+    // MARK: - Computed Properties
+
     var fullName: String {
         "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
     }
 
+    var localizedFullName: String? {
+        guard let first = localizedLastName ?? localizedFirstName else { return nil }
+        if let last = localizedFirstName, localizedLastName != nil {
+            return "\(first)\(last)" // CJK names: 姓+名 no space
+        }
+        return first
+    }
+
     var displayName: String {
+        // Prefer localized name if English name is empty
         if fullName.isEmpty {
-            return email ?? "Unknown"
+            return localizedFullName ?? email ?? "Unknown"
         }
         return fullName
+    }
+
+    /// Combined display showing both names if available (e.g., "Hagry Lin 林辰陽")
+    var displayNameWithLocalized: String {
+        let western = fullName
+        let localized = localizedFullName
+
+        if !western.isEmpty, let loc = localized, !loc.isEmpty {
+            return "\(western) (\(loc))"
+        } else if !western.isEmpty {
+            return western
+        } else if let loc = localized {
+            return loc
+        }
+        return email ?? "Unknown"
+    }
+
+    /// All searchable text for this contact (used for filtering)
+    var searchableText: String {
+        [
+            firstName, lastName,
+            localizedFirstName, localizedLastName,
+            company, localizedCompany,
+            title, localizedTitle,
+            email, phone
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
     }
 
     /// Create from vCard string

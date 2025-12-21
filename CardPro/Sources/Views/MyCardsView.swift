@@ -5,10 +5,12 @@ struct MyCardsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \BusinessCard.createdAt, order: .reverse) private var cards: [BusinessCard]
     @State private var showingAddCard = false
-    @State private var showingEditCard = false
-    @State private var selectedCard: BusinessCard?
-    @State private var showingShareSheet = false
-    @State private var showingQRCode = false
+    @State private var cardToEdit: BusinessCard?
+    @State private var cardToShare: BusinessCard?
+    @State private var cardForQR: BusinessCard?
+    @State private var cardForAirDrop: BusinessCard?
+    @State private var cardForNFC: BusinessCard?
+    @State private var cardForWallet: BusinessCard?
 
     var defaultCard: BusinessCard? {
         cards.first(where: { $0.isDefault }) ?? cards.first
@@ -30,15 +32,13 @@ struct MyCardsView: View {
                                 .shadow(color: .black.opacity(0.2), radius: 10, y: 5)
                                 .padding(.horizontal)
                                 .onTapGesture {
-                                    selectedCard = card
-                                    showingEditCard = true
+                                    cardToEdit = card
                                 }
                         } else {
                             CardPreviewView(card: card)
                                 .padding(.horizontal)
                                 .onTapGesture {
-                                    selectedCard = card
-                                    showingEditCard = true
+                                    cardToEdit = card
                                 }
                         }
 
@@ -47,10 +47,29 @@ struct MyCardsView: View {
                             Text(card.displayName)
                                 .font(.title2)
                                 .fontWeight(.bold)
-                            if let title = card.title, let company = card.company {
-                                Text("\(title) @ \(company)")
-                                    .font(.subheadline)
+
+                            // Show localized name if available and different
+                            if let localizedName = card.localizedFullName,
+                               !card.fullName.isEmpty {
+                                Text(localizedName)
+                                    .font(.headline)
                                     .foregroundStyle(.secondary)
+                            }
+
+                            // Title and Company
+                            if let title = card.title, let company = card.company {
+                                if let localizedTitle = card.localizedTitle, let localizedCompany = card.localizedCompany {
+                                    Text("\(title) @ \(company)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    Text("\(localizedTitle) @ \(localizedCompany)")
+                                        .font(.caption)
+                                        .foregroundStyle(.tertiary)
+                                } else {
+                                    Text("\(title) @ \(company)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                }
                             } else if let company = card.company {
                                 Text(company)
                                     .font(.subheadline)
@@ -59,21 +78,33 @@ struct MyCardsView: View {
                         }
                         .padding(.top, 8)
 
-                        // Share buttons
-                        HStack(spacing: 16) {
-                            ShareButton(title: "Share", icon: "square.and.arrow.up", color: .blue) {
-                                selectedCard = card
-                                showingShareSheet = true
+                        // Share buttons - Row 1
+                        HStack(spacing: 12) {
+                            ShareButton(title: "AirDrop", icon: "airplayaudio", color: .blue) {
+                                cardForAirDrop = card
                             }
 
                             ShareButton(title: "QR Code", icon: "qrcode", color: .purple) {
-                                selectedCard = card
-                                showingQRCode = true
+                                cardForQR = card
                             }
 
-                            ShareButton(title: "Edit", icon: "pencil", color: .orange) {
-                                selectedCard = card
-                                showingEditCard = true
+                            ShareButton(title: "NFC", icon: "wave.3.right", color: .orange) {
+                                cardForNFC = card
+                            }
+                        }
+
+                        // Share buttons - Row 2
+                        HStack(spacing: 12) {
+                            ShareButton(title: "Share", icon: "square.and.arrow.up", color: .green) {
+                                cardToShare = card
+                            }
+
+                            ShareButton(title: "Wallet", icon: "wallet.pass.fill", color: .black) {
+                                cardForWallet = card
+                            }
+
+                            ShareButton(title: "Edit", icon: "pencil", color: .gray) {
+                                cardToEdit = card
                             }
                         }
                         .padding(.horizontal)
@@ -128,6 +159,12 @@ struct MyCardsView: View {
                 .padding(.vertical)
             }
             .navigationTitle("My Cards")
+            .onAppear {
+                updateWidgetIfNeeded()
+            }
+            .onChange(of: cards) { _, _ in
+                updateWidgetIfNeeded()
+            }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
@@ -140,20 +177,23 @@ struct MyCardsView: View {
             .sheet(isPresented: $showingAddCard) {
                 CardEditorView(card: nil)
             }
-            .sheet(isPresented: $showingEditCard) {
-                if let card = selectedCard {
-                    CardEditorView(card: card)
-                }
+            .sheet(item: $cardToEdit) { card in
+                CardEditorView(card: card)
             }
-            .sheet(isPresented: $showingShareSheet) {
-                if let card = selectedCard {
-                    ShareSheet(card: card)
-                }
+            .sheet(item: $cardToShare) { card in
+                ShareSheet(card: card)
             }
-            .sheet(isPresented: $showingQRCode) {
-                if let card = selectedCard {
-                    QRCodeView(card: card)
-                }
+            .sheet(item: $cardForQR) { card in
+                QRCodeView(card: card)
+            }
+            .sheet(item: $cardForAirDrop) { card in
+                AirDropShareView(card: card)
+            }
+            .sheet(item: $cardForNFC) { card in
+                NFCWriteView(card: card)
+            }
+            .sheet(item: $cardForWallet) { card in
+                WalletPassView(card: card)
             }
         }
     }
@@ -161,6 +201,16 @@ struct MyCardsView: View {
     private func setDefaultCard(_ card: BusinessCard) {
         for c in cards {
             c.isDefault = (c.id == card.id)
+        }
+        // Update widget with new default card
+        WidgetDataService.shared.updateWidget(with: card)
+    }
+
+    private func updateWidgetIfNeeded() {
+        if let card = defaultCard {
+            WidgetDataService.shared.updateWidget(with: card)
+        } else {
+            WidgetDataService.shared.clearWidget()
         }
     }
 }

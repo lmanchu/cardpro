@@ -1,9 +1,12 @@
 import SwiftUI
+import CloudKit
 
 struct SettingsView: View {
     @AppStorage("preferredShareMethod") private var preferredShareMethod = "airdrop"
     @AppStorage("autoImportToContacts") private var autoImportToContacts = false
     @AppStorage("hapticFeedback") private var hapticFeedback = true
+    @State private var iCloudStatus: CKAccountStatus = .couldNotDetermine
+    @State private var isCheckingStatus = true
 
     var body: some View {
         NavigationStack {
@@ -28,6 +31,39 @@ struct SettingsView: View {
                 Section("App") {
                     Toggle(isOn: $hapticFeedback) {
                         Label("Haptic Feedback", systemImage: "hand.tap")
+                    }
+                }
+
+                // iCloud Sync
+                Section {
+                    HStack {
+                        Label("iCloud Sync", systemImage: "arrow.triangle.2.circlepath.icloud")
+                        Spacer()
+                        if isCheckingStatus {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            HStack(spacing: 4) {
+                                Circle()
+                                    .fill(iCloudStatusColor)
+                                    .frame(width: 8, height: 8)
+                                Text(iCloudStatusText)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+
+                    if iCloudStatus != .available {
+                        Text(iCloudStatusDescription)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                } header: {
+                    Text("Sync")
+                } footer: {
+                    if iCloudStatus == .available {
+                        Text("Your cards sync automatically across all your devices signed into the same iCloud account.")
                     }
                 }
 
@@ -69,6 +105,66 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
+            .onAppear {
+                checkiCloudStatus()
+            }
+        }
+    }
+
+    private func checkiCloudStatus() {
+        isCheckingStatus = true
+        CKContainer.default().accountStatus { status, error in
+            DispatchQueue.main.async {
+                iCloudStatus = status
+                isCheckingStatus = false
+            }
+        }
+    }
+
+    private var iCloudStatusColor: Color {
+        switch iCloudStatus {
+        case .available:
+            return .green
+        case .noAccount, .restricted, .temporarilyUnavailable:
+            return .orange
+        case .couldNotDetermine:
+            return .gray
+        @unknown default:
+            return .gray
+        }
+    }
+
+    private var iCloudStatusText: String {
+        switch iCloudStatus {
+        case .available:
+            return "On"
+        case .noAccount:
+            return "Sign In Required"
+        case .restricted:
+            return "Restricted"
+        case .temporarilyUnavailable:
+            return "Unavailable"
+        case .couldNotDetermine:
+            return "Unknown"
+        @unknown default:
+            return "Unknown"
+        }
+    }
+
+    private var iCloudStatusDescription: String {
+        switch iCloudStatus {
+        case .available:
+            return ""
+        case .noAccount:
+            return "Sign in to iCloud in Settings to enable sync across your devices."
+        case .restricted:
+            return "iCloud access is restricted on this device."
+        case .temporarilyUnavailable:
+            return "iCloud is temporarily unavailable. Please try again later."
+        case .couldNotDetermine:
+            return "Unable to determine iCloud status."
+        @unknown default:
+            return "Unable to determine iCloud status."
         }
     }
 }

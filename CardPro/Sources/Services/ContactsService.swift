@@ -1,6 +1,50 @@
 import Contacts
 import Foundation
 
+/// Represents a contact container (account) like iCloud or Google
+struct ContactContainer: Identifiable {
+    let id: String
+    let name: String
+    let type: CNContainerType
+
+    var displayName: String {
+        switch type {
+        case .local:
+            return "iPhone (\(name))"
+        case .exchange:
+            return "Exchange (\(name))"
+        case .cardDAV:
+            // CardDAV includes iCloud and Google
+            if name.lowercased().contains("icloud") {
+                return "iCloud"
+            } else if name.lowercased().contains("google") || name.lowercased().contains("gmail") {
+                return "Google"
+            }
+            return name
+        @unknown default:
+            return name
+        }
+    }
+
+    var iconName: String {
+        switch type {
+        case .local:
+            return "iphone"
+        case .exchange:
+            return "envelope.fill"
+        case .cardDAV:
+            if name.lowercased().contains("icloud") {
+                return "icloud.fill"
+            } else if name.lowercased().contains("google") || name.lowercased().contains("gmail") {
+                return "g.circle.fill"
+            }
+            return "person.crop.circle.fill"
+        @unknown default:
+            return "person.crop.circle.fill"
+        }
+    }
+}
+
 /// Service for importing contacts to iOS Contacts app
 class ContactsService {
     static let shared = ContactsService()
@@ -24,8 +68,33 @@ class ContactsService {
         CNContactStore.authorizationStatus(for: .contacts)
     }
 
+    /// Fetch all available contact containers (accounts)
+    func fetchContainers() async throws -> [ContactContainer] {
+        // Check authorization first
+        if authorizationStatus != .authorized {
+            let granted = await requestAccess()
+            if !granted {
+                throw ContactsError.notAuthorized
+            }
+        }
+
+        let containers = try store.containers(matching: nil)
+        return containers.map { container in
+            ContactContainer(
+                id: container.identifier,
+                name: container.name,
+                type: container.type
+            )
+        }
+    }
+
+    /// Get the default container identifier
+    func defaultContainerIdentifier() -> String? {
+        return store.defaultContainerIdentifier()
+    }
+
     /// Import a ReceivedContact to iOS Contacts
-    func importContact(_ contact: ReceivedContact) async throws {
+    func importContact(_ contact: ReceivedContact, toContainer containerId: String? = nil) async throws {
         // Check authorization
         if authorizationStatus != .authorized {
             let granted = await requestAccess()
@@ -37,16 +106,40 @@ class ContactsService {
         // Create CNMutableContact
         let cnContact = CNMutableContact()
 
-        // Name
+        // Name - use Western name as primary, CJK as phonetic
         cnContact.givenName = contact.firstName
         cnContact.familyName = contact.lastName
 
-        // Company and title
+        // Localized name (中文/日文) stored as phonetic name
+        // This helps with sorting and searching in CJK locales
+        if let localizedFirst = contact.localizedFirstName {
+            cnContact.phoneticGivenName = localizedFirst
+        }
+        if let localizedLast = contact.localizedLastName {
+            cnContact.phoneticFamilyName = localizedLast
+        }
+
+        // If no Western name but has CJK name, use CJK as primary
+        if contact.firstName.isEmpty && contact.lastName.isEmpty {
+            if let localizedFirst = contact.localizedFirstName {
+                cnContact.givenName = localizedFirst
+            }
+            if let localizedLast = contact.localizedLastName {
+                cnContact.familyName = localizedLast
+            }
+        }
+
+        // Company and title (prefer Western, add localized to notes if different)
         if let company = contact.company {
             cnContact.organizationName = company
+        } else if let localizedCompany = contact.localizedCompany {
+            cnContact.organizationName = localizedCompany
         }
+
         if let title = contact.title {
             cnContact.jobTitle = title
+        } else if let localizedTitle = contact.localizedTitle {
+            cnContact.jobTitle = localizedTitle
         }
 
         // Phone
@@ -81,14 +174,41 @@ class ContactsService {
             cnContact.imageData = photoData
         }
 
-        // Notes
-        if let notes = contact.notes {
-            cnContact.note = notes
+        // Build notes with localized info
+        var noteLines: [String] = []
+
+        // Add original notes
+        if let notes = contact.notes, !notes.isEmpty {
+            noteLines.append(notes)
+        }
+
+        // Add localized company/title if different from primary
+        if let localizedCompany = contact.localizedCompany,
+           let company = contact.company,
+           localizedCompany != company {
+            noteLines.append("公司: \(localizedCompany)")
+        }
+        if let localizedTitle = contact.localizedTitle,
+           let title = contact.title,
+           localizedTitle != title {
+            noteLines.append("職稱: \(localizedTitle)")
+        }
+
+        // Add received info
+        if let location = contact.receivedLocation {
+            noteLines.append("收到地點: \(location)")
+        }
+        if let event = contact.receivedEvent {
+            noteLines.append("活動: \(event)")
+        }
+
+        if !noteLines.isEmpty {
+            cnContact.note = noteLines.joined(separator: "\n")
         }
 
         // Save to contacts
         let saveRequest = CNSaveRequest()
-        saveRequest.add(cnContact, toContainerWithIdentifier: nil)
+        saveRequest.add(cnContact, toContainerWithIdentifier: containerId)
 
         try store.execute(saveRequest)
     }

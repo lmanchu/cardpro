@@ -49,19 +49,23 @@ struct CustomField: Codable, Identifiable, Equatable {
 @Model
 final class BusinessCard {
     var id: UUID
-    var firstName: String
+    var firstName: String              // Primary name (usually Western/English)
     var lastName: String
+    var localizedFirstName: String?    // CJK name (中文/日文名)
+    var localizedLastName: String?
     var company: String?
+    var localizedCompany: String?      // 公司中文名
     var title: String?
+    var localizedTitle: String?        // 職稱中文名
     var phone: String?
     var email: String?
     var website: String?
-    var photoData: Data?           // 個人照片
-    var cardImageData: Data?       // 名片設計圖（掃描/上傳/生成）
-    var cardImageSource: String?   // "scan" | "upload" | "generated"
+    var photoData: Data?               // 個人照片
+    var cardImageData: Data?           // 名片設計圖（掃描/上傳/生成）
+    var cardImageSource: String?       // "scan" | "upload" | "generated"
     var notes: String?
-    var customFieldsData: Data?    // Encoded [CustomField]
-    var cardVersion: Int           // Version for tracking updates
+    var customFieldsData: Data?        // Encoded [CustomField]
+    var cardVersion: Int               // Version for tracking updates
     var isDefault: Bool
     var createdAt: Date
     var updatedAt: Date
@@ -81,8 +85,12 @@ final class BusinessCard {
         id: UUID = UUID(),
         firstName: String = "",
         lastName: String = "",
+        localizedFirstName: String? = nil,
+        localizedLastName: String? = nil,
         company: String? = nil,
+        localizedCompany: String? = nil,
         title: String? = nil,
+        localizedTitle: String? = nil,
         phone: String? = nil,
         email: String? = nil,
         website: String? = nil,
@@ -99,8 +107,12 @@ final class BusinessCard {
         self.id = id
         self.firstName = firstName
         self.lastName = lastName
+        self.localizedFirstName = localizedFirstName
+        self.localizedLastName = localizedLastName
         self.company = company
+        self.localizedCompany = localizedCompany
         self.title = title
+        self.localizedTitle = localizedTitle
         self.phone = phone
         self.email = email
         self.website = website
@@ -115,32 +127,77 @@ final class BusinessCard {
         self.updatedAt = updatedAt
     }
 
+    // MARK: - Computed Properties
+
     var fullName: String {
         "\(firstName) \(lastName)".trimmingCharacters(in: .whitespaces)
     }
 
+    var localizedFullName: String? {
+        guard let first = localizedLastName ?? localizedFirstName else { return nil }
+        if let last = localizedFirstName, localizedLastName != nil {
+            return "\(first)\(last)" // CJK names: 姓+名 no space
+        }
+        return first
+    }
+
     var displayName: String {
+        // Prefer Western name, fallback to localized
         if fullName.isEmpty {
-            return email ?? "Unnamed Card"
+            return localizedFullName ?? email ?? "Unnamed Card"
         }
         return fullName
     }
 
+    /// Combined display showing both names if available (e.g., "Hagry Lin 林辰陽")
+    var displayNameWithLocalized: String {
+        let western = fullName
+        let localized = localizedFullName
+
+        if !western.isEmpty, let loc = localized, !loc.isEmpty {
+            return "\(western) (\(loc))"
+        } else if !western.isEmpty {
+            return western
+        } else if let loc = localized {
+            return loc
+        }
+        return email ?? "Unnamed Card"
+    }
+
     /// Generate vCard 3.0 format
     func toVCard() -> String {
+        // Use localized name as primary if no Western name
+        let primaryFirstName = firstName.isEmpty ? (localizedFirstName ?? "") : firstName
+        let primaryLastName = lastName.isEmpty ? (localizedLastName ?? "") : lastName
+        let primaryFullName = "\(primaryFirstName) \(primaryLastName)".trimmingCharacters(in: .whitespaces)
+
         var vcard = """
         BEGIN:VCARD
         VERSION:3.0
-        N:\(lastName);\(firstName);;;
-        FN:\(fullName)
+        N:\(primaryLastName);\(primaryFirstName);;;
+        FN:\(primaryFullName)
         """
 
-        if let company = company, !company.isEmpty {
-            vcard += "\nORG:\(company)"
+        // Add localized name as phonetic (for sorting/display in CJK systems)
+        if let localizedLast = localizedLastName {
+            vcard += "\nX-PHONETIC-LAST-NAME:\(localizedLast)"
+        }
+        if let localizedFirst = localizedFirstName {
+            vcard += "\nX-PHONETIC-FIRST-NAME:\(localizedFirst)"
         }
 
+        // Company - use both if available
+        if let company = company, !company.isEmpty {
+            vcard += "\nORG:\(company)"
+        } else if let localizedCompany = localizedCompany, !localizedCompany.isEmpty {
+            vcard += "\nORG:\(localizedCompany)"
+        }
+
+        // Title - use both if available
         if let title = title, !title.isEmpty {
             vcard += "\nTITLE:\(title)"
+        } else if let localizedTitle = localizedTitle, !localizedTitle.isEmpty {
+            vcard += "\nTITLE:\(localizedTitle)"
         }
 
         if let phone = phone, !phone.isEmpty {
