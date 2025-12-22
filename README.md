@@ -18,15 +18,22 @@ A modern iOS app for digital business card exchange with NFC, AirDrop, and QR Co
   - Smart parsing for names, phone, email, website, company, title
 - **Sharing** - Share both card image (JPG) + contact file (.vcf) together
 - **QR Code** - Generate scannable QR codes for easy sharing
+- **NFC Support** - Write and read business cards via NFC tags
+  - Write your card to NDEF NFC tags (NTAG215/216 recommended)
+  - Read business cards from NFC tags
+- **AirDrop Receiving** - Accept shared business cards via AirDrop
+  - Supports both .vcf contact files and card images
+  - Automatically combines image + contact when both are shared
 - **Contacts Import** - One-tap import received cards to iOS Contacts
+- **Widget** - Home screen widget showing your default card
+- **Apple Wallet** - Generate wallet passes for your cards
+- **Tags & Organization** - Organize received cards with custom tags
 - **Beautiful UI** - Tab-based interface with card preview and quick actions
 
 ### 🔄 Coming Soon
 
-- NFC tag writing/reading
-- AirDrop receiving handler
-- iCloud sync
-- Subscription features
+- iCloud sync (infrastructure ready, needs testing)
+- Subscription features (StoreKit 2)
 
 ## Tech Stack
 

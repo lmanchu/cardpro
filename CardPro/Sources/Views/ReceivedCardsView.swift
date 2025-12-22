@@ -10,6 +10,7 @@ struct ReceivedCardsView: View {
     @State private var showingAddOptions = false
     @State private var showingDocumentScanner = false
     @State private var showingQRScanner = false
+    @State private var showingNFCScanner = false
     @State private var showingManualEntry = false
     @State private var scannedCardData: ScannedCardData?
     @State private var pendingUpdate: PendingCardUpdate?
@@ -126,6 +127,14 @@ struct ReceivedCardsView: View {
                     Label("Scan QR Code", systemImage: "qrcode.viewfinder")
                 }
 
+                if NFCService.shared.isNFCAvailable {
+                    Button {
+                        showingNFCScanner = true
+                    } label: {
+                        Label("Scan NFC Tag", systemImage: "wave.3.right")
+                    }
+                }
+
                 Button {
                     showingManualEntry = true
                 } label: {
@@ -147,6 +156,11 @@ struct ReceivedCardsView: View {
             }
             .sheet(isPresented: $showingQRScanner) {
                 QRCodeScannerView { contact in
+                    handleReceivedContact(contact)
+                }
+            }
+            .sheet(isPresented: $showingNFCScanner) {
+                NFCReadView { contact in
                     handleReceivedContact(contact)
                 }
             }

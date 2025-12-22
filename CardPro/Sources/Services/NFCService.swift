@@ -7,10 +7,12 @@ class NFCService: NSObject, ObservableObject {
 
     @Published var isNFCAvailable: Bool = false
     @Published var lastError: String?
+    @Published var writeSuccess: Bool = false
 
     private var session: NFCNDEFReaderSession?
     private var writeMessage: NFCNDEFMessage?
     private var onReadCompletion: ((Result<String, Error>) -> Void)?
+    private var onWriteCompletion: ((Result<Void, Error>) -> Void)?
 
     override init() {
         super.init()
@@ -38,6 +40,7 @@ class NFCService: NSObject, ObservableObject {
         )
 
         writeMessage = NFCNDEFMessage(records: [payload])
+        onWriteCompletion = completion
 
         session = NFCNDEFReaderSession(
             delegate: self,
@@ -118,9 +121,18 @@ extension NFCService: NFCNDEFReaderSessionDelegate {
                         tag.writeNDEF(message) { error in
                             if let error = error {
                                 session.invalidate(errorMessage: "Write failed: \(error.localizedDescription)")
+                                DispatchQueue.main.async {
+                                    self.onWriteCompletion?(.failure(NFCError.writeFailed))
+                                    self.onWriteCompletion = nil
+                                }
                             } else {
                                 session.alertMessage = "Card written successfully!"
                                 session.invalidate()
+                                DispatchQueue.main.async {
+                                    self.writeSuccess = true
+                                    self.onWriteCompletion?(.success(()))
+                                    self.onWriteCompletion = nil
+                                }
                             }
                         }
                     }

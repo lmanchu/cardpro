@@ -33,6 +33,7 @@
 		D5A9752719903818E82324BF /* CardProWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58997001F2AECB5B5646CE9 /* CardProWidget.swift */; };
 		EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E7C56D2FD953887BA82A2 /* NFCService.swift */; };
 		F615356A472646905892F037 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */; };
+		FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +68,7 @@
 		2F8471DDC22D9BDF440FB431 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		3920FDD69AF99882EE149B34 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		479A82FF55F86216E7076764 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
+		498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
 		4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		512E7C56D2FD953887BA82A2 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		536CADA6F5000A23B36C3293 /* IncomingCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingCardView.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				B8E057DB79F440988CA6F223 /* ImageCropperView.swift */,
 				536CADA6F5000A23B36C3293 /* IncomingCardView.swift */,
 				897B542F1003CDC1EF2077B8 /* MyCardsView.swift */,
+				498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */,
 				479A82FF55F86216E7076764 /* NFCWriteView.swift */,
 				B770527BE8C34D743D83CC86 /* ReceivedCardsView.swift */,
 				2F8471DDC22D9BDF440FB431 /* SettingsView.swift */,
@@ -255,11 +258,11 @@
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					068039BC1A648013EBFF531B = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = HG5RRBKA8T;
 						ProvisioningStyle = Automatic;
 					};
 					2979E3D3A951EA131D5A96A8 = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = HG5RRBKA8T;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -310,6 +313,7 @@
 				6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */,
 				24ECDF08BD45CE408573D3B1 /* IncomingCardView.swift in Sources */,
 				A33353A119310E1ECCA31506 /* MyCardsView.swift in Sources */,
+				FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */,
 				EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */,
 				5D31146FA9B519245F62076F /* NFCWriteView.swift in Sources */,
 				263399394719E9C0A057C155 /* OCRService.swift in Sources */,
@@ -439,7 +443,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HG5RRBKA8T;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -518,7 +522,7 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = HG5RRBKA8T;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

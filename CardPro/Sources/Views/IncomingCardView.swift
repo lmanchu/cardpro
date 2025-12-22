@@ -32,8 +32,18 @@ struct IncomingCardView: View {
 
                 // Contact preview card
                 VStack(spacing: 16) {
-                    // Photo
-                    if let photoData = contact.photoData,
+                    // Card image if available
+                    if let cardImageData = contact.cardImageData,
+                       let uiImage = UIImage(data: cardImageData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxHeight: 180)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .shadow(radius: 5)
+                    }
+                    // Photo (avatar)
+                    else if let photoData = contact.photoData,
                        let uiImage = UIImage(data: photoData) {
                         Image(uiImage: uiImage)
                             .resizable()
