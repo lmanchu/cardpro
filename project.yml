@@ -83,12 +83,13 @@ targets:
         com.apple.developer.nfc.readersession.formats:
           - NDEF
           - TAG
-        com.apple.developer.icloud-services:
-          - CloudKit
-        com.apple.developer.icloud-container-identifiers:
-          - iCloud.com.lman.cardpro
         com.apple.security.application-groups:
           - group.com.lman.cardpro
+        # iCloud sync disabled for now - enable after testing basic features
+        # com.apple.developer.icloud-services:
+        #   - CloudKit
+        # com.apple.developer.icloud-container-identifiers:
+        #   - iCloud.com.lman.cardpro
     dependencies:
       - target: CardProWidget
         embed: true

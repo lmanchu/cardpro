@@ -97,32 +97,14 @@ struct CardProApp: App {
             ReceivedContact.self,
         ])
 
-        // Try to use CloudKit sync if available (requires paid Apple Developer account)
-        // CloudKit container: iCloud.com.lman.cardpro
-        let cloudKitContainerIdentifier = "iCloud.com.lman.cardpro"
-
+        // Use local storage - CloudKit sync can be enabled later
+        // CloudKit requires schema deployment which happens automatically on first run
+        // but can cause crashes if not properly configured
         do {
-            // First try with CloudKit enabled
-            let cloudConfig = ModelConfiguration(
-                schema: schema,
-                isStoredInMemoryOnly: false,
-                cloudKitDatabase: .private(cloudKitContainerIdentifier)
-            )
-            return try ModelContainer(for: schema, configurations: [cloudConfig])
+            let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+            return try ModelContainer(for: schema, configurations: [localConfig])
         } catch {
-            // Fall back to local-only storage if CloudKit fails
-            // This happens when:
-            // - User is not signed into iCloud
-            // - App doesn't have CloudKit entitlements
-            // - Other CloudKit errors
-            print("CloudKit sync not available, using local storage: \(error.localizedDescription)")
-
-            do {
-                let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-                return try ModelContainer(for: schema, configurations: [localConfig])
-            } catch {
-                fatalError("Could not create ModelContainer: \(error)")
-            }
+            fatalError("Could not create ModelContainer: \(error)")
         }
     }()
 
