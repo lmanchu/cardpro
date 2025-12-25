@@ -85,7 +85,8 @@ targets:
           - TAG
         com.apple.security.application-groups:
           - group.com.lman.cardpro
-        # iCloud sync disabled for now - enable after testing basic features
+        # iCloud/CloudKit disabled - SwiftData models need CloudKit-compatible schema
+        # Will implement proper CloudKit sync in future version
         # com.apple.developer.icloud-services:
         #   - CloudKit
         # com.apple.developer.icloud-container-identifiers:

@@ -33,7 +33,7 @@ final class ReceivedContact {
     var notes: String?
     var isImportedToContacts: Bool
     var isFavorite: Bool
-    var tags: [String]
+    var tagsData: Data?  // Store tags as encoded JSON for CloudKit compatibility
 
     // Version tracking for update detection
     var senderCardId: UUID?        // Original card ID from sender
@@ -50,6 +50,17 @@ final class ReceivedContact {
         }
         set {
             customFieldsData = try? JSONEncoder().encode(newValue)
+        }
+    }
+
+    // Computed property for tags (stored as JSON for CloudKit compatibility)
+    var tags: [String] {
+        get {
+            guard let data = tagsData else { return [] }
+            return (try? JSONDecoder().decode([String].self, from: data)) ?? []
+        }
+        set {
+            tagsData = try? JSONEncoder().encode(newValue)
         }
     }
 
@@ -101,7 +112,7 @@ final class ReceivedContact {
         self.notes = notes
         self.isImportedToContacts = isImportedToContacts
         self.isFavorite = isFavorite
-        self.tags = tags
+        self.tagsData = try? JSONEncoder().encode(tags)
         self.senderCardId = senderCardId
         self.senderCardVersion = senderCardVersion
         self.isTracked = isTracked

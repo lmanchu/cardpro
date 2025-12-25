@@ -97,9 +97,8 @@ struct CardProApp: App {
             ReceivedContact.self,
         ])
 
-        // Use local storage - CloudKit sync can be enabled later
-        // CloudKit requires schema deployment which happens automatically on first run
-        // but can cause crashes if not properly configured
+        // Local storage only - CloudKit sync requires additional schema work
+        // TODO: Enable CloudKit after verifying model compatibility
         do {
             let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
             return try ModelContainer(for: schema, configurations: [localConfig])
