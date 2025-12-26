@@ -23,6 +23,7 @@
 		67044C1BFEB5FC25D398C3B8 /* WalletPassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6910499A150BFB9B515D74E /* WalletPassView.swift */; };
 		6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E057DB79F440988CA6F223 /* ImageCropperView.swift */; };
 		6DFEE41C920C5BD92FA944D9 /* ReceivedContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */; };
+		79999107DC3266697EAE1A37 /* CardProIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306146CD34493DF4D9888381 /* CardProIntents.swift */; };
 		7CFF3A48D56E4856755FCC10 /* TagService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD020432EB94950E0186C964 /* TagService.swift */; };
 		80B58F2C580581E20DD01262 /* PromoCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3CB15BA8C15644AA598ECC /* PromoCodeService.swift */; };
 		82189106E477ACECDA9DF78C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1734F2FA8725752664126DF9 /* ContentView.swift */; };
@@ -78,6 +79,7 @@
 		2B1571453C226BBDA9A68D90 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2B7DCEDD6A592ED0D90A27DD /* CardPro.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CardPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F8471DDC22D9BDF440FB431 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		306146CD34493DF4D9888381 /* CardProIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardProIntents.swift; sourceTree = "<group>"; };
 		3127651644F46B23BDB29BA9 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		3920FDD69AF99882EE149B34 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		479A82FF55F86216E7076764 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
@@ -150,6 +152,7 @@
 			isa = PBXGroup;
 			children = (
 				9790FABA2BC47A8A63F5CE72 /* App */,
+				A4571ABBFDC550E09EA41D97 /* Intents */,
 				D8DF1BF61BF8898F2D3F1440 /* Models */,
 				91D21E6A4ABD01E2AB1F3660 /* Services */,
 				D6891490EDEF80CAB2EB44C9 /* Utilities */,
@@ -186,6 +189,14 @@
 				988BC52E348CB9BC7340868B /* CardProApp.swift */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		A4571ABBFDC550E09EA41D97 /* Intents */ = {
+			isa = PBXGroup;
+			children = (
+				306146CD34493DF4D9888381 /* CardProIntents.swift */,
+			);
+			path = Intents;
 			sourceTree = "<group>";
 		};
 		C1AFE264501234063578ACB7 /* Utils */ = {
@@ -345,6 +356,7 @@
 				21DCC7FF6453EDCEB1AB0C0D /* CardImageGenerator.swift in Sources */,
 				1A17CD52A686B061B18792FB /* CardPreviewView.swift in Sources */,
 				B07B32B98B3C69CDD5537E18 /* CardProApp.swift in Sources */,
+				79999107DC3266697EAE1A37 /* CardProIntents.swift in Sources */,
 				0001B4FCDC7D4AD147364936 /* CloudSyncService.swift in Sources */,
 				14361BD3D163F5B418BC1D9E /* ContactsService.swift in Sources */,
 				82189106E477ACECDA9DF78C /* ContentView.swift in Sources */,
