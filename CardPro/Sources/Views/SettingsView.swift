@@ -397,6 +397,12 @@ struct SubscriptionView: View {
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            // Generate referral code for Pro users if not already generated
+            if subscriptionService.subscriptionStatus.isPro {
+                _ = promoCodeService.getUserReferralCode()
+            }
+        }
         .alert(L10n.Common.error, isPresented: $showingError) {
             Button(L10n.Common.ok) {}
         } message: {
