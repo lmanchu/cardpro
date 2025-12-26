@@ -97,13 +97,28 @@ struct CardProApp: App {
             ReceivedContact.self,
         ])
 
-        // Local storage only - CloudKit sync requires additional schema work
-        // TODO: Enable CloudKit after verifying model compatibility
+        // Try CloudKit first, fall back to local storage if it fails
         do {
-            let localConfig = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-            return try ModelContainer(for: schema, configurations: [localConfig])
+            // CloudKit sync for cross-device synchronization
+            let cloudConfig = ModelConfiguration(
+                schema: schema,
+                isStoredInMemoryOnly: false,
+                cloudKitDatabase: .private("iCloud.com.lman.cardpro")
+            )
+            return try ModelContainer(for: schema, configurations: [cloudConfig])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            print("⚠️ CloudKit failed, falling back to local storage: \(error)")
+            // Fallback to local storage
+            do {
+                let localConfig = ModelConfiguration(
+                    schema: schema,
+                    isStoredInMemoryOnly: false,
+                    cloudKitDatabase: .none
+                )
+                return try ModelContainer(for: schema, configurations: [localConfig])
+            } catch {
+                fatalError("Could not create ModelContainer: \(error)")
+            }
         }
     }()
 

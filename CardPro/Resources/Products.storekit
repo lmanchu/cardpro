@@ -1,0 +1,129 @@
+{
+  "identifier" : "com.lman.cardpro.products",
+  "nonRenewingSubscriptions" : [],
+  "products" : [],
+  "settings" : {
+    "_applicationInternalID" : "",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "cardpro_pro",
+      "localizations" : [
+        {
+          "description" : "Unlock all CardPro features",
+          "displayName" : "CardPro Pro",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "解鎖所有 CardPro 功能",
+          "displayName" : "CardPro Pro",
+          "locale" : "zh_TW"
+        },
+        {
+          "description" : "解锁所有 CardPro 功能",
+          "displayName" : "CardPro Pro",
+          "locale" : "zh_CN"
+        },
+        {
+          "description" : "CardPro のすべての機能をアンロック",
+          "displayName" : "CardPro Pro",
+          "locale" : "ja"
+        }
+      ],
+      "name" : "CardPro Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "2.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "monthly_001",
+          "introductoryOffer" : {
+            "internalID" : "monthly_trial",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Billed monthly after free trial",
+              "displayName" : "Monthly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "免費試用後按月計費",
+              "displayName" : "月繳",
+              "locale" : "zh_TW"
+            },
+            {
+              "description" : "免费试用后按月计费",
+              "displayName" : "月付",
+              "locale" : "zh_CN"
+            },
+            {
+              "description" : "無料トライアル後、月額課金",
+              "displayName" : "月額",
+              "locale" : "ja"
+            }
+          ],
+          "productID" : "com.lman.cardpro.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "CardPro Pro Monthly",
+          "subscriptionGroupID" : "cardpro_pro",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [],
+          "codeOffers" : [],
+          "displayPrice" : "29.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "yearly_001",
+          "introductoryOffer" : {
+            "internalID" : "yearly_trial",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Billed yearly after free trial - Save 17%",
+              "displayName" : "Yearly",
+              "locale" : "en_US"
+            },
+            {
+              "description" : "免費試用後按年計費 - 省 17%",
+              "displayName" : "年繳",
+              "locale" : "zh_TW"
+            },
+            {
+              "description" : "免费试用后按年计费 - 省 17%",
+              "displayName" : "年付",
+              "locale" : "zh_CN"
+            },
+            {
+              "description" : "無料トライアル後、年額課金 - 17%お得",
+              "displayName" : "年額",
+              "locale" : "ja"
+            }
+          ],
+          "productID" : "com.lman.cardpro.pro.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "CardPro Pro Yearly",
+          "subscriptionGroupID" : "cardpro_pro",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

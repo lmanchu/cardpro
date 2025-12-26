@@ -1,0 +1,291 @@
+/*
+  Localizable.strings (Japanese)
+  CardPro
+*/
+
+// MARK: - Tab Bar
+"tab.myCards" = "マイ名刺";
+"tab.received" = "受け取った";
+"tab.settings" = "設定";
+
+// MARK: - My Cards View
+"myCards.title" = "マイ名刺";
+"myCards.empty.title" = "名刺がありません";
+"myCards.empty.subtitle" = "最初のデジタル名刺を作成しましょう";
+"myCards.empty.button" = "名刺を作成";
+"myCards.setDefault" = "デフォルトに設定";
+"myCards.defaultCard" = "デフォルト名刺";
+"myCards.cardCount" = "%d / %d";
+
+// MARK: - Card Editor
+"cardEditor.newCard" = "新規名刺";
+"cardEditor.editCard" = "名刺を編集";
+"cardEditor.save" = "保存";
+"cardEditor.cancel" = "キャンセル";
+"cardEditor.delete" = "削除";
+"cardEditor.deleteCard" = "名刺を削除";
+"cardEditor.deleteConfirm" = "「%@」を削除してもよろしいですか？この操作は取り消せません。";
+
+// Card Identity
+"cardEditor.cardIdentity" = "名刺の識別";
+"cardEditor.cardName" = "名刺名";
+"cardEditor.cardNameHint" = "識別しやすい名前をつけてください（例：「仕事」「プライベート」「副業」）";
+"cardEditor.myCard" = "マイ名刺";
+
+// Profile Photo
+"cardEditor.profilePhoto" = "プロフィール写真";
+
+// Card Design
+"cardEditor.cardDesign" = "名刺デザイン";
+"cardEditor.cardDesignHint" = "この画像は連絡先情報と一緒に共有され、より個人的なタッチを加えます。";
+"cardEditor.addCardDesign" = "名刺デザインを追加";
+"cardEditor.scanUploadGenerate" = "スキャン、アップロード、または生成";
+"cardEditor.change" = "変更";
+"cardEditor.scanned" = "スキャン済み";
+"cardEditor.uploaded" = "アップロード済み";
+"cardEditor.generated" = "生成済み";
+
+// Card Design Options
+"cardEditor.quickScan" = "クイックスキャン（自動トリミング）";
+"cardEditor.hdPhoto" = "HD写真（手動トリミング）";
+"cardEditor.uploadFromPhotos" = "写真からアップロード";
+"cardEditor.generateFromTemplate" = "テンプレートから生成";
+"cardEditor.cropCurrentImage" = "現在の画像をトリミング";
+"cardEditor.removeCardDesign" = "名刺デザインを削除";
+
+// HD Photo Alert
+"cardEditor.takeHDPhoto" = "HD写真を撮影しますか？";
+"cardEditor.takeHDPhotoButton" = "HD写真を撮影";
+"cardEditor.useScannedImage" = "スキャン画像を使用";
+"cardEditor.hdPhotoHint" = "スキャンした画像はテキスト認識に最適化されています。名刺表示用に高画質の写真を撮影しますか？";
+
+// Name Section
+"cardEditor.nameEnglish" = "氏名（英語）";
+"cardEditor.nameLocal" = "氏名（中国語/日本語）";
+"cardEditor.firstName" = "名";
+"cardEditor.lastName" = "姓";
+
+// Work Section
+"cardEditor.workEnglish" = "仕事（英語）";
+"cardEditor.workLocal" = "仕事（中国語/日本語）";
+"cardEditor.company" = "会社";
+"cardEditor.title" = "役職";
+
+// Contact Section
+"cardEditor.contact" = "連絡先";
+"cardEditor.phone" = "電話";
+"cardEditor.email" = "メール";
+"cardEditor.website" = "ウェブサイト";
+
+// Additional Info
+"cardEditor.additionalInfo" = "追加情報";
+"cardEditor.addField" = "フィールドを追加";
+"cardEditor.additionalInfoHint" = "SNS、追加の電話番号、またはカスタムフィールドを追加します。";
+
+// Notes
+"cardEditor.notes" = "メモ";
+
+// Preview
+"cardEditor.preview" = "プレビュー";
+
+// OCR
+"cardEditor.ocrError" = "認識エラー";
+"cardEditor.ocrResults" = "認識結果";
+"cardEditor.scanningCard" = "名刺をスキャン中...";
+"cardEditor.noTextDetected" = "テキストが検出されませんでした";
+"cardEditor.rawText" = "生テキスト";
+"cardEditor.skip" = "スキップ";
+"cardEditor.autoFill" = "自動入力";
+
+// Templates
+"cardEditor.chooseTemplate" = "テンプレートを選択";
+"cardEditor.useTemplate" = "テンプレートを使用";
+
+// Custom Fields
+"cardEditor.editField" = "フィールドを編集";
+"cardEditor.fieldInfo" = "フィールド情報";
+"cardEditor.label" = "ラベル";
+"cardEditor.labelHint" = "ラベル（例：LinkedIn）";
+"cardEditor.type" = "タイプ";
+"cardEditor.value" = "値";
+"cardEditor.deleteField" = "フィールドを削除";
+"cardEditor.quickAdd" = "クイック追加";
+"cardEditor.chooseFromPresets" = "プリセットから選択";
+"cardEditor.socialMedia" = "SNS";
+"cardEditor.other" = "その他";
+"cardEditor.usernameOrUrl" = "ユーザー名またはURL";
+
+// MARK: - Received Cards View
+"received.title" = "受け取った";
+"received.searchPrompt" = "連絡先を検索";
+"received.allContacts" = "すべての連絡先";
+
+// Add Contact Options
+"received.addContact" = "連絡先を追加";
+"received.scanPhysicalCard" = "実物の名刺をスキャン";
+"received.scanQRCode" = "QRコードをスキャン";
+"received.scanNFCTag" = "NFCタグをスキャン";
+"received.manualEntry" = "手動入力";
+
+// Batch Import
+"received.importAllToContacts" = "すべて連絡先にインポート";
+"received.syncAllToContacts" = "すべて連絡先に同期";
+"received.importToContacts" = "連絡先にインポート";
+"received.importComplete" = "インポート完了";
+"received.importResult" = "インポート %d 件、更新 %d 件、失敗 %d 件";
+"received.startImport" = "インポート開始";
+"received.importing" = "%@ をインポート中...";
+"received.importHint" = "%d 件の連絡先がiPhoneの連絡先にインポートされます。";
+"received.duplicateHint" = "同じメールアドレスまたは電話番号の既存の連絡先は、重複作成ではなく更新されます。";
+"received.imported" = "インポート済み";
+"received.updated" = "更新済み";
+"received.failed" = "失敗";
+
+// Contact Detail
+"received.contactDetail" = "連絡先";
+"received.addToContacts" = "連絡先に追加";
+"received.alreadyInContacts" = "連絡先に登録済み";
+"received.call" = "電話";
+"received.message" = "メッセージ";
+"received.copyEmail" = "メールをコピー";
+"received.openWebsite" = "ウェブサイトを開く";
+"received.editContact" = "連絡先を編集";
+"received.deleteContact" = "連絡先を削除";
+"received.deleteConfirm" = "この連絡先を削除してもよろしいですか？この操作は取り消せません。";
+
+// Contact Info Labels
+"received.info" = "情報";
+"received.receivedInfo" = "受信情報";
+"received.receivedAt" = "受信日時";
+"received.location" = "場所";
+"received.event" = "イベント";
+"received.tags" = "タグ";
+"received.manageTags" = "タグを管理";
+"received.favorite" = "お気に入り";
+"received.tracking" = "追跡";
+"received.trackUpdates" = "更新を追跡";
+"received.trackUpdatesHint" = "この連絡先が名刺を更新したときに通知を受け取る";
+
+// Contact Editor
+"received.newContact" = "新規連絡先";
+"received.editContactTitle" = "連絡先を編集";
+"received.profilePhoto" = "プロフィール写真";
+"received.addPhoto" = "写真を追加";
+"received.changePhoto" = "写真を変更";
+"received.profilePhotoHint" = "ヒント：相手のメールにGravatarがリンクされていれば、自動取得できます。";
+"received.fetchFromGravatar" = "Gravatarから取得";
+"received.takePhoto" = "写真を撮る";
+"received.chooseFromPhotos" = "写真から選択";
+"received.removePhoto" = "写真を削除";
+"received.noGravatarFound" = "このメールにGravatarがありません";
+
+// Card Image
+"received.cardImage" = "名刺画像";
+"received.addCardImage" = "名刺画像を追加";
+"received.replaceCardImage" = "名刺画像を置き換え";
+"received.removeImage" = "画像を削除";
+
+// Account Picker
+"received.chooseAccount" = "アカウントを選択";
+"received.chooseAccountHint" = "連絡先を保存するアカウントを選択";
+"received.importingContact" = "連絡先をインポート中...";
+
+// MARK: - Settings View
+"settings.title" = "設定";
+
+// Sharing
+"settings.sharing" = "共有";
+"settings.preferredMethod" = "優先方法";
+"settings.airdrop" = "AirDrop";
+"settings.qrcode" = "QRコード";
+"settings.nfc" = "NFC";
+
+// App
+"settings.app" = "アプリ";
+"settings.hapticFeedback" = "触覚フィードバック";
+"settings.language" = "言語";
+
+// Subscription
+"settings.subscription" = "サブスクリプション";
+"settings.cardproPro" = "CardPro Pro";
+"settings.free" = "無料";
+
+// About
+"settings.about" = "情報";
+"settings.version" = "バージョン";
+"settings.privacyPolicy" = "プライバシーポリシー";
+"settings.termsOfService" = "利用規約";
+"settings.contactSupport" = "サポートに連絡";
+
+// MARK: - Subscription View
+"subscription.title" = "CardPro Pro";
+"subscription.unlockAll" = "すべての機能をアンロック";
+"subscription.unlimitedCards" = "無制限の名刺";
+"subscription.unlimitedCardsDesc" = "必要なだけ名刺を作成";
+"subscription.icloudSync" = "iCloud同期";
+"subscription.icloudSyncDesc" = "すべてのデバイスで名刺にアクセス";
+"subscription.premiumTemplates" = "プレミアムテンプレート";
+"subscription.premiumTemplatesDesc" = "ユニークなデザインで目立つ";
+"subscription.analytics" = "分析";
+"subscription.analyticsDesc" = "名刺共有の統計を追跡";
+"subscription.yearly" = "年額";
+"subscription.monthly" = "月額";
+"subscription.yearlyPrice" = "¥3,900/年";
+"subscription.monthlyPrice" = "¥400/月";
+"subscription.save17" = "17%お得";
+"subscription.startFreeTrial" = "無料トライアルを開始";
+"subscription.trialHint" = "7日間の無料トライアル後、%@";
+
+// MARK: - Share
+"share.share" = "共有";
+"share.qrCode" = "QRコード";
+"share.edit" = "編集";
+"share.airdrop" = "AirDrop";
+"share.nfc" = "NFC";
+"share.wallet" = "Wallet";
+"share.shareCard" = "名刺を共有";
+"share.scanToConnect" = "スキャンして接続";
+"share.saveQRCode" = "QRコードを保存";
+"share.shareQRCode" = "QRコードを共有";
+"share.qrCodeSaved" = "QRコードを写真に保存しました";
+
+// MARK: - NFC
+"nfc.writeToTag" = "NFCタグに書き込む";
+"nfc.readyToWrite" = "書き込み準備完了";
+"nfc.holdNearTag" = "iPhoneをNFCタグに近づけてください";
+"nfc.writeSuccess" = "名刺をNFCタグに書き込みました！";
+"nfc.notAvailable" = "このデバイスではNFCが利用できません";
+
+// MARK: - Incoming Card
+"incoming.newCard" = "新しい名刺";
+"incoming.sharedWithYou" = "誰かが名刺を共有しました";
+"incoming.cardSaved" = "名刺を保存しました！";
+"incoming.saveToCardPro" = "CardProに保存";
+"incoming.notNow" = "後で";
+"incoming.receivedCard" = "受け取った名刺";
+
+// MARK: - Sync
+"sync.title" = "同期";
+"sync.icloudSync" = "iCloud同期";
+"sync.enabled" = "有効";
+"sync.disabled" = "無効";
+"sync.syncing" = "同期中...";
+"sync.lastSync" = "最終同期：%@";
+"sync.noAccount" = "iCloudアカウントなし";
+"sync.restricted" = "iCloud制限中";
+"sync.unknown" = "不明な状態";
+"sync.temporarilyUnavailable" = "一時的に利用不可";
+"sync.proFeature" = "Pro機能";
+"sync.proFeatureDesc" = "Proにアップグレードして全デバイスで同期";
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "キャンセル";
+"common.save" = "保存";
+"common.delete" = "削除";
+"common.edit" = "編集";
+"common.done" = "完了";
+"common.error" = "エラー";
+"common.success" = "成功";
+"common.loading" = "読み込み中...";
+"common.retry" = "再試行";

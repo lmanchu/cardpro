@@ -1,0 +1,291 @@
+/*
+  Localizable.strings (Traditional Chinese)
+  CardPro
+*/
+
+// MARK: - Tab Bar
+"tab.myCards" = "我的名片";
+"tab.received" = "收到的";
+"tab.settings" = "設定";
+
+// MARK: - My Cards View
+"myCards.title" = "我的名片";
+"myCards.empty.title" = "尚無名片";
+"myCards.empty.subtitle" = "建立你的第一張數位名片";
+"myCards.empty.button" = "建立名片";
+"myCards.setDefault" = "設為預設";
+"myCards.defaultCard" = "預設名片";
+"myCards.cardCount" = "%d / %d";
+
+// MARK: - Card Editor
+"cardEditor.newCard" = "新增名片";
+"cardEditor.editCard" = "編輯名片";
+"cardEditor.save" = "儲存";
+"cardEditor.cancel" = "取消";
+"cardEditor.delete" = "刪除";
+"cardEditor.deleteCard" = "刪除名片";
+"cardEditor.deleteConfirm" = "確定要刪除「%@」嗎？此操作無法復原。";
+
+// Card Identity
+"cardEditor.cardIdentity" = "名片識別";
+"cardEditor.cardName" = "名片名稱";
+"cardEditor.cardNameHint" = "為這張名片命名以便識別（如「工作」、「個人」、「副業」）";
+"cardEditor.myCard" = "我的名片";
+
+// Profile Photo
+"cardEditor.profilePhoto" = "個人照片";
+
+// Card Design
+"cardEditor.cardDesign" = "名片設計";
+"cardEditor.cardDesignHint" = "此圖片將與您的聯絡資訊一同分享，增添個人特色。";
+"cardEditor.addCardDesign" = "新增名片設計";
+"cardEditor.scanUploadGenerate" = "掃描、上傳或生成";
+"cardEditor.change" = "變更";
+"cardEditor.scanned" = "已掃描";
+"cardEditor.uploaded" = "已上傳";
+"cardEditor.generated" = "已生成";
+
+// Card Design Options
+"cardEditor.quickScan" = "快速掃描（自動裁切）";
+"cardEditor.hdPhoto" = "高畫質照片（手動裁切）";
+"cardEditor.uploadFromPhotos" = "從相簿上傳";
+"cardEditor.generateFromTemplate" = "從模板生成";
+"cardEditor.cropCurrentImage" = "裁切目前圖片";
+"cardEditor.removeCardDesign" = "移除名片設計";
+
+// HD Photo Alert
+"cardEditor.takeHDPhoto" = "拍攝高畫質照片？";
+"cardEditor.takeHDPhotoButton" = "拍攝高畫質照片";
+"cardEditor.useScannedImage" = "使用掃描圖片";
+"cardEditor.hdPhotoHint" = "掃描的圖片已針對文字辨識最佳化。您是否要拍攝高畫質照片作為名片顯示？";
+
+// Name Section
+"cardEditor.nameEnglish" = "姓名（英文）";
+"cardEditor.nameLocal" = "姓名（中文/日文）";
+"cardEditor.firstName" = "名";
+"cardEditor.lastName" = "姓";
+
+// Work Section
+"cardEditor.workEnglish" = "工作（英文）";
+"cardEditor.workLocal" = "工作（中文/日文）";
+"cardEditor.company" = "公司";
+"cardEditor.title" = "職稱";
+
+// Contact Section
+"cardEditor.contact" = "聯絡方式";
+"cardEditor.phone" = "電話";
+"cardEditor.email" = "電子郵件";
+"cardEditor.website" = "網站";
+
+// Additional Info
+"cardEditor.additionalInfo" = "其他資訊";
+"cardEditor.addField" = "新增欄位";
+"cardEditor.additionalInfoHint" = "新增社群媒體、額外電話或自訂欄位。";
+
+// Notes
+"cardEditor.notes" = "備註";
+
+// Preview
+"cardEditor.preview" = "預覽";
+
+// OCR
+"cardEditor.ocrError" = "辨識錯誤";
+"cardEditor.ocrResults" = "辨識結果";
+"cardEditor.scanningCard" = "正在掃描名片...";
+"cardEditor.noTextDetected" = "未偵測到文字";
+"cardEditor.rawText" = "原始文字";
+"cardEditor.skip" = "略過";
+"cardEditor.autoFill" = "自動填入";
+
+// Templates
+"cardEditor.chooseTemplate" = "選擇模板";
+"cardEditor.useTemplate" = "使用模板";
+
+// Custom Fields
+"cardEditor.editField" = "編輯欄位";
+"cardEditor.fieldInfo" = "欄位資訊";
+"cardEditor.label" = "標籤";
+"cardEditor.labelHint" = "標籤（如 LinkedIn）";
+"cardEditor.type" = "類型";
+"cardEditor.value" = "值";
+"cardEditor.deleteField" = "刪除欄位";
+"cardEditor.quickAdd" = "快速新增";
+"cardEditor.chooseFromPresets" = "從預設選擇";
+"cardEditor.socialMedia" = "社群媒體";
+"cardEditor.other" = "其他";
+"cardEditor.usernameOrUrl" = "使用者名稱或網址";
+
+// MARK: - Received Cards View
+"received.title" = "收到的";
+"received.searchPrompt" = "搜尋聯絡人";
+"received.allContacts" = "所有聯絡人";
+
+// Add Contact Options
+"received.addContact" = "新增聯絡人";
+"received.scanPhysicalCard" = "掃描實體名片";
+"received.scanQRCode" = "掃描 QR Code";
+"received.scanNFCTag" = "掃描 NFC 標籤";
+"received.manualEntry" = "手動輸入";
+
+// Batch Import
+"received.importAllToContacts" = "全部匯入通訊錄";
+"received.syncAllToContacts" = "全部同步到通訊錄";
+"received.importToContacts" = "匯入通訊錄";
+"received.importComplete" = "匯入完成";
+"received.importResult" = "匯入 %d 筆，更新 %d 筆，失敗 %d 筆";
+"received.startImport" = "開始匯入";
+"received.importing" = "正在匯入 %@...";
+"received.importHint" = "%d 位聯絡人將匯入到 iPhone 通訊錄。";
+"received.duplicateHint" = "已存在相同電子郵件或電話的聯絡人將被更新，而非重複建立。";
+"received.imported" = "已匯入";
+"received.updated" = "已更新";
+"received.failed" = "失敗";
+
+// Contact Detail
+"received.contactDetail" = "聯絡人";
+"received.addToContacts" = "加入通訊錄";
+"received.alreadyInContacts" = "已在通訊錄中";
+"received.call" = "撥打電話";
+"received.message" = "發送訊息";
+"received.copyEmail" = "複製電子郵件";
+"received.openWebsite" = "開啟網站";
+"received.editContact" = "編輯聯絡人";
+"received.deleteContact" = "刪除聯絡人";
+"received.deleteConfirm" = "確定要刪除這位聯絡人嗎？此操作無法復原。";
+
+// Contact Info Labels
+"received.info" = "資訊";
+"received.receivedInfo" = "收到資訊";
+"received.receivedAt" = "收到時間";
+"received.location" = "地點";
+"received.event" = "活動";
+"received.tags" = "標籤";
+"received.manageTags" = "管理標籤";
+"received.favorite" = "收藏";
+"received.tracking" = "追蹤";
+"received.trackUpdates" = "追蹤更新";
+"received.trackUpdatesHint" = "當此聯絡人更新名片時收到通知";
+
+// Contact Editor
+"received.newContact" = "新增聯絡人";
+"received.editContactTitle" = "編輯聯絡人";
+"received.profilePhoto" = "個人照片";
+"received.addPhoto" = "新增照片";
+"received.changePhoto" = "變更照片";
+"received.profilePhotoHint" = "提示：如果對方的電子郵件有連結 Gravatar，可以自動抓取。";
+"received.fetchFromGravatar" = "從 Gravatar 抓取";
+"received.takePhoto" = "拍照";
+"received.chooseFromPhotos" = "從相簿選擇";
+"received.removePhoto" = "移除照片";
+"received.noGravatarFound" = "此電子郵件沒有 Gravatar";
+
+// Card Image
+"received.cardImage" = "名片圖片";
+"received.addCardImage" = "新增名片圖片";
+"received.replaceCardImage" = "替換名片圖片";
+"received.removeImage" = "移除圖片";
+
+// Account Picker
+"received.chooseAccount" = "選擇帳戶";
+"received.chooseAccountHint" = "選擇要儲存聯絡人的帳戶";
+"received.importingContact" = "正在匯入聯絡人...";
+
+// MARK: - Settings View
+"settings.title" = "設定";
+
+// Sharing
+"settings.sharing" = "分享";
+"settings.preferredMethod" = "偏好方式";
+"settings.airdrop" = "AirDrop";
+"settings.qrcode" = "QR Code";
+"settings.nfc" = "NFC";
+
+// App
+"settings.app" = "應用程式";
+"settings.hapticFeedback" = "觸覺回饋";
+"settings.language" = "語言";
+
+// Subscription
+"settings.subscription" = "訂閱";
+"settings.cardproPro" = "CardPro Pro";
+"settings.free" = "免費";
+
+// About
+"settings.about" = "關於";
+"settings.version" = "版本";
+"settings.privacyPolicy" = "隱私權政策";
+"settings.termsOfService" = "服務條款";
+"settings.contactSupport" = "聯絡客服";
+
+// MARK: - Subscription View
+"subscription.title" = "CardPro Pro";
+"subscription.unlockAll" = "解鎖所有功能";
+"subscription.unlimitedCards" = "無限名片";
+"subscription.unlimitedCardsDesc" = "建立您所需的任意數量名片";
+"subscription.icloudSync" = "iCloud 同步";
+"subscription.icloudSyncDesc" = "在所有裝置上存取名片";
+"subscription.premiumTemplates" = "進階模板";
+"subscription.premiumTemplatesDesc" = "使用獨特設計脫穎而出";
+"subscription.analytics" = "分析";
+"subscription.analyticsDesc" = "追蹤名片分享統計";
+"subscription.yearly" = "年繳";
+"subscription.monthly" = "月繳";
+"subscription.yearlyPrice" = "NT$990/年";
+"subscription.monthlyPrice" = "NT$99/月";
+"subscription.save17" = "省 17%";
+"subscription.startFreeTrial" = "開始免費試用";
+"subscription.trialHint" = "7 天免費試用，之後 %@";
+
+// MARK: - Share
+"share.share" = "分享";
+"share.qrCode" = "QR Code";
+"share.edit" = "編輯";
+"share.airdrop" = "AirDrop";
+"share.nfc" = "NFC";
+"share.wallet" = "錢包";
+"share.shareCard" = "分享名片";
+"share.scanToConnect" = "掃描以連結";
+"share.saveQRCode" = "儲存 QR Code";
+"share.shareQRCode" = "分享 QR Code";
+"share.qrCodeSaved" = "QR Code 已儲存到相簿";
+
+// MARK: - NFC
+"nfc.writeToTag" = "寫入 NFC 標籤";
+"nfc.readyToWrite" = "準備寫入";
+"nfc.holdNearTag" = "將 iPhone 靠近 NFC 標籤";
+"nfc.writeSuccess" = "名片已寫入 NFC 標籤！";
+"nfc.notAvailable" = "此裝置不支援 NFC";
+
+// MARK: - Incoming Card
+"incoming.newCard" = "新名片";
+"incoming.sharedWithYou" = "有人與您分享了名片";
+"incoming.cardSaved" = "名片已儲存！";
+"incoming.saveToCardPro" = "儲存到 CardPro";
+"incoming.notNow" = "暫時不要";
+"incoming.receivedCard" = "收到的名片";
+
+// MARK: - Sync
+"sync.title" = "同步";
+"sync.icloudSync" = "iCloud 同步";
+"sync.enabled" = "已啟用";
+"sync.disabled" = "已停用";
+"sync.syncing" = "同步中...";
+"sync.lastSync" = "上次同步：%@";
+"sync.noAccount" = "未登入 iCloud";
+"sync.restricted" = "iCloud 受限";
+"sync.unknown" = "狀態未知";
+"sync.temporarilyUnavailable" = "暫時無法使用";
+"sync.proFeature" = "Pro 功能";
+"sync.proFeatureDesc" = "升級 Pro 以跨裝置同步";
+
+// MARK: - Common
+"common.ok" = "確定";
+"common.cancel" = "取消";
+"common.save" = "儲存";
+"common.delete" = "刪除";
+"common.edit" = "編輯";
+"common.done" = "完成";
+"common.error" = "錯誤";
+"common.success" = "成功";
+"common.loading" = "載入中...";
+"common.retry" = "重試";

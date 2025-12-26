@@ -1,0 +1,291 @@
+/*
+  Localizable.strings (English)
+  CardPro
+*/
+
+// MARK: - Tab Bar
+"tab.myCards" = "My Cards";
+"tab.received" = "Received";
+"tab.settings" = "Settings";
+
+// MARK: - My Cards View
+"myCards.title" = "My Cards";
+"myCards.empty.title" = "No Business Card Yet";
+"myCards.empty.subtitle" = "Create your first digital business card";
+"myCards.empty.button" = "Create Card";
+"myCards.setDefault" = "Set as Default";
+"myCards.defaultCard" = "Default Card";
+"myCards.cardCount" = "%d / %d";
+
+// MARK: - Card Editor
+"cardEditor.newCard" = "New Card";
+"cardEditor.editCard" = "Edit Card";
+"cardEditor.save" = "Save";
+"cardEditor.cancel" = "Cancel";
+"cardEditor.delete" = "Delete";
+"cardEditor.deleteCard" = "Delete Card";
+"cardEditor.deleteConfirm" = "Are you sure you want to delete \"%@\"? This cannot be undone.";
+
+// Card Identity
+"cardEditor.cardIdentity" = "Card Identity";
+"cardEditor.cardName" = "Card Name";
+"cardEditor.cardNameHint" = "Give this card a name to identify it (e.g., \"Work\", \"Personal\", \"Side Business\")";
+"cardEditor.myCard" = "My Card";
+
+// Profile Photo
+"cardEditor.profilePhoto" = "Profile Photo";
+
+// Card Design
+"cardEditor.cardDesign" = "Card Design";
+"cardEditor.cardDesignHint" = "This image will be shared along with your contact info for a more personal touch.";
+"cardEditor.addCardDesign" = "Add Card Design";
+"cardEditor.scanUploadGenerate" = "Scan, upload, or generate";
+"cardEditor.change" = "Change";
+"cardEditor.scanned" = "Scanned";
+"cardEditor.uploaded" = "Uploaded";
+"cardEditor.generated" = "Generated";
+
+// Card Design Options
+"cardEditor.quickScan" = "Quick Scan (Auto Edge)";
+"cardEditor.hdPhoto" = "HD Photo (Manual Crop)";
+"cardEditor.uploadFromPhotos" = "Upload from Photos";
+"cardEditor.generateFromTemplate" = "Generate from Template";
+"cardEditor.cropCurrentImage" = "Crop Current Image";
+"cardEditor.removeCardDesign" = "Remove Card Design";
+
+// HD Photo Alert
+"cardEditor.takeHDPhoto" = "Take HD Photo?";
+"cardEditor.takeHDPhotoButton" = "Take HD Photo";
+"cardEditor.useScannedImage" = "Use Scanned Image";
+"cardEditor.hdPhotoHint" = "The scanned image is optimized for text recognition. Would you like to take a high-quality photo for your card display?";
+
+// Name Section
+"cardEditor.nameEnglish" = "Name (English)";
+"cardEditor.nameLocal" = "Name (中文/日文)";
+"cardEditor.firstName" = "First Name";
+"cardEditor.lastName" = "Last Name";
+
+// Work Section
+"cardEditor.workEnglish" = "Work (English)";
+"cardEditor.workLocal" = "Work (中文/日文)";
+"cardEditor.company" = "Company";
+"cardEditor.title" = "Title";
+
+// Contact Section
+"cardEditor.contact" = "Contact";
+"cardEditor.phone" = "Phone";
+"cardEditor.email" = "Email";
+"cardEditor.website" = "Website";
+
+// Additional Info
+"cardEditor.additionalInfo" = "Additional Info";
+"cardEditor.addField" = "Add Field";
+"cardEditor.additionalInfoHint" = "Add social media, extra phones, or custom fields.";
+
+// Notes
+"cardEditor.notes" = "Notes";
+
+// Preview
+"cardEditor.preview" = "Preview";
+
+// OCR
+"cardEditor.ocrError" = "OCR Error";
+"cardEditor.ocrResults" = "OCR Results";
+"cardEditor.scanningCard" = "Scanning card...";
+"cardEditor.noTextDetected" = "No text detected";
+"cardEditor.rawText" = "Raw Text";
+"cardEditor.skip" = "Skip";
+"cardEditor.autoFill" = "Auto-Fill";
+
+// Templates
+"cardEditor.chooseTemplate" = "Choose a Template";
+"cardEditor.useTemplate" = "Use Template";
+
+// Custom Fields
+"cardEditor.editField" = "Edit Field";
+"cardEditor.fieldInfo" = "Field Info";
+"cardEditor.label" = "Label";
+"cardEditor.labelHint" = "Label (e.g., LinkedIn)";
+"cardEditor.type" = "Type";
+"cardEditor.value" = "Value";
+"cardEditor.deleteField" = "Delete Field";
+"cardEditor.quickAdd" = "Quick Add";
+"cardEditor.chooseFromPresets" = "Choose from Presets";
+"cardEditor.socialMedia" = "Social Media";
+"cardEditor.other" = "Other";
+"cardEditor.usernameOrUrl" = "Username or URL";
+
+// MARK: - Received Cards View
+"received.title" = "Received";
+"received.searchPrompt" = "Search contacts";
+"received.allContacts" = "All Contacts";
+
+// Add Contact Options
+"received.addContact" = "Add Contact";
+"received.scanPhysicalCard" = "Scan Physical Card";
+"received.scanQRCode" = "Scan QR Code";
+"received.scanNFCTag" = "Scan NFC Tag";
+"received.manualEntry" = "Manual Entry";
+
+// Batch Import
+"received.importAllToContacts" = "Import All to Contacts";
+"received.syncAllToContacts" = "Sync All to Contacts";
+"received.importToContacts" = "Import to Contacts";
+"received.importComplete" = "Import Complete";
+"received.importResult" = "%d imported, %d updated, %d failed";
+"received.startImport" = "Start Import";
+"received.importing" = "Importing %@...";
+"received.importHint" = "%d contacts will be imported to your iPhone Contacts app.";
+"received.duplicateHint" = "Existing contacts with matching email or phone will be updated instead of duplicated.";
+"received.imported" = "Imported";
+"received.updated" = "Updated";
+"received.failed" = "Failed";
+
+// Contact Detail
+"received.contactDetail" = "Contact";
+"received.addToContacts" = "Add to Contacts";
+"received.alreadyInContacts" = "Already in Contacts";
+"received.call" = "Call";
+"received.message" = "Message";
+"received.copyEmail" = "Copy Email";
+"received.openWebsite" = "Open Website";
+"received.editContact" = "Edit Contact";
+"received.deleteContact" = "Delete Contact";
+"received.deleteConfirm" = "Are you sure you want to delete this contact? This cannot be undone.";
+
+// Contact Info Labels
+"received.info" = "Info";
+"received.receivedInfo" = "Received Info";
+"received.receivedAt" = "Received";
+"received.location" = "Location";
+"received.event" = "Event";
+"received.tags" = "Tags";
+"received.manageTags" = "Manage Tags";
+"received.favorite" = "Favorite";
+"received.tracking" = "Tracking";
+"received.trackUpdates" = "Track Updates";
+"received.trackUpdatesHint" = "Get notified when this contact updates their card";
+
+// Contact Editor
+"received.newContact" = "New Contact";
+"received.editContactTitle" = "Edit Contact";
+"received.profilePhoto" = "Profile Photo";
+"received.addPhoto" = "Add Photo";
+"received.changePhoto" = "Change Photo";
+"received.profilePhotoHint" = "Tip: If they have a Gravatar linked to their email, it can be auto-fetched.";
+"received.fetchFromGravatar" = "Fetch from Gravatar";
+"received.takePhoto" = "Take Photo";
+"received.chooseFromPhotos" = "Choose from Photos";
+"received.removePhoto" = "Remove Photo";
+"received.noGravatarFound" = "No Gravatar found for this email";
+
+// Card Image
+"received.cardImage" = "Card Image";
+"received.addCardImage" = "Add Card Image";
+"received.replaceCardImage" = "Replace Card Image";
+"received.removeImage" = "Remove Image";
+
+// Account Picker
+"received.chooseAccount" = "Choose Account";
+"received.chooseAccountHint" = "Select which account to save the contact to";
+"received.importingContact" = "Importing contact...";
+
+// MARK: - Settings View
+"settings.title" = "Settings";
+
+// Sharing
+"settings.sharing" = "Sharing";
+"settings.preferredMethod" = "Preferred Method";
+"settings.airdrop" = "AirDrop";
+"settings.qrcode" = "QR Code";
+"settings.nfc" = "NFC";
+
+// App
+"settings.app" = "App";
+"settings.hapticFeedback" = "Haptic Feedback";
+"settings.language" = "Language";
+
+// Subscription
+"settings.subscription" = "Subscription";
+"settings.cardproPro" = "CardPro Pro";
+"settings.free" = "Free";
+
+// About
+"settings.about" = "About";
+"settings.version" = "Version";
+"settings.privacyPolicy" = "Privacy Policy";
+"settings.termsOfService" = "Terms of Service";
+"settings.contactSupport" = "Contact Support";
+
+// MARK: - Subscription View
+"subscription.title" = "CardPro Pro";
+"subscription.unlockAll" = "Unlock all features";
+"subscription.unlimitedCards" = "Unlimited Cards";
+"subscription.unlimitedCardsDesc" = "Create as many cards as you need";
+"subscription.icloudSync" = "iCloud Sync";
+"subscription.icloudSyncDesc" = "Access cards on all devices";
+"subscription.premiumTemplates" = "Premium Templates";
+"subscription.premiumTemplatesDesc" = "Stand out with unique designs";
+"subscription.analytics" = "Analytics";
+"subscription.analyticsDesc" = "Track card sharing stats";
+"subscription.yearly" = "Yearly";
+"subscription.monthly" = "Monthly";
+"subscription.yearlyPrice" = "$29.99/year";
+"subscription.monthlyPrice" = "$2.99/month";
+"subscription.save17" = "Save 17%";
+"subscription.startFreeTrial" = "Start Free Trial";
+"subscription.trialHint" = "7-day free trial, then %@";
+
+// MARK: - Share
+"share.share" = "Share";
+"share.qrCode" = "QR Code";
+"share.edit" = "Edit";
+"share.airdrop" = "AirDrop";
+"share.nfc" = "NFC";
+"share.wallet" = "Wallet";
+"share.shareCard" = "Share Card";
+"share.scanToConnect" = "Scan to connect";
+"share.saveQRCode" = "Save QR Code";
+"share.shareQRCode" = "Share QR Code";
+"share.qrCodeSaved" = "QR Code saved to Photos";
+
+// MARK: - NFC
+"nfc.writeToTag" = "Write to NFC Tag";
+"nfc.readyToWrite" = "Ready to Write";
+"nfc.holdNearTag" = "Hold your iPhone near an NFC tag";
+"nfc.writeSuccess" = "Card written to NFC tag!";
+"nfc.notAvailable" = "NFC not available on this device";
+
+// MARK: - Incoming Card
+"incoming.newCard" = "New Business Card";
+"incoming.sharedWithYou" = "Someone shared their card with you";
+"incoming.cardSaved" = "Card Saved!";
+"incoming.saveToCardPro" = "Save to CardPro";
+"incoming.notNow" = "Not Now";
+"incoming.receivedCard" = "Received Card";
+
+// MARK: - Sync
+"sync.title" = "Sync";
+"sync.icloudSync" = "iCloud Sync";
+"sync.enabled" = "Enabled";
+"sync.disabled" = "Disabled";
+"sync.syncing" = "Syncing...";
+"sync.lastSync" = "Last sync: %@";
+"sync.noAccount" = "No iCloud account";
+"sync.restricted" = "iCloud restricted";
+"sync.unknown" = "Unknown status";
+"sync.temporarilyUnavailable" = "Temporarily unavailable";
+"sync.proFeature" = "Pro Feature";
+"sync.proFeatureDesc" = "Upgrade to Pro to sync across devices";
+
+// MARK: - Common
+"common.ok" = "OK";
+"common.cancel" = "Cancel";
+"common.save" = "Save";
+"common.delete" = "Delete";
+"common.edit" = "Edit";
+"common.done" = "Done";
+"common.error" = "Error";
+"common.success" = "Success";
+"common.loading" = "Loading...";
+"common.retry" = "Retry";

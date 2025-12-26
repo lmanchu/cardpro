@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import PhotosUI
 
 struct ReceivedCardsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -14,6 +15,16 @@ struct ReceivedCardsView: View {
     @State private var showingManualEntry = false
     @State private var scannedCardData: ScannedCardData?
     @State private var pendingUpdate: PendingCardUpdate?
+
+    // Batch import states
+    @State private var showingBatchImport = false
+    @State private var batchImportProgress: Double = 0
+    @State private var isBatchImporting = false
+    @State private var batchImportResult: BatchImportResult?
+
+    var contactsNotImported: [ReceivedContact] {
+        contacts.filter { !$0.isImportedToContacts }
+    }
 
     var allTags: [String] {
         TagService.shared.getAllTags(from: contacts)
@@ -101,47 +112,68 @@ struct ReceivedCardsView: View {
                             .onDelete(perform: deleteContacts)
                         }
                     }
-                    .searchable(text: $searchText, prompt: "Search contacts")
+                    .searchable(text: $searchText, prompt: L10n.Received.searchPrompt)
                 }
             }
-            .navigationTitle("Received")
+            .navigationTitle(L10n.Received.title)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        showingAddOptions = true
-                    } label: {
-                        Image(systemName: "plus")
+                    HStack(spacing: 16) {
+                        // Batch import menu
+                        if !contacts.isEmpty {
+                            Menu {
+                                Button {
+                                    showingBatchImport = true
+                                } label: {
+                                    Label(L10n.Received.importAllToContacts, systemImage: "person.crop.circle.badge.plus")
+                                }
+
+                                Button {
+                                    syncAllContacts()
+                                } label: {
+                                    Label(L10n.Received.syncAllToContacts, systemImage: "arrow.triangle.2.circlepath")
+                                }
+                            } label: {
+                                Image(systemName: "person.2.fill")
+                            }
+                        }
+
+                        Button {
+                            showingAddOptions = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
                     }
                 }
             }
-            .confirmationDialog("Add Contact", isPresented: $showingAddOptions) {
+            .confirmationDialog(L10n.Received.addContact, isPresented: $showingAddOptions) {
                 Button {
                     showingDocumentScanner = true
                 } label: {
-                    Label("Scan Physical Card", systemImage: "doc.viewfinder")
+                    Label(L10n.Received.scanPhysicalCard, systemImage: "doc.viewfinder")
                 }
 
                 Button {
                     showingQRScanner = true
                 } label: {
-                    Label("Scan QR Code", systemImage: "qrcode.viewfinder")
+                    Label(L10n.Received.scanQRCode, systemImage: "qrcode.viewfinder")
                 }
 
                 if NFCService.shared.isNFCAvailable {
                     Button {
                         showingNFCScanner = true
                     } label: {
-                        Label("Scan NFC Tag", systemImage: "wave.3.right")
+                        Label(L10n.Received.scanNFCTag, systemImage: "wave.3.right")
                     }
                 }
 
                 Button {
                     showingManualEntry = true
                 } label: {
-                    Label("Manual Entry", systemImage: "square.and.pencil")
+                    Label(L10n.Received.manualEntry, systemImage: "square.and.pencil")
                 }
 
-                Button("Cancel", role: .cancel) {}
+                Button(L10n.Common.cancel, role: .cancel) {}
             }
             .sheet(item: $selectedContact) { contact in
                 ReceivedContactDetailView(contact: contact)
@@ -197,6 +229,40 @@ struct ReceivedCardsView: View {
                     ocrInfo: data.ocrInfo
                 )
             }
+            .sheet(isPresented: $showingBatchImport) {
+                BatchImportSheet(
+                    contacts: contactsNotImported,
+                    onComplete: { result in
+                        batchImportResult = result
+                    }
+                )
+            }
+            .alert(L10n.Received.importComplete, isPresented: .init(
+                get: { batchImportResult != nil },
+                set: { if !$0 { batchImportResult = nil } }
+            )) {
+                Button(L10n.Common.ok) { batchImportResult = nil }
+            } message: {
+                if let result = batchImportResult {
+                    Text(L10n.Received.importResult(result.imported, result.updated, result.failed))
+                }
+            }
+        }
+    }
+
+    private func syncAllContacts() {
+        Task {
+            for contact in contacts.filter({ $0.isImportedToContacts }) {
+                do {
+                    let cnIdentifier = try await ContactsService.shared.importContact(contact, toContainer: nil)
+                    await MainActor.run {
+                        contact.cnContactIdentifier = cnIdentifier
+                        contact.lastSyncedAt = Date()
+                    }
+                } catch {
+                    print("Failed to sync \(contact.displayName): \(error)")
+                }
+            }
         }
     }
 
@@ -238,6 +304,179 @@ struct PendingCardUpdate: Identifiable {
     let existingContact: ReceivedContact
     let newContact: ReceivedContact
     let changes: [CardChange]
+}
+
+// MARK: - Batch Import
+
+struct BatchImportResult {
+    let imported: Int
+    let updated: Int
+    let failed: Int
+}
+
+struct BatchImportSheet: View {
+    let contacts: [ReceivedContact]
+    let onComplete: (BatchImportResult) -> Void
+    @Environment(\.dismiss) private var dismiss
+    @State private var isImporting = false
+    @State private var progress: Double = 0
+    @State private var currentContact: String = ""
+    @State private var importedCount = 0
+    @State private var updatedCount = 0
+    @State private var failedCount = 0
+
+    var body: some View {
+        NavigationStack {
+            VStack(spacing: 24) {
+                if isImporting {
+                    // Progress view
+                    VStack(spacing: 16) {
+                        ProgressView(value: progress)
+                            .progressViewStyle(.linear)
+                            .scaleEffect(x: 1, y: 2, anchor: .center)
+
+                        Text(L10n.Received.importing(currentContact))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+
+                        Text("\(Int(progress * 100))%")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .monospacedDigit()
+
+                        HStack(spacing: 24) {
+                            VStack {
+                                Text("\(importedCount)")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.green)
+                                Text(L10n.Received.imported)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            VStack {
+                                Text("\(updatedCount)")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.blue)
+                                Text(L10n.Received.updated)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            VStack {
+                                Text("\(failedCount)")
+                                    .font(.title2)
+                                    .fontWeight(.semibold)
+                                    .foregroundColor(.red)
+                                Text(L10n.Received.failed)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                    .padding()
+                } else {
+                    // Confirmation view
+                    VStack(spacing: 16) {
+                        Image(systemName: "person.crop.circle.badge.plus")
+                            .font(.system(size: 60))
+                            .foregroundColor(.accentColor)
+
+                        Text(L10n.Received.importToContacts)
+                            .font(.title2)
+                            .fontWeight(.bold)
+
+                        Text(L10n.Received.importHint(contacts.count))
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+
+                        Text(L10n.Received.duplicateHint)
+                            .font(.caption)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.tertiary)
+                            .padding(.horizontal)
+                    }
+                    .padding()
+
+                    Button {
+                        startImport()
+                    } label: {
+                        Label(L10n.Received.startImport, systemImage: "arrow.down.circle.fill")
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.accentColor)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.horizontal)
+                }
+
+                Spacer()
+            }
+            .padding(.top, 32)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.Common.cancel) {
+                        dismiss()
+                    }
+                    .disabled(isImporting)
+                }
+            }
+        }
+    }
+
+    private func startImport() {
+        isImporting = true
+        Task {
+            let total = contacts.count
+            for (index, contact) in contacts.enumerated() {
+                await MainActor.run {
+                    currentContact = contact.displayName
+                    progress = Double(index) / Double(total)
+                }
+
+                do {
+                    // Check if this will be an update or new import
+                    let isUpdate = (try? ContactsService.shared.findExistingContact(
+                        email: contact.email,
+                        phone: contact.phone
+                    )) != nil
+
+                    let cnIdentifier = try await ContactsService.shared.importContact(contact, toContainer: nil)
+                    await MainActor.run {
+                        contact.isImportedToContacts = true
+                        contact.cnContactIdentifier = cnIdentifier
+                        contact.lastSyncedAt = Date()
+                        if isUpdate {
+                            updatedCount += 1
+                        } else {
+                            importedCount += 1
+                        }
+                    }
+                } catch {
+                    await MainActor.run {
+                        failedCount += 1
+                    }
+                    print("Failed to import \(contact.displayName): \(error)")
+                }
+            }
+
+            await MainActor.run {
+                progress = 1.0
+                // Small delay to show 100%
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    onComplete(BatchImportResult(
+                        imported: importedCount,
+                        updated: updatedCount,
+                        failed: failedCount
+                    ))
+                    dismiss()
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Card Update Confirmation View
@@ -450,13 +689,15 @@ struct ReceivedContactRow: View {
 struct ReceivedContactDetailView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    let contact: ReceivedContact
+    @Bindable var contact: ReceivedContact
     @State private var showingImportAlert = false
     @State private var importError: String?
     @State private var showingAccountPicker = false
     @State private var availableContainers: [ContactContainer] = []
     @State private var isLoadingContainers = false
     @State private var showingTagEditor = false
+    @State private var showingDeleteConfirm = false
+    @State private var showingEditor = false
 
     var body: some View {
         NavigationStack {
@@ -579,7 +820,7 @@ struct ReceivedContactDetailView: View {
                                     ProgressView()
                                         .tint(.white)
                                 } else {
-                                    Label("Add to Contacts", systemImage: "person.badge.plus")
+                                    Label(L10n.Received.addToContacts, systemImage: "person.badge.plus")
                                 }
                             }
                             .font(.headline)
@@ -592,7 +833,7 @@ struct ReceivedContactDetailView: View {
                         .disabled(isLoadingContainers)
                         .padding(.horizontal)
                     } else {
-                        Label("Added to Contacts", systemImage: "checkmark.circle.fill")
+                        Label(L10n.Received.alreadyInContacts, systemImage: "checkmark.circle.fill")
                             .foregroundColor(.green)
                     }
 
@@ -692,12 +933,28 @@ struct ReceivedContactDetailView: View {
                             .font(.caption)
                             .foregroundStyle(.tertiary)
                     }
+
+                    // Delete button
+                    Button(role: .destructive) {
+                        showingDeleteConfirm = true
+                    } label: {
+                        HStack {
+                            Spacer()
+                            Label(L10n.Received.deleteContact, systemImage: "trash")
+                            Spacer()
+                        }
+                        .padding()
+                        .background(Color.red.opacity(0.1))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 16)
                 }
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Done") {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button(L10n.Common.done) {
                         // Mark as read when dismissing
                         if contact.hasUnreadUpdate {
                             contact.markUpdateAsRead()
@@ -706,11 +963,18 @@ struct ReceivedContactDetailView: View {
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        contact.isFavorite.toggle()
-                    } label: {
-                        Image(systemName: contact.isFavorite ? "star.fill" : "star")
-                            .foregroundColor(contact.isFavorite ? .yellow : .gray)
+                    HStack(spacing: 16) {
+                        Button {
+                            showingEditor = true
+                        } label: {
+                            Image(systemName: "pencil")
+                        }
+                        Button {
+                            contact.isFavorite.toggle()
+                        } label: {
+                            Image(systemName: contact.isFavorite ? "star.fill" : "star")
+                                .foregroundColor(contact.isFavorite ? .yellow : .gray)
+                        }
                     }
                 }
             }
@@ -734,6 +998,22 @@ struct ReceivedContactDetailView: View {
             }
             .sheet(isPresented: $showingTagEditor) {
                 TagEditorView(contact: contact)
+            }
+            .sheet(isPresented: $showingEditor) {
+                ReceivedContactEditorView(
+                    existingContact: contact,
+                    cardImageData: contact.cardImageData,
+                    ocrInfo: nil
+                )
+            }
+            .alert(L10n.Received.deleteContact, isPresented: $showingDeleteConfirm) {
+                Button(L10n.Common.cancel, role: .cancel) {}
+                Button(L10n.Common.delete, role: .destructive) {
+                    modelContext.delete(contact)
+                    dismiss()
+                }
+            } message: {
+                Text(L10n.Received.deleteConfirm)
             }
         }
     }
@@ -769,9 +1049,11 @@ struct ReceivedContactDetailView: View {
     private func importToContainer(_ containerId: String?) {
         Task {
             do {
-                try await ContactsService.shared.importContact(contact, toContainer: containerId)
+                let cnIdentifier = try await ContactsService.shared.importContact(contact, toContainer: containerId)
                 await MainActor.run {
                     contact.isImportedToContacts = true
+                    contact.cnContactIdentifier = cnIdentifier
+                    contact.lastSyncedAt = Date()
                 }
             } catch {
                 await MainActor.run {
@@ -849,8 +1131,10 @@ struct AccountPickerSheet: View {
         isImporting = true
         Task {
             do {
-                try await ContactsService.shared.importContact(contact, toContainer: containerId)
+                let cnIdentifier = try await ContactsService.shared.importContact(contact, toContainer: containerId)
                 await MainActor.run {
+                    contact.cnContactIdentifier = cnIdentifier
+                    contact.lastSyncedAt = Date()
                     onComplete(true)
                     dismiss()
                 }
@@ -1328,23 +1612,116 @@ struct ReceivedContactEditorView: View {
     @State private var receivedEvent = ""
     @State private var receivedLocation = ""
 
+    // Card image editing
+    @State private var editableCardImageData: Data?
+    @State private var showingImageOptions = false
+    @State private var showingDocumentScanner = false
+    @State private var showingHDCamera = false
+    @State private var showingPhotoPicker = false
+    @State private var selectedPhotoItem: PhotosPickerItem?
+    @State private var showingHDPhotoPrompt = false
+    @State private var isProcessingOCR = false
+    @State private var showingCropper = false
+    @State private var pendingCropData: Data?
+
+    // Avatar/profile photo editing
+    @State private var editablePhotoData: Data?
+    @State private var showingAvatarOptions = false
+    @State private var showingAvatarCamera = false
+    @State private var showingAvatarPhotoPicker = false
+    @State private var selectedAvatarPhotoItem: PhotosPickerItem?
+    @State private var isFetchingGravatar = false
+    @State private var gravatarError: String?
+
     var isEditing: Bool { existingContact != nil }
 
     var body: some View {
         NavigationStack {
             Form {
-                // Card image preview
-                if let imageData = cardImageData,
-                   let uiImage = UIImage(data: imageData) {
-                    Section {
-                        Image(uiImage: uiImage)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(maxHeight: 200)
-                            .clipShape(RoundedRectangle(cornerRadius: 8))
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
+                // Profile Photo / Avatar section
+                Section {
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 12) {
+                            if let photoData = editablePhotoData,
+                               let uiImage = UIImage(data: photoData) {
+                                Image(uiImage: uiImage)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 100, height: 100)
+                                    .clipShape(Circle())
+                                    .overlay(Circle().stroke(Color.accentColor, lineWidth: 2))
+                            } else {
+                                Image(systemName: "person.circle.fill")
+                                    .font(.system(size: 100))
+                                    .foregroundColor(.gray)
+                            }
+
+                            Button {
+                                showingAvatarOptions = true
+                            } label: {
+                                if isFetchingGravatar {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Text(editablePhotoData == nil ? "Add Photo" : "Change Photo")
+                                        .font(.subheadline)
+                                }
+                            }
+                            .disabled(isFetchingGravatar)
+
+                            if let error = gravatarError {
+                                Text(error)
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                        }
+                        Spacer()
                     }
+                    .listRowBackground(Color.clear)
+                } header: {
+                    Text("Profile Photo")
+                } footer: {
+                    Text("Tip: If they have a Gravatar linked to their email, it can be auto-fetched.")
+                }
+
+                // Card image section (editable)
+                Section {
+                    if let imageData = editableCardImageData,
+                       let uiImage = UIImage(data: imageData) {
+                        VStack(spacing: 12) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(maxHeight: 200)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                            Button("Change Image") {
+                                showingImageOptions = true
+                            }
+                            .font(.caption)
+                        }
+                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                        .listRowBackground(Color.clear)
+                    } else {
+                        Button {
+                            showingImageOptions = true
+                        } label: {
+                            HStack {
+                                Image(systemName: "photo.badge.plus")
+                                    .font(.title2)
+                                    .foregroundColor(.accentColor)
+                                Text("Add Card Image")
+                                    .foregroundColor(.primary)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.vertical, 8)
+                        }
+                    }
+                } header: {
+                    Text("Card Image")
                 }
 
                 Section("Name (English)") {
@@ -1414,10 +1791,178 @@ struct ReceivedContactEditorView: View {
             .onAppear {
                 loadData()
             }
+            .confirmationDialog("Card Image", isPresented: $showingImageOptions) {
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    Button("Quick Scan (Auto Edge + OCR)") {
+                        showingDocumentScanner = true
+                    }
+                    Button("HD Photo (Manual Crop)") {
+                        showingHDCamera = true
+                    }
+                }
+                Button("Choose from Photos") {
+                    showingPhotoPicker = true
+                }
+                if editableCardImageData != nil {
+                    Button("Remove Image", role: .destructive) {
+                        editableCardImageData = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            }
+            .sheet(isPresented: $showingDocumentScanner) {
+                DocumentScannerForReceived { imageData, ocrInfo in
+                    editableCardImageData = imageData
+                    // Apply OCR results if this is a new contact
+                    if !isEditing, let ocr = ocrInfo {
+                        applyOCRResults(ocr)
+                    }
+                    // Prompt for HD photo after scan
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showingHDPhotoPrompt = true
+                    }
+                }
+            }
+            .sheet(isPresented: $showingHDCamera) {
+                ReceivedCardCameraPicker { imageData in
+                    pendingCropData = imageData
+                    showingCropper = true
+                }
+            }
+            .sheet(isPresented: $showingCropper) {
+                if let cropData = pendingCropData {
+                    ImageCropperView(
+                        imageData: cropData,
+                        onCrop: { croppedData in
+                            editableCardImageData = croppedData
+                            pendingCropData = nil
+                            showingCropper = false
+                        },
+                        onCancel: {
+                            pendingCropData = nil
+                            showingCropper = false
+                        }
+                    )
+                }
+            }
+            .alert("Take HD Photo?", isPresented: $showingHDPhotoPrompt) {
+                Button("Take HD Photo") {
+                    showingHDCamera = true
+                }
+                Button("Use Scanned Image", role: .cancel) {}
+            } message: {
+                Text("The scanned image is optimized for text recognition. Would you like to take a high-quality photo for display?")
+            }
+            .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedPhotoItem, matching: .images)
+            .onChange(of: selectedPhotoItem) { _, newItem in
+                Task {
+                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                        pendingCropData = data
+                        showingCropper = true
+                    }
+                }
+            }
+            // Avatar options dialog
+            .confirmationDialog("Profile Photo", isPresented: $showingAvatarOptions) {
+                if !email.isEmpty {
+                    Button("Fetch from Gravatar") {
+                        fetchGravatar()
+                    }
+                }
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    Button("Take Photo") {
+                        showingAvatarCamera = true
+                    }
+                }
+                Button("Choose from Photos") {
+                    showingAvatarPhotoPicker = true
+                }
+                if editablePhotoData != nil {
+                    Button("Remove Photo", role: .destructive) {
+                        editablePhotoData = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {}
+            } message: {
+                if email.isEmpty {
+                    Text("Add an email to enable Gravatar auto-fetch")
+                }
+            }
+            .sheet(isPresented: $showingAvatarCamera) {
+                AvatarCameraPicker { imageData in
+                    editablePhotoData = imageData
+                }
+            }
+            .photosPicker(isPresented: $showingAvatarPhotoPicker, selection: $selectedAvatarPhotoItem, matching: .images)
+            .onChange(of: selectedAvatarPhotoItem) { _, newItem in
+                Task {
+                    if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                        // Resize for avatar (smaller file size)
+                        if let image = UIImage(data: data) {
+                            let resized = resizeImage(image, targetSize: CGSize(width: 400, height: 400))
+                            editablePhotoData = resized.jpegData(compressionQuality: 0.8)
+                        }
+                    }
+                }
+            }
         }
     }
 
+    private func fetchGravatar() {
+        guard !email.isEmpty else { return }
+        isFetchingGravatar = true
+        gravatarError = nil
+
+        Task {
+            if let data = await GravatarService.shared.fetchGravatar(for: email) {
+                await MainActor.run {
+                    editablePhotoData = data
+                    isFetchingGravatar = false
+                }
+            } else {
+                await MainActor.run {
+                    gravatarError = "No Gravatar found for this email"
+                    isFetchingGravatar = false
+                }
+            }
+        }
+    }
+
+    private func resizeImage(_ image: UIImage, targetSize: CGSize) -> UIImage {
+        let size = image.size
+        let widthRatio = targetSize.width / size.width
+        let heightRatio = targetSize.height / size.height
+        let ratio = min(widthRatio, heightRatio)
+
+        let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+        let rect = CGRect(origin: .zero, size: newSize)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+        image.draw(in: rect)
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage ?? image
+    }
+
+    private func applyOCRResults(_ ocr: OCRService.ContactInfo) {
+        if firstName.isEmpty, let fn = ocr.firstName { firstName = fn }
+        if lastName.isEmpty, let ln = ocr.lastName { lastName = ln }
+        if localizedFirstName.isEmpty, let lfn = ocr.localizedFirstName { localizedFirstName = lfn }
+        if localizedLastName.isEmpty, let lln = ocr.localizedLastName { localizedLastName = lln }
+        if company.isEmpty, let c = ocr.company { company = c }
+        if localizedCompany.isEmpty, let lc = ocr.localizedCompany { localizedCompany = lc }
+        if title.isEmpty, let t = ocr.title { title = t }
+        if localizedTitle.isEmpty, let lt = ocr.localizedTitle { localizedTitle = lt }
+        if phone.isEmpty, let p = ocr.phone { phone = p }
+        if email.isEmpty, let e = ocr.email { email = e }
+        if website.isEmpty, let w = ocr.website { website = w }
+    }
+
     private func loadData() {
+        // Load card image
+        editableCardImageData = cardImageData
+
         // Load from existing contact if editing
         if let contact = existingContact {
             firstName = contact.firstName
@@ -1434,6 +1979,7 @@ struct ReceivedContactEditorView: View {
             notes = contact.notes ?? ""
             receivedEvent = contact.receivedEvent ?? ""
             receivedLocation = contact.receivedLocation ?? ""
+            editablePhotoData = contact.photoData
         }
         // Apply OCR results if available
         else if let ocr = ocrInfo {
@@ -1468,6 +2014,8 @@ struct ReceivedContactEditorView: View {
             contact.notes = notes.isEmpty ? nil : notes
             contact.receivedEvent = receivedEvent.isEmpty ? nil : receivedEvent
             contact.receivedLocation = receivedLocation.isEmpty ? nil : receivedLocation
+            contact.cardImageData = editableCardImageData
+            contact.photoData = editablePhotoData
         } else {
             // Create new
             let contact = ReceivedContact(
@@ -1482,7 +2030,8 @@ struct ReceivedContactEditorView: View {
                 phone: phone.isEmpty ? nil : phone,
                 email: email.isEmpty ? nil : email,
                 website: website.isEmpty ? nil : website,
-                cardImageData: cardImageData,
+                photoData: editablePhotoData,
+                cardImageData: editableCardImageData,
                 receivedLocation: receivedLocation.isEmpty ? nil : receivedLocation,
                 receivedEvent: receivedEvent.isEmpty ? nil : receivedEvent,
                 notes: notes.isEmpty ? nil : notes
@@ -1491,6 +2040,112 @@ struct ReceivedContactEditorView: View {
         }
 
         dismiss()
+    }
+}
+
+// MARK: - Avatar Camera Picker
+
+struct AvatarCameraPicker: UIViewControllerRepresentable {
+    let onCapture: (Data) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.cameraDevice = .front  // Front camera for selfies/portraits
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: AvatarCameraPicker
+
+        init(_ parent: AvatarCameraPicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            parent.dismiss()
+            if let image = info[.originalImage] as? UIImage {
+                // Resize for avatar
+                let resized = resizeForAvatar(image)
+                if let data = resized.jpegData(compressionQuality: 0.8) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        self.parent.onCapture(data)
+                    }
+                }
+            }
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
+
+        private func resizeForAvatar(_ image: UIImage) -> UIImage {
+            let targetSize = CGSize(width: 400, height: 400)
+            let size = image.size
+            let widthRatio = targetSize.width / size.width
+            let heightRatio = targetSize.height / size.height
+            let ratio = min(widthRatio, heightRatio)
+
+            let newSize = CGSize(width: size.width * ratio, height: size.height * ratio)
+            let rect = CGRect(origin: .zero, size: newSize)
+
+            UIGraphicsBeginImageContextWithOptions(newSize, false, 1.0)
+            image.draw(in: rect)
+            let newImage = UIGraphicsGetImageFromCurrentImageContext()
+            UIGraphicsEndImageContext()
+
+            return newImage ?? image
+        }
+    }
+}
+
+// MARK: - Received Card Camera Picker
+
+struct ReceivedCardCameraPicker: UIViewControllerRepresentable {
+    let onCapture: (Data) -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    func makeUIViewController(context: Context) -> UIImagePickerController {
+        let picker = UIImagePickerController()
+        picker.sourceType = .camera
+        picker.delegate = context.coordinator
+        return picker
+    }
+
+    func updateUIViewController(_ uiViewController: UIImagePickerController, context: Context) {}
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    class Coordinator: NSObject, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+        let parent: ReceivedCardCameraPicker
+
+        init(_ parent: ReceivedCardCameraPicker) {
+            self.parent = parent
+        }
+
+        func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+            parent.dismiss()
+            if let image = info[.originalImage] as? UIImage,
+               let data = image.jpegData(compressionQuality: 0.9) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    self.parent.onCapture(data)
+                }
+            }
+        }
+
+        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+            parent.dismiss()
+        }
     }
 }
 

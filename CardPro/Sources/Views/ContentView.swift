@@ -14,19 +14,19 @@ struct ContentView: View {
         TabView(selection: $selectedTab) {
             MyCardsView()
                 .tabItem {
-                    Label("My Cards", systemImage: "person.crop.rectangle.stack")
+                    Label(L10n.Tab.myCards, systemImage: "person.crop.rectangle.stack")
                 }
                 .tag(Tab.myCards)
 
             ReceivedCardsView()
                 .tabItem {
-                    Label("Received", systemImage: "tray.and.arrow.down")
+                    Label(L10n.Tab.received, systemImage: "tray.and.arrow.down")
                 }
                 .tag(Tab.received)
 
             SettingsView()
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(L10n.Tab.settings, systemImage: "gear")
                 }
                 .tag(Tab.settings)
         }

@@ -48,9 +48,10 @@ struct CustomField: Codable, Identifiable, Equatable {
 
 @Model
 final class BusinessCard {
-    var id: UUID
-    var firstName: String              // Primary name (usually Western/English)
-    var lastName: String
+    var id: UUID = UUID()
+    var cardLabel: String = "My Card"  // Card identifier (e.g., "Work", "Personal", "Side Business")
+    var firstName: String = ""         // Primary name (usually Western/English)
+    var lastName: String = ""
     var localizedFirstName: String?    // CJK name (中文/日文名)
     var localizedLastName: String?
     var company: String?
@@ -65,10 +66,11 @@ final class BusinessCard {
     var cardImageSource: String?       // "scan" | "upload" | "generated"
     var notes: String?
     var customFieldsData: Data?        // Encoded [CustomField]
-    var cardVersion: Int               // Version for tracking updates
-    var isDefault: Bool
-    var createdAt: Date
-    var updatedAt: Date
+    var cardVersion: Int = 1           // Version for tracking updates
+    var isDefault: Bool = false
+    var sortOrder: Int = 0             // For custom ordering
+    var createdAt: Date = Date()
+    var updatedAt: Date = Date()
 
     // Computed property for custom fields
     var customFields: [CustomField] {
@@ -83,6 +85,7 @@ final class BusinessCard {
 
     init(
         id: UUID = UUID(),
+        cardLabel: String = "My Card",
         firstName: String = "",
         lastName: String = "",
         localizedFirstName: String? = nil,
@@ -101,10 +104,12 @@ final class BusinessCard {
         customFields: [CustomField] = [],
         cardVersion: Int = 1,
         isDefault: Bool = false,
+        sortOrder: Int = 0,
         createdAt: Date = Date(),
         updatedAt: Date = Date()
     ) {
         self.id = id
+        self.cardLabel = cardLabel
         self.firstName = firstName
         self.lastName = lastName
         self.localizedFirstName = localizedFirstName
@@ -123,6 +128,7 @@ final class BusinessCard {
         self.customFieldsData = try? JSONEncoder().encode(customFields)
         self.cardVersion = cardVersion
         self.isDefault = isDefault
+        self.sortOrder = sortOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }

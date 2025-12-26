@@ -1,0 +1,291 @@
+/*
+  Localizable.strings (Simplified Chinese)
+  CardPro
+*/
+
+// MARK: - Tab Bar
+"tab.myCards" = "我的名片";
+"tab.received" = "收到的";
+"tab.settings" = "设置";
+
+// MARK: - My Cards View
+"myCards.title" = "我的名片";
+"myCards.empty.title" = "暂无名片";
+"myCards.empty.subtitle" = "创建你的第一张数字名片";
+"myCards.empty.button" = "创建名片";
+"myCards.setDefault" = "设为默认";
+"myCards.defaultCard" = "默认名片";
+"myCards.cardCount" = "%d / %d";
+
+// MARK: - Card Editor
+"cardEditor.newCard" = "新建名片";
+"cardEditor.editCard" = "编辑名片";
+"cardEditor.save" = "保存";
+"cardEditor.cancel" = "取消";
+"cardEditor.delete" = "删除";
+"cardEditor.deleteCard" = "删除名片";
+"cardEditor.deleteConfirm" = "确定要删除「%@」吗？此操作无法撤销。";
+
+// Card Identity
+"cardEditor.cardIdentity" = "名片标识";
+"cardEditor.cardName" = "名片名称";
+"cardEditor.cardNameHint" = "为这张名片命名以便识别（如「工作」、「个人」、「副业」）";
+"cardEditor.myCard" = "我的名片";
+
+// Profile Photo
+"cardEditor.profilePhoto" = "个人照片";
+
+// Card Design
+"cardEditor.cardDesign" = "名片设计";
+"cardEditor.cardDesignHint" = "此图片将与您的联系方式一同分享，增添个人特色。";
+"cardEditor.addCardDesign" = "添加名片设计";
+"cardEditor.scanUploadGenerate" = "扫描、上传或生成";
+"cardEditor.change" = "更改";
+"cardEditor.scanned" = "已扫描";
+"cardEditor.uploaded" = "已上传";
+"cardEditor.generated" = "已生成";
+
+// Card Design Options
+"cardEditor.quickScan" = "快速扫描（自动裁切）";
+"cardEditor.hdPhoto" = "高清照片（手动裁切）";
+"cardEditor.uploadFromPhotos" = "从相册上传";
+"cardEditor.generateFromTemplate" = "从模板生成";
+"cardEditor.cropCurrentImage" = "裁切当前图片";
+"cardEditor.removeCardDesign" = "移除名片设计";
+
+// HD Photo Alert
+"cardEditor.takeHDPhoto" = "拍摄高清照片？";
+"cardEditor.takeHDPhotoButton" = "拍摄高清照片";
+"cardEditor.useScannedImage" = "使用扫描图片";
+"cardEditor.hdPhotoHint" = "扫描的图片已针对文字识别优化。您是否要拍摄高清照片作为名片显示？";
+
+// Name Section
+"cardEditor.nameEnglish" = "姓名（英文）";
+"cardEditor.nameLocal" = "姓名（中文/日文）";
+"cardEditor.firstName" = "名";
+"cardEditor.lastName" = "姓";
+
+// Work Section
+"cardEditor.workEnglish" = "工作（英文）";
+"cardEditor.workLocal" = "工作（中文/日文）";
+"cardEditor.company" = "公司";
+"cardEditor.title" = "职位";
+
+// Contact Section
+"cardEditor.contact" = "联系方式";
+"cardEditor.phone" = "电话";
+"cardEditor.email" = "电子邮件";
+"cardEditor.website" = "网站";
+
+// Additional Info
+"cardEditor.additionalInfo" = "其他信息";
+"cardEditor.addField" = "添加字段";
+"cardEditor.additionalInfoHint" = "添加社交媒体、额外电话或自定义字段。";
+
+// Notes
+"cardEditor.notes" = "备注";
+
+// Preview
+"cardEditor.preview" = "预览";
+
+// OCR
+"cardEditor.ocrError" = "识别错误";
+"cardEditor.ocrResults" = "识别结果";
+"cardEditor.scanningCard" = "正在扫描名片...";
+"cardEditor.noTextDetected" = "未检测到文字";
+"cardEditor.rawText" = "原始文字";
+"cardEditor.skip" = "跳过";
+"cardEditor.autoFill" = "自动填充";
+
+// Templates
+"cardEditor.chooseTemplate" = "选择模板";
+"cardEditor.useTemplate" = "使用模板";
+
+// Custom Fields
+"cardEditor.editField" = "编辑字段";
+"cardEditor.fieldInfo" = "字段信息";
+"cardEditor.label" = "标签";
+"cardEditor.labelHint" = "标签（如 LinkedIn）";
+"cardEditor.type" = "类型";
+"cardEditor.value" = "值";
+"cardEditor.deleteField" = "删除字段";
+"cardEditor.quickAdd" = "快速添加";
+"cardEditor.chooseFromPresets" = "从预设选择";
+"cardEditor.socialMedia" = "社交媒体";
+"cardEditor.other" = "其他";
+"cardEditor.usernameOrUrl" = "用户名或网址";
+
+// MARK: - Received Cards View
+"received.title" = "收到的";
+"received.searchPrompt" = "搜索联系人";
+"received.allContacts" = "所有联系人";
+
+// Add Contact Options
+"received.addContact" = "添加联系人";
+"received.scanPhysicalCard" = "扫描实体名片";
+"received.scanQRCode" = "扫描二维码";
+"received.scanNFCTag" = "扫描 NFC 标签";
+"received.manualEntry" = "手动输入";
+
+// Batch Import
+"received.importAllToContacts" = "全部导入通讯录";
+"received.syncAllToContacts" = "全部同步到通讯录";
+"received.importToContacts" = "导入通讯录";
+"received.importComplete" = "导入完成";
+"received.importResult" = "导入 %d 条，更新 %d 条，失败 %d 条";
+"received.startImport" = "开始导入";
+"received.importing" = "正在导入 %@...";
+"received.importHint" = "%d 位联系人将导入到 iPhone 通讯录。";
+"received.duplicateHint" = "已存在相同电子邮件或电话的联系人将被更新，而非重复创建。";
+"received.imported" = "已导入";
+"received.updated" = "已更新";
+"received.failed" = "失败";
+
+// Contact Detail
+"received.contactDetail" = "联系人";
+"received.addToContacts" = "添加到通讯录";
+"received.alreadyInContacts" = "已在通讯录中";
+"received.call" = "拨打电话";
+"received.message" = "发送消息";
+"received.copyEmail" = "复制邮箱";
+"received.openWebsite" = "打开网站";
+"received.editContact" = "编辑联系人";
+"received.deleteContact" = "删除联系人";
+"received.deleteConfirm" = "确定要删除这位联系人吗？此操作无法撤销。";
+
+// Contact Info Labels
+"received.info" = "信息";
+"received.receivedInfo" = "接收信息";
+"received.receivedAt" = "接收时间";
+"received.location" = "地点";
+"received.event" = "活动";
+"received.tags" = "标签";
+"received.manageTags" = "管理标签";
+"received.favorite" = "收藏";
+"received.tracking" = "跟踪";
+"received.trackUpdates" = "跟踪更新";
+"received.trackUpdatesHint" = "当此联系人更新名片时收到通知";
+
+// Contact Editor
+"received.newContact" = "新建联系人";
+"received.editContactTitle" = "编辑联系人";
+"received.profilePhoto" = "个人照片";
+"received.addPhoto" = "添加照片";
+"received.changePhoto" = "更改照片";
+"received.profilePhotoHint" = "提示：如果对方的电子邮件有关联 Gravatar，可以自动获取。";
+"received.fetchFromGravatar" = "从 Gravatar 获取";
+"received.takePhoto" = "拍照";
+"received.chooseFromPhotos" = "从相册选择";
+"received.removePhoto" = "移除照片";
+"received.noGravatarFound" = "此电子邮件没有 Gravatar";
+
+// Card Image
+"received.cardImage" = "名片图片";
+"received.addCardImage" = "添加名片图片";
+"received.replaceCardImage" = "替换名片图片";
+"received.removeImage" = "移除图片";
+
+// Account Picker
+"received.chooseAccount" = "选择账户";
+"received.chooseAccountHint" = "选择要保存联系人的账户";
+"received.importingContact" = "正在导入联系人...";
+
+// MARK: - Settings View
+"settings.title" = "设置";
+
+// Sharing
+"settings.sharing" = "分享";
+"settings.preferredMethod" = "首选方式";
+"settings.airdrop" = "AirDrop";
+"settings.qrcode" = "二维码";
+"settings.nfc" = "NFC";
+
+// App
+"settings.app" = "应用";
+"settings.hapticFeedback" = "触觉反馈";
+"settings.language" = "语言";
+
+// Subscription
+"settings.subscription" = "订阅";
+"settings.cardproPro" = "CardPro Pro";
+"settings.free" = "免费";
+
+// About
+"settings.about" = "关于";
+"settings.version" = "版本";
+"settings.privacyPolicy" = "隐私政策";
+"settings.termsOfService" = "服务条款";
+"settings.contactSupport" = "联系客服";
+
+// MARK: - Subscription View
+"subscription.title" = "CardPro Pro";
+"subscription.unlockAll" = "解锁所有功能";
+"subscription.unlimitedCards" = "无限名片";
+"subscription.unlimitedCardsDesc" = "创建您所需的任意数量名片";
+"subscription.icloudSync" = "iCloud 同步";
+"subscription.icloudSyncDesc" = "在所有设备上访问名片";
+"subscription.premiumTemplates" = "高级模板";
+"subscription.premiumTemplatesDesc" = "使用独特设计脱颖而出";
+"subscription.analytics" = "分析";
+"subscription.analyticsDesc" = "跟踪名片分享统计";
+"subscription.yearly" = "年付";
+"subscription.monthly" = "月付";
+"subscription.yearlyPrice" = "¥198/年";
+"subscription.monthlyPrice" = "¥18/月";
+"subscription.save17" = "省 17%";
+"subscription.startFreeTrial" = "开始免费试用";
+"subscription.trialHint" = "7 天免费试用，之后 %@";
+
+// MARK: - Share
+"share.share" = "分享";
+"share.qrCode" = "二维码";
+"share.edit" = "编辑";
+"share.airdrop" = "AirDrop";
+"share.nfc" = "NFC";
+"share.wallet" = "钱包";
+"share.shareCard" = "分享名片";
+"share.scanToConnect" = "扫描以连接";
+"share.saveQRCode" = "保存二维码";
+"share.shareQRCode" = "分享二维码";
+"share.qrCodeSaved" = "二维码已保存到相册";
+
+// MARK: - NFC
+"nfc.writeToTag" = "写入 NFC 标签";
+"nfc.readyToWrite" = "准备写入";
+"nfc.holdNearTag" = "将 iPhone 靠近 NFC 标签";
+"nfc.writeSuccess" = "名片已写入 NFC 标签！";
+"nfc.notAvailable" = "此设备不支持 NFC";
+
+// MARK: - Incoming Card
+"incoming.newCard" = "新名片";
+"incoming.sharedWithYou" = "有人与您分享了名片";
+"incoming.cardSaved" = "名片已保存！";
+"incoming.saveToCardPro" = "保存到 CardPro";
+"incoming.notNow" = "暂不";
+"incoming.receivedCard" = "收到的名片";
+
+// MARK: - Sync
+"sync.title" = "同步";
+"sync.icloudSync" = "iCloud 同步";
+"sync.enabled" = "已启用";
+"sync.disabled" = "已停用";
+"sync.syncing" = "同步中...";
+"sync.lastSync" = "上次同步：%@";
+"sync.noAccount" = "未登录 iCloud";
+"sync.restricted" = "iCloud 受限";
+"sync.unknown" = "状态未知";
+"sync.temporarilyUnavailable" = "暂时无法使用";
+"sync.proFeature" = "Pro 功能";
+"sync.proFeatureDesc" = "升级 Pro 以跨设备同步";
+
+// MARK: - Common
+"common.ok" = "确定";
+"common.cancel" = "取消";
+"common.save" = "保存";
+"common.delete" = "删除";
+"common.edit" = "编辑";
+"common.done" = "完成";
+"common.error" = "错误";
+"common.success" = "成功";
+"common.loading" = "加载中...";
+"common.retry" = "重试";

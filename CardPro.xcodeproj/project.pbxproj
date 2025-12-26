@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0001B4FCDC7D4AD147364936 /* CloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11259D79E1F62BBE17938280 /* CloudSyncService.swift */; };
 		0856EA51C44E34FDA718DAE5 /* ReceivedCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770527BE8C34D743D83CC86 /* ReceivedCardsView.swift */; };
 		14361BD3D163F5B418BC1D9E /* ContactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21B40C2458885716F9FFACF /* ContactsService.swift */; };
 		1A17CD52A686B061B18792FB /* CardPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678FA74B2A9F9EE75F85DB4A /* CardPreviewView.swift */; };
@@ -16,12 +17,15 @@
 		24ECDF08BD45CE408573D3B1 /* IncomingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536CADA6F5000A23B36C3293 /* IncomingCardView.swift */; };
 		263399394719E9C0A057C155 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3920FDD69AF99882EE149B34 /* OCRService.swift */; };
 		3803DC5028930B0655031256 /* BusinessCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C7FC0E2236307B5CE94B4 /* BusinessCard.swift */; };
+		4923137371A08CE62A6036C3 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3127651644F46B23BDB29BA9 /* Localizable.swift */; };
 		5D31146FA9B519245F62076F /* NFCWriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479A82FF55F86216E7076764 /* NFCWriteView.swift */; };
+		6031401E9C4107C54323C194 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A816CAE2C64B6F67291032C /* Localizable.strings */; };
 		67044C1BFEB5FC25D398C3B8 /* WalletPassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6910499A150BFB9B515D74E /* WalletPassView.swift */; };
 		6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E057DB79F440988CA6F223 /* ImageCropperView.swift */; };
 		6DFEE41C920C5BD92FA944D9 /* ReceivedContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */; };
 		7CFF3A48D56E4856755FCC10 /* TagService.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD020432EB94950E0186C964 /* TagService.swift */; };
 		82189106E477ACECDA9DF78C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1734F2FA8725752664126DF9 /* ContentView.swift */; };
+		9EAAB3BFADEC050AE8DF7D96 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 24F1CFC273BF1345F59C9F15 /* Products.storekit */; };
 		A33353A119310E1ECCA31506 /* MyCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B542F1003CDC1EF2077B8 /* MyCardsView.swift */; };
 		A6B0D9880B53B0201D683667 /* CardEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145C50B929450D79EDE36283 /* CardEditorView.swift */; };
 		A84623A2063AA818C8F3D4A7 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */; };
@@ -30,8 +34,10 @@
 		C351641A77A7271E6C41492F /* VCardParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2978D169C42840D25CAF24C /* VCardParser.swift */; };
 		C87D969303600D2825A0E26D /* CardProWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0030BF9A651FE82A4C42359 /* CardProWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB3A2273CB0F48B653690789 /* WalletPassService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */; };
+		CE27F2056BECF7CFC0DD5A7B /* GravatarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C383436879055DFA43BC6744 /* GravatarService.swift */; };
 		D5A9752719903818E82324BF /* CardProWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58997001F2AECB5B5646CE9 /* CardProWidget.swift */; };
 		EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E7C56D2FD953887BA82A2 /* NFCService.swift */; };
+		ED2F216087C35B4CC3DFDA9C /* SubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2335FAAEC70F48A624341F31 /* SubscriptionService.swift */; };
 		F615356A472646905892F037 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */; };
 		FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */; };
 /* End PBXBuildFile section */
@@ -62,16 +68,23 @@
 
 /* Begin PBXFileReference section */
 		03EBB0C2801A5659B679DAF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		065B5AE025C14A27345B8FC1 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		11259D79E1F62BBE17938280 /* CloudSyncService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloudSyncService.swift; sourceTree = "<group>"; };
 		145C50B929450D79EDE36283 /* CardEditorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardEditorView.swift; sourceTree = "<group>"; };
 		1734F2FA8725752664126DF9 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		2335FAAEC70F48A624341F31 /* SubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionService.swift; sourceTree = "<group>"; };
+		24F1CFC273BF1345F59C9F15 /* Products.storekit */ = {isa = PBXFileReference; path = Products.storekit; sourceTree = "<group>"; };
+		2B1571453C226BBDA9A68D90 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		2B7DCEDD6A592ED0D90A27DD /* CardPro.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = CardPro.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F8471DDC22D9BDF440FB431 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		3127651644F46B23BDB29BA9 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		3920FDD69AF99882EE149B34 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		479A82FF55F86216E7076764 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
 		498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
 		4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		512E7C56D2FD953887BA82A2 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		536CADA6F5000A23B36C3293 /* IncomingCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingCardView.swift; sourceTree = "<group>"; };
+		59564CFA9B43480875B08E3D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		6329EC840E47B2A88F2CE0D2 /* WidgetDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataService.swift; sourceTree = "<group>"; };
 		678FA74B2A9F9EE75F85DB4A /* CardPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPreviewView.swift; sourceTree = "<group>"; };
 		877123AB0A3D4AFB69DB4E3B /* CardProWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CardProWidget.entitlements; sourceTree = "<group>"; };
@@ -86,6 +99,8 @@
 		B8E057DB79F440988CA6F223 /* ImageCropperView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCropperView.swift; sourceTree = "<group>"; };
 		C2978D169C42840D25CAF24C /* VCardParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCardParser.swift; sourceTree = "<group>"; };
 		C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletPassService.swift; sourceTree = "<group>"; };
+		C383436879055DFA43BC6744 /* GravatarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GravatarService.swift; sourceTree = "<group>"; };
+		C768DA0C6D6D38E380A69BD8 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedContact.swift; sourceTree = "<group>"; };
 		E58997001F2AECB5B5646CE9 /* CardProWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardProWidget.swift; sourceTree = "<group>"; };
 		EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
@@ -122,6 +137,8 @@
 				03EBB0C2801A5659B679DAF1 /* Assets.xcassets */,
 				9330608E43B74A95E9604D91 /* CardPro.entitlements */,
 				FBBBA32929D7BBB36F0C12E3 /* Info.plist */,
+				1A816CAE2C64B6F67291032C /* Localizable.strings */,
+				24F1CFC273BF1345F59C9F15 /* Products.storekit */,
 			);
 			name = Resources;
 			path = CardPro/Resources;
@@ -133,6 +150,7 @@
 				9790FABA2BC47A8A63F5CE72 /* App */,
 				D8DF1BF61BF8898F2D3F1440 /* Models */,
 				91D21E6A4ABD01E2AB1F3660 /* Services */,
+				D6891490EDEF80CAB2EB44C9 /* Utilities */,
 				C1AFE264501234063578ACB7 /* Utils */,
 				F7979B49E5AAFD415DA517A2 /* Views */,
 			);
@@ -144,10 +162,13 @@
 			isa = PBXGroup;
 			children = (
 				B03F92408D3DC3E78EF99436 /* CardImageGenerator.swift */,
+				11259D79E1F62BBE17938280 /* CloudSyncService.swift */,
 				F21B40C2458885716F9FFACF /* ContactsService.swift */,
+				C383436879055DFA43BC6744 /* GravatarService.swift */,
 				512E7C56D2FD953887BA82A2 /* NFCService.swift */,
 				3920FDD69AF99882EE149B34 /* OCRService.swift */,
 				4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */,
+				2335FAAEC70F48A624341F31 /* SubscriptionService.swift */,
 				FD020432EB94950E0186C964 /* TagService.swift */,
 				C2978D169C42840D25CAF24C /* VCardParser.swift */,
 				C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */,
@@ -178,6 +199,14 @@
 				A0030BF9A651FE82A4C42359 /* CardProWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D6891490EDEF80CAB2EB44C9 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				3127651644F46B23BDB29BA9 /* Localizable.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		D8DF1BF61BF8898F2D3F1440 /* Models */ = {
@@ -274,6 +303,9 @@
 			knownRegions = (
 				Base,
 				en,
+				ja,
+				"zh-Hans",
+				"zh-Hant",
 			);
 			mainGroup = 3EF30161C5E25629F9EDD182;
 			minimizedProjectReferenceProxies = 1;
@@ -293,6 +325,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				213698EB86DE745D49E75A62 /* Assets.xcassets in Resources */,
+				6031401E9C4107C54323C194 /* Localizable.strings in Resources */,
+				9EAAB3BFADEC050AE8DF7D96 /* Products.storekit in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -308,10 +342,13 @@
 				21DCC7FF6453EDCEB1AB0C0D /* CardImageGenerator.swift in Sources */,
 				1A17CD52A686B061B18792FB /* CardPreviewView.swift in Sources */,
 				B07B32B98B3C69CDD5537E18 /* CardProApp.swift in Sources */,
+				0001B4FCDC7D4AD147364936 /* CloudSyncService.swift in Sources */,
 				14361BD3D163F5B418BC1D9E /* ContactsService.swift in Sources */,
 				82189106E477ACECDA9DF78C /* ContentView.swift in Sources */,
+				CE27F2056BECF7CFC0DD5A7B /* GravatarService.swift in Sources */,
 				6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */,
 				24ECDF08BD45CE408573D3B1 /* IncomingCardView.swift in Sources */,
+				4923137371A08CE62A6036C3 /* Localizable.swift in Sources */,
 				A33353A119310E1ECCA31506 /* MyCardsView.swift in Sources */,
 				FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */,
 				EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */,
@@ -322,6 +359,7 @@
 				6DFEE41C920C5BD92FA944D9 /* ReceivedContact.swift in Sources */,
 				1F553BC42CEBF141725F92FA /* SettingsView.swift in Sources */,
 				F615356A472646905892F037 /* ShareSheet.swift in Sources */,
+				ED2F216087C35B4CC3DFDA9C /* SubscriptionService.swift in Sources */,
 				7CFF3A48D56E4856755FCC10 /* TagService.swift in Sources */,
 				C351641A77A7271E6C41492F /* VCardParser.swift in Sources */,
 				CB3A2273CB0F48B653690789 /* WalletPassService.swift in Sources */,
@@ -347,6 +385,20 @@
 			targetProxy = BB1FF084035FACE1A76907E0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
+
+/* Begin PBXVariantGroup section */
+		1A816CAE2C64B6F67291032C /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				59564CFA9B43480875B08E3D /* en */,
+				065B5AE025C14A27345B8FC1 /* ja */,
+				C768DA0C6D6D38E380A69BD8 /* zh-Hans */,
+				2B1571453C226BBDA9A68D90 /* zh-Hant */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		0A95B4CA2476B4AE967AA1B9 /* Release */ = {
@@ -402,7 +454,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.lman.cardpro;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -454,8 +506,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -481,7 +533,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.lman.cardpro;
 				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -539,8 +591,8 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

@@ -12,35 +12,39 @@ struct CardChange: Identifiable {
 
 @Model
 final class ReceivedContact {
-    var id: UUID
-    var firstName: String           // Primary name (usually Western/English)
-    var lastName: String
-    var localizedFirstName: String? // CJK name (中文/日文名)
+    var id: UUID = UUID()
+    var firstName: String = ""           // Primary name (usually Western/English)
+    var lastName: String = ""
+    var localizedFirstName: String?      // CJK name (中文/日文名)
     var localizedLastName: String?
     var company: String?
-    var localizedCompany: String?   // 公司中文名
+    var localizedCompany: String?        // 公司中文名
     var title: String?
-    var localizedTitle: String?     // 職稱中文名
+    var localizedTitle: String?          // 職稱中文名
     var phone: String?
     var email: String?
     var website: String?
     var photoData: Data?
-    var cardImageData: Data?       // 收到的名片設計圖
-    var customFieldsData: Data?    // Encoded [CustomField]
-    var receivedAt: Date
+    var cardImageData: Data?             // 收到的名片設計圖
+    var customFieldsData: Data?          // Encoded [CustomField]
+    var receivedAt: Date = Date()
     var receivedLocation: String?
     var receivedEvent: String?
     var notes: String?
-    var isImportedToContacts: Bool
-    var isFavorite: Bool
-    var tagsData: Data?  // Store tags as encoded JSON for CloudKit compatibility
+    var isImportedToContacts: Bool = false
+    var isFavorite: Bool = false
+    var tagsData: Data?                  // Store tags as encoded JSON for CloudKit compatibility
+
+    // iOS Contacts sync
+    var cnContactIdentifier: String?     // CNContact.identifier for sync/update
+    var lastSyncedAt: Date?              // When last synced to iOS Contacts
 
     // Version tracking for update detection
-    var senderCardId: UUID?        // Original card ID from sender
-    var senderCardVersion: Int     // Version when received
-    var isTracked: Bool            // Whether to track updates
-    var lastUpdatedAt: Date?       // When card was last updated
-    var hasUnreadUpdate: Bool      // Show badge for new updates
+    var senderCardId: UUID?              // Original card ID from sender
+    var senderCardVersion: Int = 1       // Version when received
+    var isTracked: Bool = false          // Whether to track updates
+    var lastUpdatedAt: Date?             // When card was last updated
+    var hasUnreadUpdate: Bool = false    // Show badge for new updates
 
     // Computed property for custom fields
     var customFields: [CustomField] {

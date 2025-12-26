@@ -93,8 +93,42 @@ class ContactsService {
         return store.defaultContainerIdentifier()
     }
 
-    /// Import a ReceivedContact to iOS Contacts
-    func importContact(_ contact: ReceivedContact, toContainer containerId: String? = nil) async throws {
+    /// Find existing CNContact by email or phone
+    func findExistingContact(email: String?, phone: String?) throws -> CNContact? {
+        var predicates: [NSPredicate] = []
+
+        if let email = email, !email.isEmpty {
+            predicates.append(CNContact.predicateForContacts(matchingEmailAddress: email))
+        }
+
+        if let phone = phone, !phone.isEmpty {
+            let normalized = phone.components(separatedBy: CharacterSet.decimalDigits.inverted).joined()
+            if normalized.count >= 7 {
+                predicates.append(CNContact.predicateForContacts(matching: CNPhoneNumber(stringValue: phone)))
+            }
+        }
+
+        let keysToFetch: [CNKeyDescriptor] = [
+            CNContactIdentifierKey as CNKeyDescriptor,
+            CNContactGivenNameKey as CNKeyDescriptor,
+            CNContactFamilyNameKey as CNKeyDescriptor,
+            CNContactEmailAddressesKey as CNKeyDescriptor,
+            CNContactPhoneNumbersKey as CNKeyDescriptor
+        ]
+
+        for predicate in predicates {
+            let contacts = try store.unifiedContacts(matching: predicate, keysToFetch: keysToFetch)
+            if let contact = contacts.first {
+                return contact
+            }
+        }
+
+        return nil
+    }
+
+    /// Import a ReceivedContact to iOS Contacts (returns CNContact identifier)
+    @discardableResult
+    func importContact(_ contact: ReceivedContact, toContainer containerId: String? = nil) async throws -> String {
         // Check authorization
         if authorizationStatus != .authorized {
             let granted = await requestAccess()
@@ -206,11 +240,77 @@ class ContactsService {
             cnContact.note = noteLines.joined(separator: "\n")
         }
 
-        // Save to contacts
+        // Check if we should update an existing contact
         let saveRequest = CNSaveRequest()
-        saveRequest.add(cnContact, toContainerWithIdentifier: containerId)
+        var resultIdentifier: String
+
+        // First, check if we have a stored identifier
+        if let existingId = contact.cnContactIdentifier {
+            // Try to fetch and update existing contact
+            if let existingContact = try? fetchContact(identifier: existingId) {
+                let mutableExisting = existingContact.mutableCopy() as! CNMutableContact
+                updateMutableContact(mutableExisting, from: cnContact)
+                saveRequest.update(mutableExisting)
+                resultIdentifier = existingId
+            } else {
+                // Stored ID no longer valid, create new
+                saveRequest.add(cnContact, toContainerWithIdentifier: containerId)
+                resultIdentifier = cnContact.identifier
+            }
+        }
+        // Otherwise, check if contact already exists by email/phone
+        else if let existingContact = try? findExistingContact(email: contact.email, phone: contact.phone) {
+            let mutableExisting = existingContact.mutableCopy() as! CNMutableContact
+            updateMutableContact(mutableExisting, from: cnContact)
+            saveRequest.update(mutableExisting)
+            resultIdentifier = existingContact.identifier
+        }
+        // Create new contact
+        else {
+            saveRequest.add(cnContact, toContainerWithIdentifier: containerId)
+            resultIdentifier = cnContact.identifier
+        }
 
         try store.execute(saveRequest)
+        return resultIdentifier
+    }
+
+    /// Fetch a CNContact by identifier
+    private func fetchContact(identifier: String) throws -> CNContact? {
+        let keysToFetch: [CNKeyDescriptor] = [
+            CNContactIdentifierKey as CNKeyDescriptor,
+            CNContactGivenNameKey as CNKeyDescriptor,
+            CNContactFamilyNameKey as CNKeyDescriptor,
+            CNContactPhoneticGivenNameKey as CNKeyDescriptor,
+            CNContactPhoneticFamilyNameKey as CNKeyDescriptor,
+            CNContactOrganizationNameKey as CNKeyDescriptor,
+            CNContactJobTitleKey as CNKeyDescriptor,
+            CNContactPhoneNumbersKey as CNKeyDescriptor,
+            CNContactEmailAddressesKey as CNKeyDescriptor,
+            CNContactUrlAddressesKey as CNKeyDescriptor,
+            CNContactImageDataKey as CNKeyDescriptor,
+            CNContactNoteKey as CNKeyDescriptor
+        ]
+        return try? store.unifiedContact(withIdentifier: identifier, keysToFetch: keysToFetch)
+    }
+
+    /// Update a mutable contact with data from another contact
+    private func updateMutableContact(_ target: CNMutableContact, from source: CNMutableContact) {
+        target.givenName = source.givenName
+        target.familyName = source.familyName
+        target.phoneticGivenName = source.phoneticGivenName
+        target.phoneticFamilyName = source.phoneticFamilyName
+        target.organizationName = source.organizationName
+        target.jobTitle = source.jobTitle
+        target.phoneNumbers = source.phoneNumbers
+        target.emailAddresses = source.emailAddresses
+        target.urlAddresses = source.urlAddresses
+        if source.imageData != nil {
+            target.imageData = source.imageData
+        }
+        if !source.note.isEmpty {
+            target.note = source.note
+        }
     }
 
     /// Import a BusinessCard to iOS Contacts

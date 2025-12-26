@@ -1,176 +1,173 @@
 import SwiftUI
-import CloudKit
 
 struct SettingsView: View {
     @AppStorage("preferredShareMethod") private var preferredShareMethod = "airdrop"
-    @AppStorage("autoImportToContacts") private var autoImportToContacts = false
     @AppStorage("hapticFeedback") private var hapticFeedback = true
-    @State private var iCloudStatus: CKAccountStatus = .couldNotDetermine
-    @State private var isCheckingStatus = true
+    @StateObject private var languageManager = LanguageManager.shared
+    @StateObject private var cloudSyncService = CloudSyncService.shared
+    @StateObject private var subscriptionService = SubscriptionService.shared
+    @State private var refreshID = UUID()
 
     var body: some View {
         NavigationStack {
             Form {
-                // Sharing preferences
-                Section("Sharing") {
-                    Picker("Preferred Method", selection: $preferredShareMethod) {
-                        Label("AirDrop", systemImage: "airplayaudio").tag("airdrop")
-                        Label("QR Code", systemImage: "qrcode").tag("qrcode")
-                        Label("NFC", systemImage: "wave.3.right").tag("nfc")
-                    }
-                }
-
-                // Receiving preferences
-                Section("Receiving") {
-                    Toggle(isOn: $autoImportToContacts) {
-                        Label("Auto-import to Contacts", systemImage: "person.badge.plus")
-                    }
-                }
-
-                // App preferences
-                Section("App") {
-                    Toggle(isOn: $hapticFeedback) {
-                        Label("Haptic Feedback", systemImage: "hand.tap")
-                    }
-                }
-
-                // iCloud Sync
+                // iCloud Sync Section
                 Section {
                     HStack {
-                        Label("iCloud Sync", systemImage: "arrow.triangle.2.circlepath.icloud")
+                        Label(L10n.Sync.icloudSync, systemImage: cloudSyncService.syncStatus.icon)
+                            .foregroundColor(cloudSyncService.syncStatus.color)
                         Spacer()
-                        if isCheckingStatus {
-                            ProgressView()
-                                .scaleEffect(0.8)
+                        if subscriptionService.subscriptionStatus.isPro {
+                            Text(cloudSyncService.syncStatus.displayText)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
                         } else {
-                            HStack(spacing: 4) {
-                                Circle()
-                                    .fill(iCloudStatusColor)
-                                    .frame(width: 8, height: 8)
-                                Text(iCloudStatusText)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
+                            Text(L10n.Sync.proFeature)
+                                .font(.caption)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
+                                .background(Color.orange.opacity(0.2))
+                                .foregroundColor(.orange)
+                                .clipShape(Capsule())
                         }
                     }
 
-                    if iCloudStatus != .available {
-                        Text(iCloudStatusDescription)
+                    if !subscriptionService.subscriptionStatus.isPro {
+                        Text(L10n.Sync.proFeatureDesc)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     }
                 } header: {
-                    Text("Sync")
+                    Text(L10n.Sync.title)
                 } footer: {
-                    if iCloudStatus == .available {
-                        Text("Your cards sync automatically across all your devices signed into the same iCloud account.")
+                    if subscriptionService.subscriptionStatus.isPro && cloudSyncService.isCloudKitAvailable {
+                        Text("Your cards sync automatically across all devices signed in with the same Apple ID.")
                     }
                 }
 
-                // Subscription
-                Section("Subscription") {
+                // Sharing preferences
+                Section(L10n.Settings.sharing) {
+                    Picker(L10n.Settings.preferredMethod, selection: $preferredShareMethod) {
+                        Label(L10n.Settings.airdrop, systemImage: "airplayaudio").tag("airdrop")
+                        Label(L10n.Settings.qrcode, systemImage: "qrcode").tag("qrcode")
+                        Label(L10n.Settings.nfc, systemImage: "wave.3.right").tag("nfc")
+                    }
+                }
+
+                // App preferences
+                Section(L10n.Settings.app) {
+                    Toggle(isOn: $hapticFeedback) {
+                        Label(L10n.Settings.hapticFeedback, systemImage: "hand.tap")
+                    }
+
                     NavigationLink {
-                        SubscriptionView()
+                        LanguagePickerView(languageManager: languageManager, onLanguageChange: {
+                            refreshID = UUID()
+                        })
                     } label: {
                         HStack {
-                            Label("CardPro Pro", systemImage: "crown.fill")
-                                .foregroundColor(.orange)
+                            Label(L10n.Settings.language, systemImage: "globe")
                             Spacer()
-                            Text("Free")
+                            Text(languageManager.displayName(for: languageManager.currentLanguage))
                                 .foregroundStyle(.secondary)
                         }
                     }
                 }
 
+                // Subscription
+                Section(L10n.Settings.subscription) {
+                    NavigationLink {
+                        SubscriptionView()
+                    } label: {
+                        HStack {
+                            Label(L10n.Settings.cardproPro, systemImage: "crown.fill")
+                                .foregroundColor(.orange)
+                            Spacer()
+                            if SubscriptionService.shared.subscriptionStatus.isPro {
+                                Text("Pro")
+                                    .foregroundColor(.orange)
+                                    .fontWeight(.semibold)
+                            } else {
+                                Text(L10n.Settings.free)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+                }
+
                 // About
-                Section("About") {
+                Section(L10n.Settings.about) {
                     HStack {
-                        Text("Version")
+                        Text(L10n.Settings.version)
                         Spacer()
                         Text("1.0.0")
                             .foregroundStyle(.secondary)
                     }
 
                     Link(destination: URL(string: "https://irisgo.xyz/cardpro/privacy")!) {
-                        Label("Privacy Policy", systemImage: "hand.raised.fill")
+                        Label(L10n.Settings.privacyPolicy, systemImage: "hand.raised.fill")
                     }
 
                     Link(destination: URL(string: "https://irisgo.xyz/cardpro/terms")!) {
-                        Label("Terms of Service", systemImage: "doc.text.fill")
+                        Label(L10n.Settings.termsOfService, systemImage: "doc.text.fill")
                     }
 
                     Link(destination: URL(string: "mailto:support@irisgo.xyz")!) {
-                        Label("Contact Support", systemImage: "envelope.fill")
+                        Label(L10n.Settings.contactSupport, systemImage: "envelope.fill")
                     }
                 }
             }
-            .navigationTitle("Settings")
-            .onAppear {
-                checkiCloudStatus()
-            }
-        }
-    }
-
-    private func checkiCloudStatus() {
-        isCheckingStatus = true
-        CKContainer.default().accountStatus { status, error in
-            DispatchQueue.main.async {
-                iCloudStatus = status
-                isCheckingStatus = false
-            }
-        }
-    }
-
-    private var iCloudStatusColor: Color {
-        switch iCloudStatus {
-        case .available:
-            return .green
-        case .noAccount, .restricted, .temporarilyUnavailable:
-            return .orange
-        case .couldNotDetermine:
-            return .gray
-        @unknown default:
-            return .gray
-        }
-    }
-
-    private var iCloudStatusText: String {
-        switch iCloudStatus {
-        case .available:
-            return "On"
-        case .noAccount:
-            return "Sign In Required"
-        case .restricted:
-            return "Restricted"
-        case .temporarilyUnavailable:
-            return "Unavailable"
-        case .couldNotDetermine:
-            return "Unknown"
-        @unknown default:
-            return "Unknown"
-        }
-    }
-
-    private var iCloudStatusDescription: String {
-        switch iCloudStatus {
-        case .available:
-            return ""
-        case .noAccount:
-            return "Sign in to iCloud in Settings to enable sync across your devices."
-        case .restricted:
-            return "iCloud access is restricted on this device."
-        case .temporarilyUnavailable:
-            return "iCloud is temporarily unavailable. Please try again later."
-        case .couldNotDetermine:
-            return "Unable to determine iCloud status."
-        @unknown default:
-            return "Unable to determine iCloud status."
+            .navigationTitle(L10n.Settings.title)
+            .id(refreshID)
         }
     }
 }
 
+struct LanguagePickerView: View {
+    @ObservedObject var languageManager: LanguageManager
+    var onLanguageChange: () -> Void
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        List {
+            ForEach(LanguageManager.supportedLanguages, id: \.code) { language in
+                Button {
+                    languageManager.currentLanguage = language.code
+                    onLanguageChange()
+                    dismiss()
+                } label: {
+                    HStack {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(language.localName)
+                                .foregroundColor(.primary)
+                            if language.code != "system" {
+                                Text(language.name)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        Spacer()
+
+                        if languageManager.currentLanguage == language.code {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+            }
+        }
+        .navigationTitle(L10n.Settings.language)
+        .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
 struct SubscriptionView: View {
-    @State private var selectedPlan: String = "yearly"
+    @StateObject private var subscriptionService = SubscriptionService.shared
+    @State private var selectedProductID: String = SubscriptionProduct.yearly.rawValue
+    @State private var showingError = false
+    @State private var errorMessage = ""
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         ScrollView {
@@ -181,71 +178,122 @@ struct SubscriptionView: View {
                         .font(.system(size: 60))
                         .foregroundColor(.orange)
 
-                    Text("CardPro Pro")
+                    Text(L10n.Subscription.title)
                         .font(.largeTitle)
                         .fontWeight(.bold)
 
-                    Text("Unlock all features")
-                        .foregroundStyle(.secondary)
+                    if subscriptionService.subscriptionStatus.isPro {
+                        Label("Pro Active", systemImage: "checkmark.seal.fill")
+                            .foregroundColor(.green)
+                    } else {
+                        Text(L10n.Subscription.unlockAll)
+                            .foregroundStyle(.secondary)
+                    }
                 }
                 .padding(.top, 32)
 
                 // Features
                 VStack(alignment: .leading, spacing: 16) {
-                    FeatureRow(icon: "infinity", title: "Unlimited Cards", description: "Create as many cards as you need")
-                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: "iCloud Sync", description: "Access cards on all devices")
-                    FeatureRow(icon: "paintbrush.fill", title: "Premium Templates", description: "Stand out with unique designs")
-                    FeatureRow(icon: "chart.bar.fill", title: "Analytics", description: "Track card sharing stats")
+                    FeatureRow(icon: "infinity", title: L10n.Subscription.unlimitedCards, description: L10n.Subscription.unlimitedCardsDesc)
+                    FeatureRow(icon: "arrow.triangle.2.circlepath", title: L10n.Subscription.icloudSync, description: L10n.Subscription.icloudSyncDesc)
+                    FeatureRow(icon: "paintbrush.fill", title: L10n.Subscription.premiumTemplates, description: L10n.Subscription.premiumTemplatesDesc)
+                    FeatureRow(icon: "chart.bar.fill", title: L10n.Subscription.analytics, description: L10n.Subscription.analyticsDesc)
                 }
                 .padding()
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
 
-                // Plans
-                VStack(spacing: 12) {
-                    PlanButton(
-                        title: "Yearly",
-                        price: "$29.99/year",
-                        savings: "Save 17%",
-                        isSelected: selectedPlan == "yearly"
-                    ) {
-                        selectedPlan = "yearly"
-                    }
+                if !subscriptionService.subscriptionStatus.isPro {
+                    // Plans from StoreKit
+                    if subscriptionService.products.isEmpty {
+                        ProgressView()
+                            .padding()
+                    } else {
+                        VStack(spacing: 12) {
+                            ForEach(subscriptionService.products, id: \.id) { product in
+                                let isYearly = product.id.contains("yearly")
+                                PlanButton(
+                                    title: product.displayName,
+                                    price: product.displayPrice + (isYearly ? "/year" : "/month"),
+                                    savings: isYearly ? L10n.Subscription.save17 : nil,
+                                    isSelected: selectedProductID == product.id
+                                ) {
+                                    selectedProductID = product.id
+                                }
+                            }
+                        }
+                        .padding(.horizontal)
 
-                    PlanButton(
-                        title: "Monthly",
-                        price: "$2.99/month",
-                        savings: nil,
-                        isSelected: selectedPlan == "monthly"
-                    ) {
-                        selectedPlan = "monthly"
+                        // Subscribe button
+                        Button {
+                            purchase()
+                        } label: {
+                            HStack {
+                                if subscriptionService.isLoading {
+                                    ProgressView()
+                                        .tint(.white)
+                                } else {
+                                    Text(L10n.Subscription.startFreeTrial)
+                                }
+                            }
+                            .font(.headline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .background(Color.orange)
+                            .foregroundColor(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .disabled(subscriptionService.isLoading)
+                        .padding(.horizontal)
+
+                        if let selectedProduct = subscriptionService.products.first(where: { $0.id == selectedProductID }) {
+                            Text(L10n.Subscription.trialHint(selectedProduct.displayPrice))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        // Restore purchases
+                        Button {
+                            Task {
+                                await subscriptionService.restorePurchases()
+                            }
+                        } label: {
+                            Text("Restore Purchases")
+                                .font(.subheadline)
+                                .foregroundColor(.accentColor)
+                        }
+                        .padding(.top, 8)
                     }
                 }
-                .padding(.horizontal)
-
-                // Subscribe button
-                Button {
-                    // TODO: Implement StoreKit purchase
-                } label: {
-                    Text("Start Free Trial")
-                        .font(.headline)
-                        .padding()
-                        .frame(maxWidth: .infinity)
-                        .background(Color.orange)
-                        .foregroundColor(.white)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
-                }
-                .padding(.horizontal)
-
-                Text("7-day free trial, then \(selectedPlan == "yearly" ? "$29.99/year" : "$2.99/month")")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
 
                 Spacer()
             }
         }
         .navigationBarTitleDisplayMode(.inline)
+        .alert(L10n.Common.error, isPresented: $showingError) {
+            Button(L10n.Common.ok) {}
+        } message: {
+            Text(errorMessage)
+        }
+    }
+
+    private func purchase() {
+        guard let product = subscriptionService.products.first(where: { $0.id == selectedProductID }) else {
+            return
+        }
+
+        Task {
+            do {
+                let success = try await subscriptionService.purchase(product)
+                if success {
+                    dismiss()
+                }
+            } catch {
+                errorMessage = error.localizedDescription
+                showingError = true
+            }
+        }
     }
 }
 

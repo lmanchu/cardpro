@@ -6,8 +6,15 @@ import UIKit
 struct CardEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
+    @Query private var existingCards: [BusinessCard]
 
     let card: BusinessCard?
+
+    // Delete confirmation
+    @State private var showingDeleteConfirm = false
+
+    // Card identity
+    @State private var cardLabel = "My Card"
 
     // Basic info
     @State private var firstName = ""
@@ -52,6 +59,11 @@ struct CardEditorView: View {
     // Cropping - use a wrapper struct for sheet(item:) pattern
     @State private var cropRequest: CropRequest?
 
+    // HD Photo capture (after OCR scan)
+    @State private var showingHDPhotoPrompt = false
+    @State private var showingHDCamera = false
+    @State private var pendingOCRImageData: Data?  // Keep OCR scan temporarily
+
     var isEditing: Bool { card != nil }
 
     var body: some View {
@@ -74,13 +86,32 @@ struct CardEditorView: View {
         .photosPicker(isPresented: $showingPhotoPicker, selection: $selectedCardImageItem, matching: .images)
         .sheet(isPresented: $showingDocumentScanner) {
             DocumentScanner { imageData in
-                // Document scanner already crops the image
+                // Document scanner - use for OCR only, then prompt for HD photo
+                pendingOCRImageData = imageData
+                // Temporarily set as card image (will be replaced by HD photo)
                 cardImageData = imageData
                 cardImageSource = "scan"
                 Task {
                     await processOCR(imageData: imageData)
                 }
             }
+        }
+        .sheet(isPresented: $showingHDCamera) {
+            CameraPicker { imageData in
+                // HD camera for display - go through cropper
+                cropRequest = CropRequest(imageData: imageData, source: "hd_photo")
+            }
+        }
+        .alert("Take HD Photo?", isPresented: $showingHDPhotoPrompt) {
+            Button("Take HD Photo") {
+                showingHDCamera = true
+            }
+            Button("Use Scanned Image", role: .cancel) {
+                // Keep the scanned image as-is
+                pendingOCRImageData = nil
+            }
+        } message: {
+            Text("The scanned image is optimized for text recognition. Would you like to take a high-quality photo for your card display?")
         }
         .sheet(isPresented: $showingCamera) {
             CameraPicker { imageData in
@@ -93,10 +124,17 @@ struct CardEditorView: View {
                 imageData: request.imageData,
                 onCrop: { croppedData in
                     cardImageData = croppedData
-                    cardImageSource = request.source
+                    cardImageSource = request.source == "hd_photo" ? "hd_photo" : request.source
                     cropRequest = nil
-                    Task {
-                        await processOCR(imageData: croppedData)
+
+                    // Only run OCR for scan sources, not HD photos
+                    if request.source != "hd_photo" {
+                        Task {
+                            await processOCR(imageData: croppedData)
+                        }
+                    } else {
+                        // HD photo captured, clear pending OCR data
+                        pendingOCRImageData = nil
                     }
                 },
                 onCancel: {
@@ -122,6 +160,20 @@ struct CardEditorView: View {
         } message: {
             Text(ocrError ?? "Unknown error")
         }
+        .alert("Delete Card", isPresented: $showingDeleteConfirm) {
+            Button("Cancel", role: .cancel) {}
+            Button("Delete", role: .destructive) {
+                deleteCard()
+            }
+        } message: {
+            Text("Are you sure you want to delete \"\(cardLabel)\"? This cannot be undone.")
+        }
+    }
+
+    private func deleteCard() {
+        guard let card else { return }
+        modelContext.delete(card)
+        dismiss()
     }
 
     // MARK: - Form Content
@@ -129,6 +181,7 @@ struct CardEditorView: View {
     @ViewBuilder
     private var formContent: some View {
         Form {
+            cardLabelSection
             profilePhotoSection
             cardImageSection
             nameSection
@@ -139,10 +192,42 @@ struct CardEditorView: View {
             customFieldsSection
             notesSection
             previewSection
+
+            // Delete section (only when editing existing card)
+            if isEditing {
+                deleteCardSection
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var deleteCardSection: some View {
+        Section {
+            Button(role: .destructive) {
+                showingDeleteConfirm = true
+            } label: {
+                HStack {
+                    Spacer()
+                    Label("Delete This Card", systemImage: "trash")
+                    Spacer()
+                }
+            }
         }
     }
 
     // MARK: - Sections
+
+    @ViewBuilder
+    private var cardLabelSection: some View {
+        Section {
+            TextField("Card Name", text: $cardLabel)
+                .font(.headline)
+        } header: {
+            Text("Card Identity")
+        } footer: {
+            Text("Give this card a name to identify it (e.g., \"Work\", \"Personal\", \"Side Business\")")
+        }
+    }
 
     @ViewBuilder
     private var profilePhotoSection: some View {
@@ -467,9 +552,21 @@ struct CardEditorView: View {
             onApply: { info in
                 applyOCRResults(info)
                 showingOCRResults = false
+                // If this came from document scanner, prompt for HD photo
+                if pendingOCRImageData != nil {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showingHDPhotoPrompt = true
+                    }
+                }
             },
             onCancel: {
                 showingOCRResults = false
+                // If skipping OCR results, still offer HD photo option
+                if pendingOCRImageData != nil {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showingHDPhotoPrompt = true
+                    }
+                }
             }
         )
     }
@@ -528,6 +625,7 @@ struct CardEditorView: View {
 
     private var previewCard: BusinessCard {
         BusinessCard(
+            cardLabel: cardLabel,
             firstName: firstName,
             lastName: lastName,
             localizedFirstName: localizedFirstName.isEmpty ? nil : localizedFirstName,
@@ -569,6 +667,7 @@ struct CardEditorView: View {
 
     private func loadCard() {
         guard let card else { return }
+        cardLabel = card.cardLabel
         firstName = card.firstName
         lastName = card.lastName
         localizedFirstName = card.localizedFirstName ?? ""
@@ -590,6 +689,7 @@ struct CardEditorView: View {
     private func saveCard() {
         if let card {
             // Update existing
+            card.cardLabel = cardLabel
             card.firstName = firstName
             card.lastName = lastName
             card.localizedFirstName = localizedFirstName.isEmpty ? nil : localizedFirstName
@@ -608,8 +708,10 @@ struct CardEditorView: View {
             card.cardImageSource = cardImageSource
             card.incrementVersion()
         } else {
-            // Create new
+            // Create new - only set as default if this is the first card
+            let shouldBeDefault = existingCards.isEmpty
             let newCard = BusinessCard(
+                cardLabel: cardLabel,
                 firstName: firstName,
                 lastName: lastName,
                 localizedFirstName: localizedFirstName.isEmpty ? nil : localizedFirstName,
@@ -626,7 +728,7 @@ struct CardEditorView: View {
                 cardImageSource: cardImageSource,
                 notes: notes.isEmpty ? nil : notes,
                 customFields: customFields,
-                isDefault: true
+                isDefault: shouldBeDefault
             )
             modelContext.insert(newCard)
         }
