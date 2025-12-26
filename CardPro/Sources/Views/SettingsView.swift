@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @AppStorage("preferredShareMethod") private var preferredShareMethod = "airdrop"
@@ -164,9 +165,14 @@ struct LanguagePickerView: View {
 
 struct SubscriptionView: View {
     @StateObject private var subscriptionService = SubscriptionService.shared
+    @StateObject private var promoCodeService = PromoCodeService.shared
     @State private var selectedProductID: String = SubscriptionProduct.yearly.rawValue
     @State private var showingError = false
     @State private var errorMessage = ""
+    @State private var promoCodeInput = ""
+    @State private var promoCodeMessage = ""
+    @State private var showPromoCodeSuccess = false
+    @State private var showCopiedToast = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -203,6 +209,70 @@ struct SubscriptionView: View {
                 .background(Color(.systemGray6))
                 .clipShape(RoundedRectangle(cornerRadius: 16))
                 .padding(.horizontal)
+
+                // Referral Code Section (for Pro users)
+                if subscriptionService.subscriptionStatus.isPro {
+                    VStack(spacing: 16) {
+                        Divider()
+                            .padding(.vertical, 8)
+
+                        VStack(spacing: 8) {
+                            Text(L10n.Promo.yourReferralCode)
+                                .font(.headline)
+
+                            HStack(spacing: 12) {
+                                Text(promoCodeService.userReferral?.referralCode ?? "---")
+                                    .font(.system(.title2, design: .monospaced))
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.orange)
+
+                                Button {
+                                    if let code = promoCodeService.userReferral?.referralCode {
+                                        UIPasteboard.general.string = code
+                                        showCopiedToast = true
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                                            showCopiedToast = false
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "doc.on.doc")
+                                        .foregroundColor(.orange)
+                                }
+                            }
+
+                            if showCopiedToast {
+                                Text(L10n.Promo.copied)
+                                    .font(.caption)
+                                    .foregroundColor(.green)
+                            }
+                        }
+
+                        Text(L10n.Promo.referralHint)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+
+                        if let referral = promoCodeService.userReferral, referral.referralCount > 0 {
+                            Text(L10n.Promo.referralCount(referral.referralCount))
+                                .font(.subheadline)
+                                .foregroundColor(.orange)
+                        }
+
+                        Button {
+                            shareReferralCode()
+                        } label: {
+                            Label(L10n.Promo.shareReferralCode, systemImage: "square.and.arrow.up")
+                                .font(.headline)
+                                .padding()
+                                .frame(maxWidth: .infinity)
+                                .background(Color.orange.opacity(0.2))
+                                .foregroundColor(.orange)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                        }
+                        .padding(.horizontal)
+                    }
+                }
 
                 if !subscriptionService.subscriptionStatus.isPro {
                     // Plans from StoreKit
@@ -264,6 +334,62 @@ struct SubscriptionView: View {
                                 .foregroundColor(.accentColor)
                         }
                         .padding(.top, 8)
+
+                        // Promo Code Section
+                        VStack(spacing: 12) {
+                            Divider()
+                                .padding(.vertical, 8)
+
+                            Text(L10n.Promo.enterCode)
+                                .font(.headline)
+
+                            HStack {
+                                TextField(L10n.Promo.codePlaceholder, text: $promoCodeInput)
+                                    .textFieldStyle(.roundedBorder)
+                                    .textInputAutocapitalization(.characters)
+                                    .autocorrectionDisabled()
+
+                                Button {
+                                    applyPromoCode()
+                                } label: {
+                                    Text(L10n.Promo.apply)
+                                        .fontWeight(.semibold)
+                                        .padding(.horizontal, 16)
+                                        .padding(.vertical, 8)
+                                        .background(Color.orange)
+                                        .foregroundColor(.white)
+                                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                                .disabled(promoCodeInput.isEmpty)
+                            }
+                            .padding(.horizontal)
+
+                            if !promoCodeMessage.isEmpty {
+                                Text(promoCodeMessage)
+                                    .font(.caption)
+                                    .foregroundColor(showPromoCodeSuccess ? .green : .red)
+                            }
+
+                            if let appliedCode = promoCodeService.appliedPromoCode {
+                                HStack {
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .foregroundColor(.green)
+                                    Text(appliedCode.code)
+                                        .fontWeight(.semibold)
+                                    Text(promoCodeService.discountDescription(for: appliedCode.discount))
+                                        .font(.caption)
+                                        .padding(.horizontal, 8)
+                                        .padding(.vertical, 4)
+                                        .background(Color.green.opacity(0.2))
+                                        .foregroundColor(.green)
+                                        .clipShape(Capsule())
+                                }
+                                .padding()
+                                .background(Color(.systemGray6))
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                            }
+                        }
+                        .padding(.horizontal)
                     }
                 }
 
@@ -293,6 +419,50 @@ struct SubscriptionView: View {
                 errorMessage = error.localizedDescription
                 showingError = true
             }
+        }
+    }
+
+    private func applyPromoCode() {
+        Task {
+            let result = await promoCodeService.validateCode(promoCodeInput)
+            switch result {
+            case .valid(let code):
+                promoCodeService.applyCode(code)
+                promoCodeMessage = L10n.Promo.applied
+                showPromoCodeSuccess = true
+                promoCodeInput = ""
+            case .invalid:
+                showPromoCodeSuccess = false
+                promoCodeMessage = L10n.Promo.invalid
+            case .expired:
+                showPromoCodeSuccess = false
+                promoCodeMessage = L10n.Promo.expired
+            case .alreadyUsed:
+                showPromoCodeSuccess = false
+                promoCodeMessage = L10n.Promo.alreadyUsed
+            case .notFound:
+                showPromoCodeSuccess = false
+                promoCodeMessage = L10n.Promo.notFound
+            }
+        }
+    }
+
+    private func shareReferralCode() {
+        guard let referralCode = promoCodeService.userReferral?.referralCode else { return }
+
+        let shareText = """
+        Use my referral code \(referralCode) to get 20% off CardPro Pro!
+        Download CardPro: https://apps.apple.com/app/cardpro/id123456789
+        """
+
+        let activityVC = UIActivityViewController(
+            activityItems: [shareText],
+            applicationActivities: nil
+        )
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let rootViewController = windowScene.windows.first?.rootViewController {
+            rootViewController.present(activityVC, animated: true)
         }
     }
 }

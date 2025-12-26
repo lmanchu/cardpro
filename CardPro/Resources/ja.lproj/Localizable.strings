@@ -264,6 +264,23 @@
 "incoming.notNow" = "後で";
 "incoming.receivedCard" = "受け取った名刺";
 
+// MARK: - Promo Code
+"promo.title" = "プロモコード";
+"promo.enterCode" = "プロモコードを入力";
+"promo.codePlaceholder" = "コードを入力";
+"promo.apply" = "適用";
+"promo.applied" = "コードを適用しました！";
+"promo.invalid" = "無効なコード";
+"promo.expired" = "このコードは期限切れです";
+"promo.alreadyUsed" = "このコードは既に使用済みです";
+"promo.notFound" = "コードが見つかりません";
+"promo.yourReferralCode" = "あなたの紹介コード";
+"promo.shareReferralCode" = "シェアして特典GET";
+"promo.referralHint" = "友達にコードをシェアしよう。登録されると、お互いに特典がもらえます！";
+"promo.referralCount" = "%d 件の紹介成功";
+"promo.discount" = "%d%% OFF";
+"promo.copied" = "コピーしました！";
+
 // MARK: - Sync
 "sync.title" = "同期";
 "sync.icloudSync" = "iCloud同期";

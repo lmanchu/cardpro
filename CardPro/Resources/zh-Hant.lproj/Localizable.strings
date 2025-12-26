@@ -264,6 +264,23 @@
 "incoming.notNow" = "暫時不要";
 "incoming.receivedCard" = "收到的名片";
 
+// MARK: - Promo Code
+"promo.title" = "優惠碼";
+"promo.enterCode" = "輸入優惠碼";
+"promo.codePlaceholder" = "輸入代碼";
+"promo.apply" = "套用";
+"promo.applied" = "已套用優惠碼！";
+"promo.invalid" = "無效的代碼";
+"promo.expired" = "此代碼已過期";
+"promo.alreadyUsed" = "您已使用過此代碼";
+"promo.notFound" = "找不到此代碼";
+"promo.yourReferralCode" = "您的推薦碼";
+"promo.shareReferralCode" = "分享賺獎勵";
+"promo.referralHint" = "分享您的推薦碼給朋友，當他們訂閱時，你們都能獲得獎勵！";
+"promo.referralCount" = "%d 次成功推薦";
+"promo.discount" = "%d%% 折扣";
+"promo.copied" = "已複製！";
+
 // MARK: - Sync
 "sync.title" = "同步";
 "sync.icloudSync" = "iCloud 同步";

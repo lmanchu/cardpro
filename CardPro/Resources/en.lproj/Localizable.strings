@@ -264,6 +264,23 @@
 "incoming.notNow" = "Not Now";
 "incoming.receivedCard" = "Received Card";
 
+// MARK: - Promo Code
+"promo.title" = "Promo Code";
+"promo.enterCode" = "Enter Promo Code";
+"promo.codePlaceholder" = "Enter code";
+"promo.apply" = "Apply";
+"promo.applied" = "Code Applied!";
+"promo.invalid" = "Invalid code";
+"promo.expired" = "This code has expired";
+"promo.alreadyUsed" = "You've already used this code";
+"promo.notFound" = "Code not found";
+"promo.yourReferralCode" = "Your Referral Code";
+"promo.shareReferralCode" = "Share & Earn";
+"promo.referralHint" = "Share your code with friends. When they subscribe, you both get rewards!";
+"promo.referralCount" = "%d successful referrals";
+"promo.discount" = "%d%% OFF";
+"promo.copied" = "Copied!";
+
 // MARK: - Sync
 "sync.title" = "Sync";
 "sync.icloudSync" = "iCloud Sync";

@@ -279,6 +279,29 @@ enum L10n {
         }
     }
 
+    // MARK: - Promo Code
+    enum Promo {
+        static var title: String { "promo.title".localized }
+        static var enterCode: String { "promo.enterCode".localized }
+        static var codePlaceholder: String { "promo.codePlaceholder".localized }
+        static var apply: String { "promo.apply".localized }
+        static var applied: String { "promo.applied".localized }
+        static var invalid: String { "promo.invalid".localized }
+        static var expired: String { "promo.expired".localized }
+        static var alreadyUsed: String { "promo.alreadyUsed".localized }
+        static var notFound: String { "promo.notFound".localized }
+        static var yourReferralCode: String { "promo.yourReferralCode".localized }
+        static var shareReferralCode: String { "promo.shareReferralCode".localized }
+        static var referralHint: String { "promo.referralHint".localized }
+        static func referralCount(_ count: Int) -> String {
+            "promo.referralCount".localized(with: count)
+        }
+        static func discount(_ percent: Int) -> String {
+            "promo.discount".localized(with: percent)
+        }
+        static var copied: String { "promo.copied".localized }
+    }
+
     // MARK: - Sync
     enum Sync {
         static var title: String { "sync.title".localized }
