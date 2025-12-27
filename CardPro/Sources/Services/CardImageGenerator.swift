@@ -8,12 +8,32 @@ class CardImageGenerator {
     private init() {}
 
     /// Available card templates
-    enum Template: String, CaseIterable {
+    enum Template: String, CaseIterable, Identifiable {
         case modern = "Modern"
         case classic = "Classic"
         case minimal = "Minimal"
         case bold = "Bold"
         case elegant = "Elegant"
+        // Premium templates
+        case gradient = "Gradient"
+        case neon = "Neon"
+        case executive = "Executive"
+
+        var id: String { rawValue }
+
+        /// Whether this template requires Pro subscription
+        var isPremium: Bool {
+            switch self {
+            case .modern, .classic, .minimal:
+                return false
+            case .bold, .elegant, .gradient, .neon, .executive:
+                return true
+            }
+        }
+
+        var displayName: String {
+            rawValue
+        }
 
         var primaryColor: Color {
             switch self {
@@ -22,6 +42,9 @@ class CardImageGenerator {
             case .minimal: return Color.black
             case .bold: return Color(red: 0.9, green: 0.3, blue: 0.2)       // Red-orange
             case .elegant: return Color(red: 0.6, green: 0.5, blue: 0.3)    // Gold
+            case .gradient: return Color(red: 0.4, green: 0.2, blue: 0.8)   // Purple
+            case .neon: return Color(red: 0.0, green: 1.0, blue: 0.8)       // Cyan
+            case .executive: return Color(red: 0.1, green: 0.2, blue: 0.3)  // Navy
             }
         }
 
@@ -32,21 +55,34 @@ class CardImageGenerator {
             case .minimal: return Color.white
             case .bold: return Color(red: 0.98, green: 0.98, blue: 0.98)
             case .elegant: return Color(red: 0.1, green: 0.1, blue: 0.12)   // Dark
+            case .gradient: return Color.clear  // Will use gradient
+            case .neon: return Color(red: 0.05, green: 0.05, blue: 0.1)     // Dark blue
+            case .executive: return Color.white
             }
         }
 
         var textColor: Color {
             switch self {
-            case .modern, .classic, .minimal, .bold: return Color.black
-            case .elegant: return Color.white
+            case .modern, .classic, .minimal, .bold, .executive: return Color.black
+            case .elegant, .gradient, .neon: return Color.white
             }
         }
 
         var secondaryTextColor: Color {
             switch self {
-            case .modern, .classic, .minimal, .bold: return Color.gray
-            case .elegant: return Color.gray
+            case .modern, .classic, .minimal, .bold, .executive: return Color.gray
+            case .elegant, .gradient, .neon: return Color.gray
             }
+        }
+
+        /// Free templates available to all users
+        static var freeTemplates: [Template] {
+            allCases.filter { !$0.isPremium }
+        }
+
+        /// Premium templates for Pro users only
+        static var premiumTemplates: [Template] {
+            allCases.filter { $0.isPremium }
         }
     }
 
@@ -92,6 +128,12 @@ struct CardTemplateView: View {
                 BoldCardLayout(card: card, template: template)
             case .elegant:
                 ElegantCardLayout(card: card, template: template)
+            case .gradient:
+                GradientCardLayout(card: card, template: template)
+            case .neon:
+                NeonCardLayout(card: card, template: template)
+            case .executive:
+                ExecutiveCardLayout(card: card, template: template)
             }
         }
     }
@@ -383,6 +425,254 @@ struct ElegantCardLayout: View {
                 Spacer().frame(height: 40)
             }
             .padding(40)
+        }
+    }
+}
+
+// MARK: - Premium Card Layouts
+
+struct GradientCardLayout: View {
+    let card: BusinessCard
+    let template: CardImageGenerator.Template
+
+    var body: some View {
+        ZStack {
+            // Gradient background
+            LinearGradient(
+                colors: [
+                    Color(red: 0.4, green: 0.2, blue: 0.8),
+                    Color(red: 0.8, green: 0.3, blue: 0.6)
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+
+            VStack(alignment: .leading, spacing: 20) {
+                Spacer()
+
+                // Name with glow effect
+                Text(card.displayName)
+                    .font(.system(size: 44, weight: .bold))
+                    .foregroundColor(.white)
+
+                if let localizedName = card.localizedFullName {
+                    Text(localizedName)
+                        .font(.system(size: 24))
+                        .foregroundColor(.white.opacity(0.8))
+                }
+
+                HStack(spacing: 8) {
+                    if let title = card.title {
+                        Text(title)
+                            .font(.system(size: 20))
+                            .foregroundColor(.white.opacity(0.9))
+                    }
+                    if let company = card.company {
+                        Text("•")
+                            .foregroundColor(.white.opacity(0.6))
+                        Text(company)
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                }
+
+                Spacer()
+
+                // Contact info with icons
+                HStack(spacing: 24) {
+                    if let phone = card.phone {
+                        HStack(spacing: 6) {
+                            Image(systemName: "phone.fill")
+                            Text(phone)
+                        }
+                        .font(.system(size: 14))
+                        .foregroundColor(.white.opacity(0.85))
+                    }
+                    if let email = card.email {
+                        HStack(spacing: 6) {
+                            Image(systemName: "envelope.fill")
+                            Text(email)
+                        }
+                        .font(.system(size: 14))
+                        .foregroundColor(.white.opacity(0.85))
+                    }
+                }
+
+                Spacer().frame(height: 30)
+            }
+            .padding(50)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    }
+}
+
+struct NeonCardLayout: View {
+    let card: BusinessCard
+    let template: CardImageGenerator.Template
+
+    var body: some View {
+        ZStack {
+            // Dark background
+            Color(red: 0.05, green: 0.05, blue: 0.1)
+
+            // Neon border
+            RoundedRectangle(cornerRadius: 0)
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            Color(red: 0.0, green: 1.0, blue: 0.8),
+                            Color(red: 1.0, green: 0.0, blue: 0.8)
+                        ],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    lineWidth: 4
+                )
+                .padding(20)
+
+            VStack(spacing: 24) {
+                Spacer()
+
+                // Name with neon effect
+                Text(card.displayName)
+                    .font(.system(size: 42, weight: .bold))
+                    .foregroundColor(Color(red: 0.0, green: 1.0, blue: 0.8))
+
+                if let title = card.title {
+                    Text(title.uppercased())
+                        .font(.system(size: 16, weight: .medium))
+                        .tracking(4)
+                        .foregroundColor(Color(red: 1.0, green: 0.0, blue: 0.8))
+                }
+
+                if let company = card.company {
+                    Text(company)
+                        .font(.system(size: 20))
+                        .foregroundColor(.white)
+                }
+
+                Spacer()
+
+                // Contact info
+                HStack(spacing: 30) {
+                    if let phone = card.phone {
+                        Text(phone)
+                            .font(.system(size: 14, design: .monospaced))
+                    }
+                    if let email = card.email {
+                        Text(email)
+                            .font(.system(size: 14, design: .monospaced))
+                    }
+                }
+                .foregroundColor(.white.opacity(0.7))
+
+                Spacer().frame(height: 40)
+            }
+            .padding(40)
+        }
+    }
+}
+
+struct ExecutiveCardLayout: View {
+    let card: BusinessCard
+    let template: CardImageGenerator.Template
+
+    var body: some View {
+        ZStack {
+            // Clean white background
+            Color.white
+
+            // Navy accent on left
+            HStack(spacing: 0) {
+                Rectangle()
+                    .fill(Color(red: 0.1, green: 0.2, blue: 0.3))
+                    .frame(width: 8)
+                Spacer()
+            }
+
+            // Navy accent on bottom
+            VStack {
+                Spacer()
+                Rectangle()
+                    .fill(Color(red: 0.1, green: 0.2, blue: 0.3))
+                    .frame(height: 60)
+            }
+
+            VStack {
+                HStack {
+                    // Left content
+                    VStack(alignment: .leading, spacing: 12) {
+                        Spacer().frame(height: 40)
+
+                        Text(card.displayName)
+                            .font(.system(size: 38, weight: .semibold))
+                            .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.3))
+
+                        if let localizedName = card.localizedFullName {
+                            Text(localizedName)
+                                .font(.system(size: 22))
+                                .foregroundColor(.gray)
+                        }
+
+                        Spacer().frame(height: 8)
+
+                        if let title = card.title {
+                            Text(title)
+                                .font(.system(size: 18))
+                                .foregroundColor(.gray)
+                        }
+
+                        if let company = card.company {
+                            Text(company)
+                                .font(.system(size: 20, weight: .medium))
+                                .foregroundColor(Color(red: 0.1, green: 0.2, blue: 0.3))
+                        }
+
+                        Spacer()
+                    }
+                    .padding(.leading, 50)
+
+                    Spacer()
+
+                    // Photo on right (if available)
+                    if let photoData = card.photoData, let uiImage = UIImage(data: photoData) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 160, height: 160)
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            .padding(.trailing, 50)
+                            .padding(.top, 40)
+                    }
+                }
+
+                Spacer()
+
+                // Contact info in navy bar
+                HStack(spacing: 40) {
+                    if let phone = card.phone {
+                        HStack(spacing: 8) {
+                            Image(systemName: "phone.fill")
+                            Text(phone)
+                        }
+                    }
+                    if let email = card.email {
+                        HStack(spacing: 8) {
+                            Image(systemName: "envelope.fill")
+                            Text(email)
+                        }
+                    }
+                    if let website = card.website {
+                        HStack(spacing: 8) {
+                            Image(systemName: "globe")
+                            Text(website)
+                        }
+                    }
+                }
+                .font(.system(size: 14))
+                .foregroundColor(.white)
+                .frame(height: 60)
+            }
         }
     }
 }

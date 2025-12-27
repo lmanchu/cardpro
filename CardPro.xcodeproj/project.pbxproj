@@ -37,6 +37,7 @@
 		C87D969303600D2825A0E26D /* CardProWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0030BF9A651FE82A4C42359 /* CardProWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB3A2273CB0F48B653690789 /* WalletPassService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */; };
 		CE27F2056BECF7CFC0DD5A7B /* GravatarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C383436879055DFA43BC6744 /* GravatarService.swift */; };
+		D1C820EEEF0D49F6260D7C75 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE97A16831C1360FF6049616 /* AnalyticsService.swift */; };
 		D5A9752719903818E82324BF /* CardProWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58997001F2AECB5B5646CE9 /* CardProWidget.swift */; };
 		EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E7C56D2FD953887BA82A2 /* NFCService.swift */; };
 		ED2F216087C35B4CC3DFDA9C /* SubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2335FAAEC70F48A624341F31 /* SubscriptionService.swift */; };
@@ -108,6 +109,7 @@
 		D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedContact.swift; sourceTree = "<group>"; };
 		E58997001F2AECB5B5646CE9 /* CardProWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardProWidget.swift; sourceTree = "<group>"; };
 		EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
+		EE97A16831C1360FF6049616 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		F21B40C2458885716F9FFACF /* ContactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsService.swift; sourceTree = "<group>"; };
 		F8A2D85E6F02804503614E6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FBBBA32929D7BBB36F0C12E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -166,6 +168,7 @@
 		91D21E6A4ABD01E2AB1F3660 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				EE97A16831C1360FF6049616 /* AnalyticsService.swift */,
 				B03F92408D3DC3E78EF99436 /* CardImageGenerator.swift */,
 				11259D79E1F62BBE17938280 /* CloudSyncService.swift */,
 				F21B40C2458885716F9FFACF /* ContactsService.swift */,
@@ -351,6 +354,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1C820EEEF0D49F6260D7C75 /* AnalyticsService.swift in Sources */,
 				3803DC5028930B0655031256 /* BusinessCard.swift in Sources */,
 				A6B0D9880B53B0201D683667 /* CardEditorView.swift in Sources */,
 				21DCC7FF6453EDCEB1AB0C0D /* CardImageGenerator.swift in Sources */,

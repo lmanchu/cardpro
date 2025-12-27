@@ -94,6 +94,26 @@ struct SettingsView: View {
                             }
                         }
                     }
+
+                    // Analytics (Pro feature)
+                    NavigationLink {
+                        AnalyticsView()
+                    } label: {
+                        HStack {
+                            Label(L10n.Subscription.analytics, systemImage: "chart.bar.fill")
+                                .foregroundColor(.purple)
+                            Spacer()
+                            if !subscriptionService.subscriptionStatus.isPro {
+                                Text(L10n.Sync.proFeature)
+                                    .font(.caption)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.orange.opacity(0.2))
+                                    .foregroundColor(.orange)
+                                    .clipShape(Capsule())
+                            }
+                        }
+                    }
                 }
 
                 // About

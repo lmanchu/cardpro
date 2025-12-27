@@ -278,10 +278,12 @@ struct MyCardsView: View {
             HStack(spacing: 12) {
                 ShareButton(title: L10n.Share.share, icon: "square.and.arrow.up", color: .blue) {
                     cardForAirDrop = card
+                    AnalyticsService.shared.trackShare(cardID: card.id, method: .airdrop)
                 }
 
                 ShareButton(title: L10n.Share.qrCode, icon: "qrcode", color: .purple) {
                     cardForQR = card
+                    AnalyticsService.shared.trackShare(cardID: card.id, method: .qrCode)
                 }
 
                 ShareButton(title: L10n.Share.edit, icon: "pencil", color: .gray) {
