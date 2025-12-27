@@ -10,17 +10,25 @@
 		0001B4FCDC7D4AD147364936 /* CloudSyncService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11259D79E1F62BBE17938280 /* CloudSyncService.swift */; };
 		0856EA51C44E34FDA718DAE5 /* ReceivedCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B770527BE8C34D743D83CC86 /* ReceivedCardsView.swift */; };
 		14361BD3D163F5B418BC1D9E /* ContactsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F21B40C2458885716F9FFACF /* ContactsService.swift */; };
+		1975CA00A7164824E91EE067 /* InteractionLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34A8F27F9185535B02032D02 /* InteractionLogView.swift */; };
 		1A17CD52A686B061B18792FB /* CardPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 678FA74B2A9F9EE75F85DB4A /* CardPreviewView.swift */; };
+		1BF058B913688DD22B79F3EF /* CardSubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6A25A1E5E06F5AC9202E440 /* CardSubscriptionService.swift */; };
 		1F553BC42CEBF141725F92FA /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F8471DDC22D9BDF440FB431 /* SettingsView.swift */; };
 		213698EB86DE745D49E75A62 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 03EBB0C2801A5659B679DAF1 /* Assets.xcassets */; };
 		21DCC7FF6453EDCEB1AB0C0D /* CardImageGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = B03F92408D3DC3E78EF99436 /* CardImageGenerator.swift */; };
 		24ECDF08BD45CE408573D3B1 /* IncomingCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536CADA6F5000A23B36C3293 /* IncomingCardView.swift */; };
 		263399394719E9C0A057C155 /* OCRService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3920FDD69AF99882EE149B34 /* OCRService.swift */; };
+		2E0249E633BEC1C7FA248CCA /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85504705B51552928BB407B /* PushNotificationService.swift */; };
+		358CD6BFC8BCFF9196B6EC16 /* Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58381B1BF8976994EF5863D0 /* Interaction.swift */; };
 		3803DC5028930B0655031256 /* BusinessCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C7FC0E2236307B5CE94B4 /* BusinessCard.swift */; };
 		4923137371A08CE62A6036C3 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3127651644F46B23BDB29BA9 /* Localizable.swift */; };
+		4F60821D891A693CF1DA9A1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E4E9AAAF8307E59B79DE01F3 /* FirebaseFirestore */; };
+		55771C1A99A912E08A996CCB /* CRMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4EA913C039BCE5AD748126 /* CRMService.swift */; };
+		5C187A5E76738DA7801D8863 /* FirebaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E63E83E8509A5B2BFF6E6977 /* FirebaseService.swift */; };
 		5D31146FA9B519245F62076F /* NFCWriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 479A82FF55F86216E7076764 /* NFCWriteView.swift */; };
 		6031401E9C4107C54323C194 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 1A816CAE2C64B6F67291032C /* Localizable.strings */; };
 		67044C1BFEB5FC25D398C3B8 /* WalletPassView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6910499A150BFB9B515D74E /* WalletPassView.swift */; };
+		68CEE21865B42012BA4328F8 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 842396997F841511D65F39C8 /* FirebaseMessaging */; };
 		6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8E057DB79F440988CA6F223 /* ImageCropperView.swift */; };
 		6DFEE41C920C5BD92FA944D9 /* ReceivedContact.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */; };
 		79999107DC3266697EAE1A37 /* CardProIntents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 306146CD34493DF4D9888381 /* CardProIntents.swift */; };
@@ -28,20 +36,26 @@
 		80B58F2C580581E20DD01262 /* PromoCodeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A3CB15BA8C15644AA598ECC /* PromoCodeService.swift */; };
 		82189106E477ACECDA9DF78C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1734F2FA8725752664126DF9 /* ContentView.swift */; };
 		9EAAB3BFADEC050AE8DF7D96 /* Products.storekit in Resources */ = {isa = PBXBuildFile; fileRef = 24F1CFC273BF1345F59C9F15 /* Products.storekit */; };
+		9EBA5C2BDBFD7ACB7E1DF079 /* CardPublishService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8A8DCEDB6D784184FDCC86B /* CardPublishService.swift */; };
 		A33353A119310E1ECCA31506 /* MyCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 897B542F1003CDC1EF2077B8 /* MyCardsView.swift */; };
 		A6B0D9880B53B0201D683667 /* CardEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145C50B929450D79EDE36283 /* CardEditorView.swift */; };
 		A84623A2063AA818C8F3D4A7 /* QRCodeGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */; };
 		AD713508725CBF7169A95B12 /* WidgetDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6329EC840E47B2A88F2CE0D2 /* WidgetDataService.swift */; };
 		B07B32B98B3C69CDD5537E18 /* CardProApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 988BC52E348CB9BC7340868B /* CardProApp.swift */; };
+		B85DA25D55DCA453631F6657 /* ContactGroupsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 625A13A160C8AE7B0389EE30 /* ContactGroupsView.swift */; };
 		C351641A77A7271E6C41492F /* VCardParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2978D169C42840D25CAF24C /* VCardParser.swift */; };
 		C87D969303600D2825A0E26D /* CardProWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = A0030BF9A651FE82A4C42359 /* CardProWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CB3A2273CB0F48B653690789 /* WalletPassService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */; };
 		CE27F2056BECF7CFC0DD5A7B /* GravatarService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C383436879055DFA43BC6744 /* GravatarService.swift */; };
 		D1C820EEEF0D49F6260D7C75 /* AnalyticsService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE97A16831C1360FF6049616 /* AnalyticsService.swift */; };
 		D5A9752719903818E82324BF /* CardProWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = E58997001F2AECB5B5646CE9 /* CardProWidget.swift */; };
+		E5342A397BB2C7B929332E75 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = F39E9E4397F21A071B076669 /* FirebaseAuth */; };
 		EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512E7C56D2FD953887BA82A2 /* NFCService.swift */; };
+		EACD6172FB8BB021B4C15A2A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 79BCCE610C6AF4A2E7214403 /* GoogleService-Info.plist */; };
 		ED2F216087C35B4CC3DFDA9C /* SubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2335FAAEC70F48A624341F31 /* SubscriptionService.swift */; };
+		F2666FA49191C1AF391C17FF /* ContactGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72A56E5ABA7CDAB91BF4D7C4 /* ContactGroup.swift */; };
 		F615356A472646905892F037 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */; };
+		F82BCA3BBBAA1C011D5E75E1 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = E1635568DEA9898A0688BF79 /* FirebaseStorage */; };
 		FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */; };
 /* End PBXBuildFile section */
 
@@ -82,16 +96,21 @@
 		2F8471DDC22D9BDF440FB431 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		306146CD34493DF4D9888381 /* CardProIntents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardProIntents.swift; sourceTree = "<group>"; };
 		3127651644F46B23BDB29BA9 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
+		34A8F27F9185535B02032D02 /* InteractionLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionLogView.swift; sourceTree = "<group>"; };
 		3920FDD69AF99882EE149B34 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
 		479A82FF55F86216E7076764 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
 		498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
 		4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
 		512E7C56D2FD953887BA82A2 /* NFCService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCService.swift; sourceTree = "<group>"; };
 		536CADA6F5000A23B36C3293 /* IncomingCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IncomingCardView.swift; sourceTree = "<group>"; };
+		58381B1BF8976994EF5863D0 /* Interaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interaction.swift; sourceTree = "<group>"; };
 		59564CFA9B43480875B08E3D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5A3CB15BA8C15644AA598ECC /* PromoCodeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PromoCodeService.swift; sourceTree = "<group>"; };
+		625A13A160C8AE7B0389EE30 /* ContactGroupsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactGroupsView.swift; sourceTree = "<group>"; };
 		6329EC840E47B2A88F2CE0D2 /* WidgetDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetDataService.swift; sourceTree = "<group>"; };
 		678FA74B2A9F9EE75F85DB4A /* CardPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPreviewView.swift; sourceTree = "<group>"; };
+		72A56E5ABA7CDAB91BF4D7C4 /* ContactGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactGroup.swift; sourceTree = "<group>"; };
+		79BCCE610C6AF4A2E7214403 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		877123AB0A3D4AFB69DB4E3B /* CardProWidget.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CardProWidget.entitlements; sourceTree = "<group>"; };
 		897B542F1003CDC1EF2077B8 /* MyCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyCardsView.swift; sourceTree = "<group>"; };
 		9330608E43B74A95E9604D91 /* CardPro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CardPro.entitlements; sourceTree = "<group>"; };
@@ -106,15 +125,34 @@
 		C2DE674D2E1F44A45C24F75D /* WalletPassService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WalletPassService.swift; sourceTree = "<group>"; };
 		C383436879055DFA43BC6744 /* GravatarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GravatarService.swift; sourceTree = "<group>"; };
 		C768DA0C6D6D38E380A69BD8 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
+		C8A8DCEDB6D784184FDCC86B /* CardPublishService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardPublishService.swift; sourceTree = "<group>"; };
+		CB4EA913C039BCE5AD748126 /* CRMService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CRMService.swift; sourceTree = "<group>"; };
 		D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReceivedContact.swift; sourceTree = "<group>"; };
 		E58997001F2AECB5B5646CE9 /* CardProWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardProWidget.swift; sourceTree = "<group>"; };
+		E63E83E8509A5B2BFF6E6977 /* FirebaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseService.swift; sourceTree = "<group>"; };
+		E6A25A1E5E06F5AC9202E440 /* CardSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSubscriptionService.swift; sourceTree = "<group>"; };
 		EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareSheet.swift; sourceTree = "<group>"; };
 		EE97A16831C1360FF6049616 /* AnalyticsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsService.swift; sourceTree = "<group>"; };
 		F21B40C2458885716F9FFACF /* ContactsService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactsService.swift; sourceTree = "<group>"; };
+		F85504705B51552928BB407B /* PushNotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotificationService.swift; sourceTree = "<group>"; };
 		F8A2D85E6F02804503614E6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FBBBA32929D7BBB36F0C12E3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		FD020432EB94950E0186C964 /* TagService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E8DF5BEDD09C353720FECF9B /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E5342A397BB2C7B929332E75 /* FirebaseAuth in Frameworks */,
+				4F60821D891A693CF1DA9A1E /* FirebaseFirestore in Frameworks */,
+				68CEE21865B42012BA4328F8 /* FirebaseMessaging in Frameworks */,
+				F82BCA3BBBAA1C011D5E75E1 /* FirebaseStorage in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		1CC0B69284AC8BFEA4F9C1B0 /* CardProWidget */ = {
@@ -142,6 +180,7 @@
 			children = (
 				03EBB0C2801A5659B679DAF1 /* Assets.xcassets */,
 				9330608E43B74A95E9604D91 /* CardPro.entitlements */,
+				79BCCE610C6AF4A2E7214403 /* GoogleService-Info.plist */,
 				FBBBA32929D7BBB36F0C12E3 /* Info.plist */,
 				1A816CAE2C64B6F67291032C /* Localizable.strings */,
 				24F1CFC273BF1345F59C9F15 /* Products.storekit */,
@@ -170,12 +209,17 @@
 			children = (
 				EE97A16831C1360FF6049616 /* AnalyticsService.swift */,
 				B03F92408D3DC3E78EF99436 /* CardImageGenerator.swift */,
+				C8A8DCEDB6D784184FDCC86B /* CardPublishService.swift */,
+				E6A25A1E5E06F5AC9202E440 /* CardSubscriptionService.swift */,
 				11259D79E1F62BBE17938280 /* CloudSyncService.swift */,
 				F21B40C2458885716F9FFACF /* ContactsService.swift */,
+				CB4EA913C039BCE5AD748126 /* CRMService.swift */,
+				E63E83E8509A5B2BFF6E6977 /* FirebaseService.swift */,
 				C383436879055DFA43BC6744 /* GravatarService.swift */,
 				512E7C56D2FD953887BA82A2 /* NFCService.swift */,
 				3920FDD69AF99882EE149B34 /* OCRService.swift */,
 				5A3CB15BA8C15644AA598ECC /* PromoCodeService.swift */,
+				F85504705B51552928BB407B /* PushNotificationService.swift */,
 				4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */,
 				2335FAAEC70F48A624341F31 /* SubscriptionService.swift */,
 				FD020432EB94950E0186C964 /* TagService.swift */,
@@ -230,6 +274,8 @@
 			isa = PBXGroup;
 			children = (
 				B30C7FC0E2236307B5CE94B4 /* BusinessCard.swift */,
+				72A56E5ABA7CDAB91BF4D7C4 /* ContactGroup.swift */,
+				58381B1BF8976994EF5863D0 /* Interaction.swift */,
 				D3C6C0766FF615CC87D9B306 /* ReceivedContact.swift */,
 			);
 			path = Models;
@@ -240,9 +286,11 @@
 			children = (
 				145C50B929450D79EDE36283 /* CardEditorView.swift */,
 				678FA74B2A9F9EE75F85DB4A /* CardPreviewView.swift */,
+				625A13A160C8AE7B0389EE30 /* ContactGroupsView.swift */,
 				1734F2FA8725752664126DF9 /* ContentView.swift */,
 				B8E057DB79F440988CA6F223 /* ImageCropperView.swift */,
 				536CADA6F5000A23B36C3293 /* IncomingCardView.swift */,
+				34A8F27F9185535B02032D02 /* InteractionLogView.swift */,
 				897B542F1003CDC1EF2077B8 /* MyCardsView.swift */,
 				498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */,
 				479A82FF55F86216E7076764 /* NFCWriteView.swift */,
@@ -263,6 +311,7 @@
 			buildPhases = (
 				1BED2030269E63DFCCDED208 /* Sources */,
 				5102CE7B7093441BFA028D40 /* Resources */,
+				E8DF5BEDD09C353720FECF9B /* Frameworks */,
 				69865B761F144CBC31C248C0 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -272,6 +321,10 @@
 			);
 			name = CardPro;
 			packageProductDependencies = (
+				F39E9E4397F21A071B076669 /* FirebaseAuth */,
+				E4E9AAAF8307E59B79DE01F3 /* FirebaseFirestore */,
+				842396997F841511D65F39C8 /* FirebaseMessaging */,
+				E1635568DEA9898A0688BF79 /* FirebaseStorage */,
 			);
 			productName = CardPro;
 			productReference = 2B7DCEDD6A592ED0D90A27DD /* CardPro.app */;
@@ -326,6 +379,9 @@
 			);
 			mainGroup = 3EF30161C5E25629F9EDD182;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+			);
 			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
@@ -342,6 +398,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				213698EB86DE745D49E75A62 /* Assets.xcassets in Resources */,
+				EACD6172FB8BB021B4C15A2A /* GoogleService-Info.plist in Resources */,
 				6031401E9C4107C54323C194 /* Localizable.strings in Resources */,
 				9EAAB3BFADEC050AE8DF7D96 /* Products.storekit in Resources */,
 			);
@@ -356,17 +413,25 @@
 			files = (
 				D1C820EEEF0D49F6260D7C75 /* AnalyticsService.swift in Sources */,
 				3803DC5028930B0655031256 /* BusinessCard.swift in Sources */,
+				55771C1A99A912E08A996CCB /* CRMService.swift in Sources */,
 				A6B0D9880B53B0201D683667 /* CardEditorView.swift in Sources */,
 				21DCC7FF6453EDCEB1AB0C0D /* CardImageGenerator.swift in Sources */,
 				1A17CD52A686B061B18792FB /* CardPreviewView.swift in Sources */,
 				B07B32B98B3C69CDD5537E18 /* CardProApp.swift in Sources */,
 				79999107DC3266697EAE1A37 /* CardProIntents.swift in Sources */,
+				9EBA5C2BDBFD7ACB7E1DF079 /* CardPublishService.swift in Sources */,
+				1BF058B913688DD22B79F3EF /* CardSubscriptionService.swift in Sources */,
 				0001B4FCDC7D4AD147364936 /* CloudSyncService.swift in Sources */,
+				F2666FA49191C1AF391C17FF /* ContactGroup.swift in Sources */,
+				B85DA25D55DCA453631F6657 /* ContactGroupsView.swift in Sources */,
 				14361BD3D163F5B418BC1D9E /* ContactsService.swift in Sources */,
 				82189106E477ACECDA9DF78C /* ContentView.swift in Sources */,
+				5C187A5E76738DA7801D8863 /* FirebaseService.swift in Sources */,
 				CE27F2056BECF7CFC0DD5A7B /* GravatarService.swift in Sources */,
 				6D120BF144253B625DE197C9 /* ImageCropperView.swift in Sources */,
 				24ECDF08BD45CE408573D3B1 /* IncomingCardView.swift in Sources */,
+				358CD6BFC8BCFF9196B6EC16 /* Interaction.swift in Sources */,
+				1975CA00A7164824E91EE067 /* InteractionLogView.swift in Sources */,
 				4923137371A08CE62A6036C3 /* Localizable.swift in Sources */,
 				A33353A119310E1ECCA31506 /* MyCardsView.swift in Sources */,
 				FEE19C9CBCDD3E8A05DEBBCA /* NFCReadView.swift in Sources */,
@@ -374,6 +439,7 @@
 				5D31146FA9B519245F62076F /* NFCWriteView.swift in Sources */,
 				263399394719E9C0A057C155 /* OCRService.swift in Sources */,
 				80B58F2C580581E20DD01262 /* PromoCodeService.swift in Sources */,
+				2E0249E633BEC1C7FA248CCA /* PushNotificationService.swift in Sources */,
 				A84623A2063AA818C8F3D4A7 /* QRCodeGenerator.swift in Sources */,
 				0856EA51C44E34FDA718DAE5 /* ReceivedCardsView.swift in Sources */,
 				6DFEE41C920C5BD92FA944D9 /* ReceivedContact.swift in Sources */,
@@ -655,6 +721,40 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = exactVersion;
+				version = 11.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		842396997F841511D65F39C8 /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		E1635568DEA9898A0688BF79 /* FirebaseStorage */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseStorage;
+		};
+		E4E9AAAF8307E59B79DE01F3 /* FirebaseFirestore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFirestore;
+		};
+		F39E9E4397F21A071B076669 /* FirebaseAuth */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 95F199924EEA3F2499675AC9 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAuth;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DD7C636856BC815007BB169E /* Project object */;
 }

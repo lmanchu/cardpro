@@ -72,6 +72,12 @@ final class BusinessCard {
     var createdAt: Date = Date()
     var updatedAt: Date = Date()
 
+    // MARK: - Firebase Publishing
+
+    var firebaseCardId: String?        // Firebase document ID (when published)
+    var isPublished: Bool = false      // Whether card is published to Firebase
+    var lastPublishedVersion: Int = 0  // Last version synced to Firebase
+
     // Computed property for custom fields
     var customFields: [CustomField] {
         get {
@@ -106,7 +112,10 @@ final class BusinessCard {
         isDefault: Bool = false,
         sortOrder: Int = 0,
         createdAt: Date = Date(),
-        updatedAt: Date = Date()
+        updatedAt: Date = Date(),
+        firebaseCardId: String? = nil,
+        isPublished: Bool = false,
+        lastPublishedVersion: Int = 0
     ) {
         self.id = id
         self.cardLabel = cardLabel
@@ -131,6 +140,9 @@ final class BusinessCard {
         self.sortOrder = sortOrder
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.firebaseCardId = firebaseCardId
+        self.isPublished = isPublished
+        self.lastPublishedVersion = lastPublishedVersion
     }
 
     // MARK: - Computed Properties
@@ -261,5 +273,24 @@ final class BusinessCard {
     /// Generate vCard data for sharing
     func toVCardData() -> Data? {
         toVCard().data(using: .utf8)
+    }
+
+    // MARK: - Firebase Helpers
+
+    /// Whether the card needs to be synced to Firebase
+    var needsFirebaseSync: Bool {
+        isPublished && cardVersion > lastPublishedVersion
+    }
+
+    /// Convert custom fields to Firebase format
+    func toFirebaseCustomFields() -> [FirebaseCustomField] {
+        customFields.map { field in
+            FirebaseCustomField(
+                id: field.id.uuidString,
+                label: field.label,
+                value: field.value,
+                type: field.type.rawValue
+            )
+        }
     }
 }

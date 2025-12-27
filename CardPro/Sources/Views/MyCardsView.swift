@@ -16,6 +16,9 @@ struct MyCardsView: View {
     @State private var selectedCardIndex: Int = 0
     @State private var showingSubscription = false
     @StateObject private var subscriptionService = SubscriptionService.shared
+    @StateObject private var cardPublishService = CardPublishService.shared
+    @State private var isPublishing = false
+    @State private var publishError: String?
 
     var defaultCard: BusinessCard? {
         cards.first(where: { $0.isDefault }) ?? cards.first
@@ -58,6 +61,9 @@ struct MyCardsView: View {
                             }
 
                             shareButtonsSection(card: card)
+
+                            // Publish section
+                            publishSection(card: card)
                         }
                     } else {
                         emptyStateView
@@ -293,6 +299,131 @@ struct MyCardsView: View {
         }
         .padding(.horizontal)
         .padding(.top, 8)
+    }
+
+    // MARK: - Publish Section
+
+    @ViewBuilder
+    private func publishSection(card: BusinessCard) -> some View {
+        VStack(spacing: 12) {
+            Divider()
+                .padding(.vertical, 8)
+
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Image(systemName: card.isPublished ? "globe" : "globe.badge.chevron.backward")
+                            .foregroundColor(card.isPublished ? .green : .secondary)
+
+                        Text("訂閱名片")
+                            .font(.headline)
+                    }
+
+                    Text(card.isPublished ? "他人掃 QR 可訂閱更新" : "發布後可讓他人訂閱")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if isPublishing {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                } else {
+                    Toggle("", isOn: Binding(
+                        get: { card.isPublished },
+                        set: { newValue in
+                            togglePublish(card: card, publish: newValue)
+                        }
+                    ))
+                    .labelsHidden()
+                }
+            }
+
+            // Show subscriber count when published
+            if card.isPublished, let cardId = card.firebaseCardId {
+                HStack {
+                    Image(systemName: "person.2.fill")
+                        .foregroundColor(.blue)
+                        .font(.caption)
+
+                    Text("\(cardPublishService.subscriberCounts[cardId] ?? 0) 位訂閱者")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    Spacer()
+
+                    if card.needsFirebaseSync {
+                        Button {
+                            syncCard(card)
+                        } label: {
+                            Label("同步更新", systemImage: "arrow.triangle.2.circlepath")
+                                .font(.caption)
+                        }
+                        .buttonStyle(.bordered)
+                        .controlSize(.small)
+                    }
+                }
+                .padding(.top, 4)
+                .task {
+                    // Fetch subscriber count
+                    if let count = try? await cardPublishService.getSubscriberCount(cardId: cardId) {
+                        await MainActor.run {
+                            cardPublishService.subscriberCounts[cardId] = count
+                        }
+                    }
+                }
+            }
+
+            // Error message
+            if let error = publishError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+
+    private func togglePublish(card: BusinessCard, publish: Bool) {
+        isPublishing = true
+        publishError = nil
+
+        Task {
+            do {
+                if publish {
+                    // Publish card
+                    let cardId = try await cardPublishService.publishCard(card)
+                    card.firebaseCardId = cardId
+                    card.isPublished = true
+                    card.lastPublishedVersion = card.cardVersion
+                } else {
+                    // Unpublish card
+                    try await cardPublishService.unpublishCard(card)
+                    card.isPublished = false
+                }
+            } catch {
+                publishError = "發布失敗: \(error.localizedDescription)"
+                // Revert toggle on error
+            }
+
+            isPublishing = false
+        }
+    }
+
+    private func syncCard(_ card: BusinessCard) {
+        isPublishing = true
+
+        Task {
+            do {
+                _ = try await cardPublishService.publishCard(card)
+                card.lastPublishedVersion = card.cardVersion
+            } catch {
+                publishError = "同步失敗: \(error.localizedDescription)"
+            }
+            isPublishing = false
+        }
     }
 
     // MARK: - Empty State

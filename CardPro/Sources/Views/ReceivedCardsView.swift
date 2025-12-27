@@ -927,6 +927,23 @@ struct ReceivedContactDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
 
+                    // Subscription section (if card has Firebase ID)
+                    if contact.firebaseCardId != nil {
+                        SubscriptionSection(contact: contact)
+                            .padding(.horizontal)
+                    }
+
+                    // CRM Section - Relationship & Interactions
+                    CRMSection(contact: contact)
+                        .padding(.horizontal)
+
+                    // Groups section
+                    GroupPicker(contact: contact)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal)
+
                     // Version info
                     if contact.senderCardVersion > 1 {
                         Text("Card version \(contact.senderCardVersion)")
@@ -2315,6 +2332,187 @@ struct FlowLayout: Layout {
             }
 
             self.size.height = y + lineHeight
+        }
+    }
+}
+
+// MARK: - Subscription Section
+
+struct SubscriptionSection: View {
+    @Bindable var contact: ReceivedContact
+    @StateObject private var subscriptionService = CardSubscriptionService.shared
+    @State private var isSubscribing = false
+    @State private var subscriptionError: String?
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack {
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 6) {
+                        Image(systemName: contact.isSubscribed ? "bell.fill" : "bell")
+                            .foregroundColor(contact.isSubscribed ? .green : .secondary)
+
+                        Text("訂閱更新")
+                            .font(.headline)
+                    }
+
+                    Text(contact.isSubscribed ? "名片更新時收到通知" : "訂閱以追蹤名片更新")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                if isSubscribing {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                } else {
+                    Toggle("", isOn: Binding(
+                        get: { contact.isSubscribed },
+                        set: { newValue in
+                            toggleSubscription(subscribe: newValue)
+                        }
+                    ))
+                    .labelsHidden()
+                }
+            }
+
+            if let error = subscriptionError {
+                Text(error)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private func toggleSubscription(subscribe: Bool) {
+        guard let cardId = contact.firebaseCardId else { return }
+
+        isSubscribing = true
+        subscriptionError = nil
+
+        Task {
+            do {
+                if subscribe {
+                    let subscription = try await subscriptionService.subscribe(toCardId: cardId)
+                    contact.subscriptionId = subscription.id
+                    contact.isSubscribed = true
+                } else if let subId = contact.subscriptionId {
+                    try await subscriptionService.unsubscribe(subscriptionId: subId)
+                    contact.subscriptionId = nil
+                    contact.isSubscribed = false
+                }
+            } catch {
+                subscriptionError = "操作失敗: \(error.localizedDescription)"
+            }
+
+            isSubscribing = false
+        }
+    }
+}
+
+// MARK: - CRM Section
+
+struct CRMSection: View {
+    let contact: ReceivedContact
+    @Environment(\.modelContext) private var modelContext
+    @State private var showingInteractionLog = false
+
+    private var interactions: [Interaction] {
+        CRMService.shared.fetchInteractions(for: contact, modelContext: modelContext)
+    }
+
+    var body: some View {
+        VStack(spacing: 12) {
+            // Relationship score
+            RelationshipScoreView(score: contact.relationshipScore)
+
+            // Quick stats
+            HStack(spacing: 16) {
+                VStack {
+                    Text("\(contact.interactionCount)")
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    Text("互動次數")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Divider()
+                    .frame(height: 40)
+
+                VStack {
+                    if let lastInteraction = contact.lastInteractionAt {
+                        Text(lastInteraction, style: .relative)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                    } else {
+                        Text("--")
+                            .font(.title2)
+                            .fontWeight(.bold)
+                    }
+                    Text("上次互動")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                // View interactions button
+                Button {
+                    showingInteractionLog = true
+                } label: {
+                    VStack {
+                        Image(systemName: "list.bullet.clipboard")
+                            .font(.title2)
+                        Text("查看記錄")
+                            .font(.caption)
+                    }
+                    .foregroundColor(.accentColor)
+                }
+            }
+            .padding(.top, 8)
+
+            // Recent interactions preview
+            if !interactions.isEmpty {
+                Divider()
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("最近互動")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    ForEach(interactions.prefix(2)) { interaction in
+                        HStack(spacing: 8) {
+                            Image(systemName: interaction.type.icon)
+                                .font(.caption)
+                                .foregroundColor(interaction.type.color)
+                                .frame(width: 20)
+
+                            Text(interaction.displayTitle)
+                                .font(.caption)
+                                .lineLimit(1)
+
+                            Spacer()
+
+                            Text(interaction.timestamp, style: .relative)
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                }
+            }
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .sheet(isPresented: $showingInteractionLog) {
+            NavigationStack {
+                InteractionLogView(contact: contact)
+            }
         }
     }
 }

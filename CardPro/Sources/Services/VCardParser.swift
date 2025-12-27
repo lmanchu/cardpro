@@ -105,7 +105,14 @@ class VCardParser {
                 }
 
             case "NOTE":
-                contact.notes = value
+                // Check for CardPro-ID in note
+                if value.hasPrefix("CardPro-ID:") {
+                    let cardProId = String(value.dropFirst("CardPro-ID:".count))
+                    contact.firebaseCardId = cardProId
+                    contact.isSubscribed = false // Will be set to true if user subscribes
+                } else {
+                    contact.notes = value
+                }
 
             case "PHOTO":
                 // Handle base64 encoded photo

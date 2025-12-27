@@ -46,6 +46,19 @@ final class ReceivedContact {
     var lastUpdatedAt: Date?             // When card was last updated
     var hasUnreadUpdate: Bool = false    // Show badge for new updates
 
+    // MARK: - Firebase Subscription
+
+    var firebaseCardId: String?          // Firebase published card ID (for subscription)
+    var isSubscribed: Bool = false       // Active subscription to this card
+    var subscriptionId: String?          // Firebase subscription document ID
+
+    // MARK: - CRM Data
+
+    var relationshipScore: Double = 0    // Calculated relationship score (0-100)
+    var lastInteractionAt: Date?         // Most recent interaction timestamp
+    var interactionCount: Int = 0        // Total number of interactions
+    var groupIdsData: Data?              // Encoded [UUID] for custom groups
+
     // Computed property for custom fields
     var customFields: [CustomField] {
         get {
@@ -65,6 +78,17 @@ final class ReceivedContact {
         }
         set {
             tagsData = try? JSONEncoder().encode(newValue)
+        }
+    }
+
+    // Computed property for group IDs (stored as JSON for CloudKit compatibility)
+    var groupIds: [UUID] {
+        get {
+            guard let data = groupIdsData else { return [] }
+            return (try? JSONDecoder().decode([UUID].self, from: data)) ?? []
+        }
+        set {
+            groupIdsData = try? JSONEncoder().encode(newValue)
         }
     }
 
@@ -93,7 +117,12 @@ final class ReceivedContact {
         tags: [String] = [],
         senderCardId: UUID? = nil,
         senderCardVersion: Int = 1,
-        isTracked: Bool = false
+        isTracked: Bool = false,
+        firebaseCardId: String? = nil,
+        isSubscribed: Bool = false,
+        subscriptionId: String? = nil,
+        relationshipScore: Double = 0,
+        groupIds: [UUID] = []
     ) {
         self.id = id
         self.firstName = firstName
@@ -122,6 +151,13 @@ final class ReceivedContact {
         self.isTracked = isTracked
         self.lastUpdatedAt = nil
         self.hasUnreadUpdate = false
+        self.firebaseCardId = firebaseCardId
+        self.isSubscribed = isSubscribed
+        self.subscriptionId = subscriptionId
+        self.relationshipScore = relationshipScore
+        self.lastInteractionAt = nil
+        self.interactionCount = 0
+        self.groupIdsData = try? JSONEncoder().encode(groupIds)
     }
 
     // MARK: - Computed Properties

@@ -91,10 +91,20 @@ class IncomingCardManager {
 struct CardProApp: App {
     @State private var incomingCardManager = IncomingCardManager()
 
+    init() {
+        // Initialize Firebase
+        FirebaseService.shared.configure()
+
+        // Setup push notifications
+        PushNotificationService.shared.setup()
+    }
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             BusinessCard.self,
             ReceivedContact.self,
+            Interaction.self,
+            ContactGroup.self,
         ])
 
         // Try CloudKit first, fall back to local storage if it fails
