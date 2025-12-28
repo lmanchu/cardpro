@@ -134,6 +134,30 @@ class CardPublishService: ObservableObject {
         return Int(truncating: snapshot.count)
     }
 
+    // MARK: - Get Subscribers List
+
+    /// Get list of subscribers for a published card
+    func getSubscribers(cardId: String) async throws -> [Subscriber] {
+        let snapshot = try await db.collection("subscriptions")
+            .whereField("cardId", isEqualTo: cardId)
+            .order(by: "subscribedAt", descending: true)
+            .getDocuments()
+
+        return snapshot.documents.compactMap { doc -> Subscriber? in
+            let data = doc.data()
+            guard let subscribedTimestamp = data["subscribedAt"] as? Timestamp else {
+                return nil
+            }
+
+            return Subscriber(
+                id: doc.documentID,
+                subscribedAt: subscribedTimestamp.dateValue(),
+                notificationsEnabled: data["notificationsEnabled"] as? Bool ?? true,
+                lastSeenVersion: data["lastSeenVersion"] as? Int ?? 0
+            )
+        }
+    }
+
     // MARK: - Helpers
 
     private func parseFirebaseCard(from data: [String: Any], id: String) -> FirebaseCard {
@@ -191,4 +215,13 @@ enum CardPublishError: LocalizedError {
             return "Failed to upload card data"
         }
     }
+}
+
+// MARK: - Subscriber Model
+
+struct Subscriber: Identifiable {
+    let id: String
+    let subscribedAt: Date
+    let notificationsEnabled: Bool
+    let lastSeenVersion: Int
 }

@@ -19,6 +19,7 @@ struct MyCardsView: View {
     @StateObject private var cardPublishService = CardPublishService.shared
     @State private var isPublishing = false
     @State private var publishError: String?
+    @State private var cardForSubscribers: BusinessCard?
 
     var defaultCard: BusinessCard? {
         cards.first(where: { $0.isDefault }) ?? cards.first
@@ -128,6 +129,9 @@ struct MyCardsView: View {
             }
             .sheet(item: $cardForWallet) { card in
                 WalletPassView(card: card)
+            }
+            .sheet(item: $cardForSubscribers) { card in
+                SubscribersListView(card: card)
             }
             .alert(L10n.CardEditor.deleteCard, isPresented: $showingDeleteConfirm) {
                 Button(L10n.Common.cancel, role: .cancel) {
@@ -343,13 +347,25 @@ struct MyCardsView: View {
             // Show subscriber count when published
             if card.isPublished, let cardId = card.firebaseCardId {
                 HStack {
-                    Image(systemName: "person.2.fill")
-                        .foregroundColor(.blue)
-                        .font(.caption)
+                    // Tappable subscriber count
+                    Button {
+                        cardForSubscribers = card
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: "person.2.fill")
+                                .foregroundColor(.blue)
+                                .font(.caption)
 
-                    Text("\(cardPublishService.subscriberCounts[cardId] ?? 0) 位訂閱者")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                            Text("\(cardPublishService.subscriberCounts[cardId] ?? 0) 位訂閱者")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Image(systemName: "chevron.right")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                    .buttonStyle(.plain)
 
                     Spacer()
 
