@@ -126,8 +126,14 @@ class CardPublishService: ObservableObject {
 
     /// Get the number of subscribers for a published card
     func getSubscriberCount(cardId: String) async throws -> Int {
+        guard let userId = firebaseService.userId else {
+            throw CardPublishError.notAuthenticated
+        }
+
+        // Must filter by cardOwnerId to match Firestore security rules
         let snapshot = try await db.collection("subscriptions")
             .whereField("cardId", isEqualTo: cardId)
+            .whereField("cardOwnerId", isEqualTo: userId)
             .count
             .getAggregation(source: .server)
 
@@ -138,8 +144,14 @@ class CardPublishService: ObservableObject {
 
     /// Get list of subscribers for a published card
     func getSubscribers(cardId: String) async throws -> [Subscriber] {
+        guard let userId = firebaseService.userId else {
+            throw CardPublishError.notAuthenticated
+        }
+
+        // Must filter by cardOwnerId to match Firestore security rules
         let snapshot = try await db.collection("subscriptions")
             .whereField("cardId", isEqualTo: cardId)
+            .whereField("cardOwnerId", isEqualTo: userId)
             .order(by: "subscribedAt", descending: true)
             .getDocuments()
 
