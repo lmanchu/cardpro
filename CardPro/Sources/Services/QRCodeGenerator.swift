@@ -106,7 +106,7 @@ class QRCodeGenerator {
         // Add CardPro subscription ID if published
         if let firebaseCardId = card.firebaseCardId, card.isPublished {
             // Add subscribable URL for web viewing
-            vcard += "\nURL;TYPE=CARDPRO:https://cardpro.xyz/c/\(firebaseCardId)"
+            vcard += "\nURL;TYPE=CARDPRO:https://cardpro-158e2.web.app/c/\(firebaseCardId)"
             // Add CardPro ID in NOTE for app to detect
             vcard += "\nNOTE:CardPro-ID:\(firebaseCardId)"
         }

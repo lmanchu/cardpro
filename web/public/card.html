@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CardPro - 數位名片</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="profile">
+    <meta property="og:title" id="og-title" content="CardPro 名片">
+    <meta property="og:description" id="og-desc" content="查看數位名片">
+    <meta property="og:image" id="og-image" content="">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 30px 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            border: 4px solid white;
+            margin-bottom: 15px;
+            object-fit: cover;
+            background: #4a5568;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .avatar-placeholder {
+            font-size: 40px;
+            color: white;
+        }
+
+        .name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .name-localized {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 10px;
+        }
+
+        .title {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .company {
+            font-size: 16px;
+            font-weight: 500;
+            margin-top: 5px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+            text-decoration: none;
+            color: #333;
+            transition: background 0.2s;
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .contact-item:hover {
+            background: #f8f9fa;
+            margin: 0 -20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 18px;
+        }
+
+        .contact-icon.phone { background: #dcfce7; color: #16a34a; }
+        .contact-icon.email { background: #dbeafe; color: #2563eb; }
+        .contact-icon.web { background: #fef3c7; color: #d97706; }
+        .contact-icon.linkedin { background: #dbeafe; color: #0077b5; }
+
+        .contact-label {
+            font-size: 12px;
+            color: #888;
+        }
+
+        .contact-value {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .actions {
+            padding: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .app-promo {
+            text-align: center;
+            padding: 20px;
+            color: white;
+            max-width: 400px;
+        }
+
+        .app-promo p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+        }
+
+        .app-badges {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .app-badges img {
+            height: 40px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .error-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+
+        .error h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .error p {
+            color: #666;
+        }
+
+        /* Custom fields */
+        .custom-fields {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>載入名片中...</p>
+    </div>
+
+    <div id="card-container" style="display: none;">
+        <div class="card">
+            <div class="card-header">
+                <div class="avatar" id="avatar">
+                    <span class="avatar-placeholder" id="avatar-placeholder">👤</span>
+                </div>
+                <div class="name" id="name"></div>
+                <div class="name-localized" id="name-localized"></div>
+                <div class="title" id="title"></div>
+                <div class="company" id="company"></div>
+            </div>
+
+            <div class="card-body" id="contact-info">
+                <!-- Contact items will be inserted here -->
+            </div>
+
+            <div class="actions">
+                <a href="#" class="btn btn-primary" id="add-contact">加入聯絡人</a>
+                <a href="#" class="btn btn-secondary" id="share-btn">分享</a>
+            </div>
+        </div>
+
+        <div class="app-promo">
+            <p>使用 CardPro App 訂閱名片更新</p>
+            <div class="app-badges">
+                <a href="https://apps.apple.com/app/cardpro" target="_blank">
+                    <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on App Store">
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="error" class="error" style="display: none;">
+        <div class="error-icon">😕</div>
+        <h2>找不到名片</h2>
+        <p>這張名片可能已被刪除或連結無效</p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+        import { getFirestore, doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+
+        // Firebase config (same as iOS app)
+        const firebaseConfig = {
+            apiKey: "AIzaSyA39412xqejETd0MNDXKtVMMjS5Xi8G4LY",
+            authDomain: "cardpro-158e2.firebaseapp.com",
+            projectId: "cardpro-158e2",
+            storageBucket: "cardpro-158e2.firebasestorage.app",
+            messagingSenderId: "854007914126",
+            appId: "1:854007914126:ios:64297af81c9aa93e3cb3df"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Get card ID from URL
+        const pathParts = window.location.pathname.split('/');
+        const cardId = pathParts[pathParts.length - 1] || new URLSearchParams(window.location.search).get('id');
+
+        async function loadCard() {
+            if (!cardId) {
+                showError();
+                return;
+            }
+
+            try {
+                const cardRef = doc(db, 'publishedCards', cardId);
+                const cardSnap = await getDoc(cardRef);
+
+                if (!cardSnap.exists()) {
+                    showError();
+                    return;
+                }
+
+                const card = cardSnap.data();
+                renderCard(card, cardId);
+
+            } catch (error) {
+                console.error('Error loading card:', error);
+                showError();
+            }
+        }
+
+        function renderCard(card, cardId) {
+            // Hide loading, show card
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('card-container').style.display = 'block';
+
+            // Name
+            const fullName = `${card.firstName || ''} ${card.lastName || ''}`.trim() || '未命名';
+            document.getElementById('name').textContent = fullName;
+
+            // Localized name
+            const localizedName = card.localizedFirstName || card.localizedLastName
+                ? `${card.localizedLastName || ''}${card.localizedFirstName || ''}`.trim()
+                : null;
+            const localizedEl = document.getElementById('name-localized');
+            if (localizedName && localizedName !== fullName) {
+                localizedEl.textContent = localizedName;
+                localizedEl.style.display = 'block';
+            } else {
+                localizedEl.style.display = 'none';
+            }
+
+            // Title & Company
+            const titleEl = document.getElementById('title');
+            const companyEl = document.getElementById('company');
+
+            if (card.title) {
+                titleEl.textContent = card.localizedTitle && card.localizedTitle !== card.title
+                    ? `${card.title} (${card.localizedTitle})`
+                    : card.title;
+                titleEl.style.display = 'block';
+            } else {
+                titleEl.style.display = 'none';
+            }
+
+            if (card.company) {
+                companyEl.textContent = card.localizedCompany && card.localizedCompany !== card.company
+                    ? `${card.company} (${card.localizedCompany})`
+                    : card.company;
+                companyEl.style.display = 'block';
+            } else {
+                companyEl.style.display = 'none';
+            }
+
+            // Avatar
+            if (card.photoUrl) {
+                const avatarEl = document.getElementById('avatar');
+                avatarEl.innerHTML = `<img src="${card.photoUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">`;
+            }
+
+            // Contact info
+            const contactInfo = document.getElementById('contact-info');
+            contactInfo.innerHTML = '';
+
+            if (card.phone) {
+                contactInfo.innerHTML += createContactItem('phone', '電話', card.phone, `tel:${card.phone}`);
+            }
+
+            if (card.email) {
+                contactInfo.innerHTML += createContactItem('email', 'Email', card.email, `mailto:${card.email}`);
+            }
+
+            if (card.website) {
+                const url = card.website.startsWith('http') ? card.website : `https://${card.website}`;
+                contactInfo.innerHTML += createContactItem('web', '網站', card.website, url);
+            }
+
+            // Custom fields
+            if (card.customFields && card.customFields.length > 0) {
+                card.customFields.forEach(field => {
+                    const iconType = getFieldIconType(field.type);
+                    const href = getFieldHref(field.type, field.value);
+                    contactInfo.innerHTML += createContactItem(iconType, field.label, field.value, href);
+                });
+            }
+
+            // Update page title and OG tags
+            document.title = `${fullName} - CardPro`;
+            document.getElementById('og-title').content = fullName;
+            document.getElementById('og-desc').content = card.title ? `${card.title} @ ${card.company || ''}` : 'CardPro 數位名片';
+            if (card.photoUrl) {
+                document.getElementById('og-image').content = card.photoUrl;
+            }
+
+            // Add contact button - generate vCard
+            document.getElementById('add-contact').href = generateVCardDataURL(card);
+            document.getElementById('add-contact').download = `${fullName}.vcf`;
+
+            // Share button
+            document.getElementById('share-btn').onclick = () => {
+                if (navigator.share) {
+                    navigator.share({
+                        title: fullName,
+                        text: `${fullName} 的名片`,
+                        url: window.location.href
+                    });
+                } else {
+                    navigator.clipboard.writeText(window.location.href);
+                    alert('連結已複製！');
+                }
+            };
+        }
+
+        function createContactItem(iconType, label, value, href) {
+            const icon = getIcon(iconType);
+            return `
+                <a href="${href}" class="contact-item" target="${iconType === 'web' || iconType === 'linkedin' ? '_blank' : '_self'}">
+                    <div class="contact-icon ${iconType}">${icon}</div>
+                    <div>
+                        <div class="contact-label">${label}</div>
+                        <div class="contact-value">${value}</div>
+                    </div>
+                </a>
+            `;
+        }
+
+        function getIcon(type) {
+            const icons = {
+                phone: '📞',
+                email: '✉️',
+                web: '🌐',
+                linkedin: '💼',
+                default: '📋'
+            };
+            return icons[type] || icons.default;
+        }
+
+        function getFieldIconType(type) {
+            if (type === 'linkedin' || type === 'url') return 'linkedin';
+            if (type === 'phone') return 'phone';
+            if (type === 'email') return 'email';
+            return 'web';
+        }
+
+        function getFieldHref(type, value) {
+            if (type === 'phone') return `tel:${value}`;
+            if (type === 'email') return `mailto:${value}`;
+            if (type === 'url' || type === 'linkedin') {
+                return value.startsWith('http') ? value : `https://${value}`;
+            }
+            return '#';
+        }
+
+        function generateVCardDataURL(card) {
+            const fullName = `${card.firstName || ''} ${card.lastName || ''}`.trim();
+            let vcard = `BEGIN:VCARD
+VERSION:3.0
+N:${card.lastName || ''};${card.firstName || ''};;;
+FN:${fullName}`;
+
+            if (card.company) vcard += `\nORG:${card.company}`;
+            if (card.title) vcard += `\nTITLE:${card.title}`;
+            if (card.phone) vcard += `\nTEL;TYPE=CELL:${card.phone}`;
+            if (card.email) vcard += `\nEMAIL:${card.email}`;
+            if (card.website) vcard += `\nURL:${card.website}`;
+
+            vcard += `\nEND:VCARD`;
+
+            return 'data:text/vcard;charset=utf-8,' + encodeURIComponent(vcard);
+        }
+
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+
+        // Load card on page load
+        loadCard();
+    </script>
+</body>
+</html>
