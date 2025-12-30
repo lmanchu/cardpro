@@ -869,25 +869,6 @@ struct ReceivedContactDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
 
-                    // Track updates toggle
-                    VStack(spacing: 12) {
-                        Toggle(isOn: Binding(
-                            get: { contact.isTracked },
-                            set: { contact.isTracked = $0 }
-                        )) {
-                            Label("Track Updates", systemImage: "bell.fill")
-                        }
-                        .tint(.blue)
-
-                        Text("Get notified when this contact updates their card")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-                    .padding(.horizontal)
-
                     // Tags section
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
@@ -927,11 +908,9 @@ struct ReceivedContactDetailView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                     .padding(.horizontal)
 
-                    // Subscription section (if card has Firebase ID)
-                    if contact.firebaseCardId != nil {
-                        SubscriptionSection(contact: contact)
-                            .padding(.horizontal)
-                    }
+                    // Subscription section
+                    SubscriptionSection(contact: contact)
+                        .padding(.horizontal)
 
                     // CRM Section - Relationship & Interactions
                     CRMSection(contact: contact)
@@ -2344,36 +2323,46 @@ struct SubscriptionSection: View {
     @State private var isSubscribing = false
     @State private var subscriptionError: String?
 
+    private var hasCardProId: Bool {
+        contact.firebaseCardId != nil
+    }
+
     var body: some View {
         VStack(spacing: 12) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 6) {
-                        Image(systemName: contact.isSubscribed ? "bell.fill" : "bell")
-                            .foregroundColor(contact.isSubscribed ? .green : .secondary)
+                        Image(systemName: iconName)
+                            .foregroundColor(iconColor)
 
                         Text("訂閱更新")
                             .font(.headline)
                     }
 
-                    Text(contact.isSubscribed ? "名片更新時收到通知" : "訂閱以追蹤名片更新")
+                    Text(subtitleText)
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
                 Spacer()
 
-                if isSubscribing {
-                    ProgressView()
-                        .scaleEffect(0.8)
+                if hasCardProId {
+                    if isSubscribing {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    } else {
+                        Toggle("", isOn: Binding(
+                            get: { contact.isSubscribed },
+                            set: { newValue in
+                                toggleSubscription(subscribe: newValue)
+                            }
+                        ))
+                        .labelsHidden()
+                    }
                 } else {
-                    Toggle("", isOn: Binding(
-                        get: { contact.isSubscribed },
-                        set: { newValue in
-                            toggleSubscription(subscribe: newValue)
-                        }
-                    ))
-                    .labelsHidden()
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.secondary)
+                        .font(.title2)
                 }
             }
 
@@ -2386,6 +2375,27 @@ struct SubscriptionSection: View {
         .padding()
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    private var iconName: String {
+        if !hasCardProId {
+            return "bell.slash"
+        }
+        return contact.isSubscribed ? "bell.fill" : "bell"
+    }
+
+    private var iconColor: Color {
+        if !hasCardProId {
+            return .secondary
+        }
+        return contact.isSubscribed ? .green : .secondary
+    }
+
+    private var subtitleText: String {
+        if !hasCardProId {
+            return "此聯絡人不支援自動更新"
+        }
+        return contact.isSubscribed ? "名片更新時收到通知" : "訂閱以追蹤名片更新"
     }
 
     private func toggleSubscription(subscribe: Bool) {
