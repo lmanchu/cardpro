@@ -16,6 +16,11 @@ struct ReceivedCardsView: View {
     @State private var scannedCardData: ScannedCardData?
     @State private var pendingUpdate: PendingCardUpdate?
 
+    // Pro features
+    @State private var showingProGate = false
+    @State private var showingShareSheet = false
+    @State private var shareURL: URL?
+
     // Batch import states
     @State private var showingBatchImport = false
     @State private var batchImportProgress: Double = 0
@@ -117,6 +122,15 @@ struct ReceivedCardsView: View {
             }
             .navigationTitle(L10n.Received.title)
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if !contacts.isEmpty {
+                        Button {
+                            exportContacts()
+                        } label: {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                    }
+                }
                 ToolbarItem(placement: .primaryAction) {
                     HStack(spacing: 16) {
                         // Batch import menu
@@ -247,6 +261,14 @@ struct ReceivedCardsView: View {
                     Text(L10n.Received.importResult(result.imported, result.updated, result.failed))
                 }
             }
+            .sheet(isPresented: $showingProGate) {
+                ProFeatureGateView(feature: .csvExport)
+            }
+            .sheet(isPresented: $showingShareSheet) {
+                if let url = shareURL {
+                    ActivitySheet(items: [url])
+                }
+            }
         }
     }
 
@@ -294,6 +316,45 @@ struct ReceivedCardsView: View {
             // New contact
             modelContext.insert(newContact)
         }
+    }
+
+    private func exportContacts() {
+        if SubscriptionService.shared.subscriptionStatus.isPro {
+            let csv = generateCSV(from: filteredContacts)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent("cardpro-contacts.csv")
+            do {
+                try csv.write(to: url, atomically: true, encoding: .utf8)
+                shareURL = url
+                showingShareSheet = true
+            } catch {
+                // TODO: Handle error
+                print("Failed to write CSV: \(error)")
+            }
+        } else {
+            showingProGate = true
+        }
+    }
+
+    private func generateCSV(from contacts: [ReceivedContact]) -> String {
+        let header = "Name,Title,Company,Email,Phone,Website,Notes,Received At\n"
+        let formatter = ISO8601DateFormatter()
+
+        let rows = contacts.map { c -> String in
+            let row = [
+                c.fullName,
+                c.title ?? "",
+                c.company ?? "",
+                c.email ?? "",
+                c.phone ?? "",
+                c.website ?? "",
+                c.notes ?? "",
+                formatter.string(from: c.receivedAt)
+            ].map { "\"\($0.replacingOccurrences(of: "\"", with: "\"\""))\"" }
+             .joined(separator: ",")
+            return row
+        }
+
+        return header + rows.joined(separator: "\n")
     }
 }
 
@@ -2430,6 +2491,7 @@ struct CRMSection: View {
     let contact: ReceivedContact
     @Environment(\.modelContext) private var modelContext
     @State private var showingInteractionLog = false
+    @StateObject private var subscriptionService = SubscriptionService.shared
 
     private var interactions: [Interaction] {
         CRMService.shared.fetchInteractions(for: contact, modelContext: modelContext)
@@ -2520,8 +2582,12 @@ struct CRMSection: View {
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .sheet(isPresented: $showingInteractionLog) {
-            NavigationStack {
-                InteractionLogView(contact: contact)
+            if !subscriptionService.subscriptionStatus.isPro {
+                ProFeatureGateView(feature: .crm)
+            } else {
+                NavigationStack {
+                    InteractionLogView(contact: contact)
+                }
             }
         }
     }

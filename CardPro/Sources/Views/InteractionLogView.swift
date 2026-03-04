@@ -7,12 +7,17 @@ struct InteractionLogView: View {
     let contact: ReceivedContact
     @Environment(\.modelContext) private var modelContext
     @State private var showingAddInteraction = false
+    @StateObject private var subscriptionService = SubscriptionService.shared
 
     private var interactions: [Interaction] {
         CRMService.shared.fetchInteractions(for: contact, modelContext: modelContext)
     }
 
     var body: some View {
+        if !subscriptionService.subscriptionStatus.isPro {
+            ProFeatureBanner()
+                .padding()
+        }
         List {
             // Stats section
             Section {

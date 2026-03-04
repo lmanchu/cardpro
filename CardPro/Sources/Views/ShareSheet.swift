@@ -2,6 +2,20 @@ import SwiftUI
 import UIKit
 import CoreImage.CIFilterBuiltins
 
+// MARK: - Generic Activity Sheet (for CSV export, etc.)
+
+struct ActivitySheet: UIViewControllerRepresentable {
+    let items: [Any]
+
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        UIActivityViewController(activityItems: items, applicationActivities: nil)
+    }
+
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
+}
+
+// MARK: - Card Share Sheet
+
 struct ShareSheet: UIViewControllerRepresentable {
     let card: BusinessCard
 
