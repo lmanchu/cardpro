@@ -17,7 +17,8 @@ struct InteractionLogView: View {
         if !subscriptionService.subscriptionStatus.isPro {
             ProFeatureBanner()
                 .padding()
-        }
+                .navigationTitle("Interactions")
+        } else {
         List {
             // Stats section
             Section {
@@ -82,6 +83,7 @@ struct InteractionLogView: View {
         .sheet(isPresented: $showingAddInteraction) {
             AddInteractionSheet(contact: contact)
         }
+        } // else (Pro)
     }
 
     private func deleteInteraction(_ interaction: Interaction) {

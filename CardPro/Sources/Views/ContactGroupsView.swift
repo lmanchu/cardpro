@@ -16,7 +16,8 @@ struct ContactGroupsView: View {
         if !subscriptionService.subscriptionStatus.isPro {
             ProFeatureBanner()
                 .padding()
-        }
+                .navigationTitle("Groups")
+        } else {
         List {
             if groups.isEmpty {
                 ContentUnavailableView(
@@ -72,6 +73,7 @@ struct ContactGroupsView: View {
                 Text("Are you sure you want to delete \"\(group.name)\"? Contacts in this group will not be deleted.")
             }
         }
+        } // else (Pro)
     }
 
     private func deleteGroup(_ group: ContactGroup) {
