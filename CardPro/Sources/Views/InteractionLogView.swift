@@ -7,13 +7,17 @@ struct InteractionLogView: View {
     let contact: ReceivedContact
     @Environment(\.modelContext) private var modelContext
     @State private var showingAddInteraction = false
+    @StateObject private var subscriptionService = SubscriptionService.shared
 
     private var interactions: [Interaction] {
         CRMService.shared.fetchInteractions(for: contact, modelContext: modelContext)
     }
 
     var body: some View {
-        List {
+        if !subscriptionService.subscriptionStatus.isPro {
+            ProFeatureBanner()
+        } else {
+            List {
             // Stats section
             Section {
                 HStack {
@@ -76,6 +80,7 @@ struct InteractionLogView: View {
         }
         .sheet(isPresented: $showingAddInteraction) {
             AddInteractionSheet(contact: contact)
+        }
         }
     }
 

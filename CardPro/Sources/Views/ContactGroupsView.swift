@@ -10,9 +10,13 @@ struct ContactGroupsView: View {
     @State private var groupToEdit: ContactGroup?
     @State private var groupToDelete: ContactGroup?
     @State private var showingDeleteConfirm = false
+    @StateObject private var subscriptionService = SubscriptionService.shared
 
     var body: some View {
-        List {
+        if !subscriptionService.subscriptionStatus.isPro {
+            ProFeatureBanner()
+        } else {
+            List {
             if groups.isEmpty {
                 ContentUnavailableView(
                     "No Groups",
@@ -32,9 +36,10 @@ struct ContactGroupsView: View {
                                 showingDeleteConfirm = true
                             } label: {
                                 Label("Delete", systemImage: "trash")
-                            }
-                        }
-                }
+            }
+        }
+        }
+    }
             }
         }
         .navigationTitle("Groups")

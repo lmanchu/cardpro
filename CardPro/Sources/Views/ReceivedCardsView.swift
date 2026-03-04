@@ -2430,6 +2430,7 @@ struct CRMSection: View {
     let contact: ReceivedContact
     @Environment(\.modelContext) private var modelContext
     @State private var showingInteractionLog = false
+    @StateObject private var subscriptionService = SubscriptionService.shared
 
     private var interactions: [Interaction] {
         CRMService.shared.fetchInteractions(for: contact, modelContext: modelContext)
@@ -2520,8 +2521,22 @@ struct CRMSection: View {
         .background(Color(.systemGray6))
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .sheet(isPresented: $showingInteractionLog) {
-            NavigationStack {
-                InteractionLogView(contact: contact)
+            if !subscriptionService.subscriptionStatus.isPro {
+                ProFeatureGateView(
+                    feature: .crm,
+                    onUpgrade: {
+                        showingInteractionLog = false
+                    },
+                    onDismiss: {
+                        showingInteractionLog = false
+                    }
+                )
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
+            } else {
+                NavigationStack {
+                    InteractionLogView(contact: contact)
+                }
             }
         }
     }
