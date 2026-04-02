@@ -8,21 +8,40 @@ struct SettingsView: View {
     @StateObject private var cloudSyncService = CloudSyncService.shared
     @StateObject private var subscriptionService = SubscriptionService.shared
     @State private var refreshID = UUID()
+    @State private var showRestartAlert = false
 
     var body: some View {
         NavigationStack {
             Form {
                 // iCloud Sync Section
                 Section {
-                    HStack {
-                        Label(L10n.Sync.icloudSync, systemImage: cloudSyncService.syncStatus.icon)
-                            .foregroundColor(cloudSyncService.syncStatus.color)
-                        Spacer()
-                        if subscriptionService.subscriptionStatus.isPro {
-                            Text(cloudSyncService.syncStatus.displayText)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        } else {
+                    if subscriptionService.subscriptionStatus.isPro {
+                        Toggle(isOn: $cloudSyncService.isSyncEnabled) {
+                            Label(L10n.Sync.icloudSync, systemImage: cloudSyncService.syncStatus.icon)
+                                .foregroundColor(cloudSyncService.syncStatus.color)
+                        }
+                        .tint(.orange)
+                        .onChange(of: cloudSyncService.isSyncEnabled) { _, newValue in
+                            if newValue != UserDefaults.standard.bool(forKey: "iCloudSyncEnabled") {
+                                showRestartAlert = true
+                            }
+                        }
+
+                        if cloudSyncService.isSyncEnabled {
+                            HStack {
+                                Text("Status")
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text(cloudSyncService.syncStatus.displayText)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    } else {
+                        HStack {
+                            Label(L10n.Sync.icloudSync, systemImage: "icloud.slash")
+                                .foregroundColor(.secondary)
+                            Spacer()
                             Text(L10n.Sync.proFeature)
                                 .font(.caption)
                                 .padding(.horizontal, 8)
@@ -31,9 +50,7 @@ struct SettingsView: View {
                                 .foregroundColor(.orange)
                                 .clipShape(Capsule())
                         }
-                    }
 
-                    if !subscriptionService.subscriptionStatus.isPro {
                         Text(L10n.Sync.proFeatureDesc)
                             .font(.caption)
                             .foregroundStyle(.secondary)
@@ -41,8 +58,8 @@ struct SettingsView: View {
                 } header: {
                     Text(L10n.Sync.title)
                 } footer: {
-                    if subscriptionService.subscriptionStatus.isPro && cloudSyncService.isCloudKitAvailable {
-                        Text("Your cards sync automatically across all devices signed in with the same Apple ID.")
+                    if subscriptionService.subscriptionStatus.isPro && cloudSyncService.isSyncEnabled {
+                        Text("Your cards sync automatically across all devices signed in with the same Apple ID. Requires app restart after toggling.")
                     }
                 }
 
@@ -140,6 +157,11 @@ struct SettingsView: View {
             }
             .navigationTitle(L10n.Settings.title)
             .id(refreshID)
+            .alert("Restart Required", isPresented: $showRestartAlert) {
+                Button("OK") {}
+            } message: {
+                Text("Please close and reopen CardPro for iCloud sync changes to take effect.")
+            }
         }
     }
 }

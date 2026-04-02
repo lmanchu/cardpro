@@ -145,7 +145,13 @@ struct ReceivedCardsView: View {
                                 Button {
                                     syncAllContacts()
                                 } label: {
-                                    Label(L10n.Received.syncAllToContacts, systemImage: "arrow.triangle.2.circlepath")
+                                    Label(L10n.Received.syncAllToContacts, systemImage: "arrow.up.circle")
+                                }
+
+                                Button {
+                                    syncFromContacts()
+                                } label: {
+                                    Label("Pull from Contacts", systemImage: "arrow.down.circle")
                                 }
                             } label: {
                                 Image(systemName: "person.2.fill")
@@ -284,6 +290,18 @@ struct ReceivedCardsView: View {
                 } catch {
                     print("Failed to sync \(contact.displayName): \(error)")
                 }
+            }
+        }
+    }
+
+    private func syncFromContacts() {
+        Task {
+            do {
+                let syncedContacts = contacts.filter { $0.cnContactIdentifier != nil }
+                let updatedCount = try await ContactsService.shared.batchSyncFromContacts(syncedContacts)
+                print("Synced \(updatedCount) contacts from iOS Contacts")
+            } catch {
+                print("Sync from contacts failed: \(error)")
             }
         }
     }

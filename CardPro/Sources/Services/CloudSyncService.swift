@@ -49,22 +49,36 @@ enum SyncStatus: Equatable {
     }
 }
 
-/// Service to monitor iCloud sync status
+/// Service to monitor and control iCloud sync
 @MainActor
 class CloudSyncService: ObservableObject {
     static let shared = CloudSyncService()
 
     @Published private(set) var syncStatus: SyncStatus = .disabled
     @Published private(set) var isCloudKitAvailable = false
+    @Published var isSyncEnabled: Bool {
+        didSet {
+            UserDefaults.standard.set(isSyncEnabled, forKey: "iCloudSyncEnabled")
+            if isSyncEnabled {
+                checkCloudKitAvailability()
+            } else {
+                syncStatus = .disabled
+            }
+        }
+    }
 
     private init() {
-        checkCloudKitAvailability()
+        self.isSyncEnabled = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
+        if isSyncEnabled {
+            checkCloudKitAvailability()
+        }
         setupNotifications()
     }
 
     // MARK: - CloudKit Availability
 
     func checkCloudKitAvailability() {
+        syncStatus = .syncing
         CKContainer(identifier: "iCloud.com.lman.cardpro").accountStatus { [weak self] status, error in
             Task { @MainActor in
                 switch status {
@@ -94,7 +108,6 @@ class CloudSyncService: ObservableObject {
     // MARK: - Sync Status Updates
 
     private func setupNotifications() {
-        // Listen for CloudKit notifications
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(handleAccountChange),
@@ -104,13 +117,17 @@ class CloudSyncService: ObservableObject {
     }
 
     @objc private func handleAccountChange() {
-        checkCloudKitAvailability()
+        if isSyncEnabled {
+            checkCloudKitAvailability()
+        }
     }
 
     /// Manually trigger a sync status refresh
     func refreshSyncStatus() {
-        syncStatus = .syncing
-        checkCloudKitAvailability()
+        if isSyncEnabled {
+            syncStatus = .syncing
+            checkCloudKitAvailability()
+        }
     }
 }
 

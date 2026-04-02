@@ -365,6 +365,91 @@ class ContactsService {
         saveRequest.add(cnContact, toContainerWithIdentifier: nil)
         try store.execute(saveRequest)
     }
+
+    /// Sync changes from iOS Contacts back to a ReceivedContact
+    /// Returns true if any fields were updated
+    @discardableResult
+    func syncFromContacts(_ contact: ReceivedContact) async throws -> Bool {
+        guard let identifier = contact.cnContactIdentifier else { return false }
+
+        if authorizationStatus != .authorized {
+            let granted = await requestAccess()
+            if !granted { throw ContactsError.notAuthorized }
+        }
+
+        guard let cnContact = try? fetchContact(identifier: identifier) else { return false }
+
+        var updated = false
+
+        // Pull back name changes
+        if !cnContact.givenName.isEmpty && cnContact.givenName != contact.firstName {
+            contact.firstName = cnContact.givenName
+            updated = true
+        }
+        if !cnContact.familyName.isEmpty && cnContact.familyName != contact.lastName {
+            contact.lastName = cnContact.familyName
+            updated = true
+        }
+
+        // Company and title
+        if !cnContact.organizationName.isEmpty && cnContact.organizationName != contact.company {
+            contact.company = cnContact.organizationName
+            updated = true
+        }
+        if !cnContact.jobTitle.isEmpty && cnContact.jobTitle != contact.title {
+            contact.title = cnContact.jobTitle
+            updated = true
+        }
+
+        // Phone — take first mobile or first phone
+        if let firstPhone = cnContact.phoneNumbers.first?.value.stringValue,
+           firstPhone != contact.phone {
+            contact.phone = firstPhone
+            updated = true
+        }
+
+        // Email — take first email
+        if let firstEmail = cnContact.emailAddresses.first?.value as String?,
+           firstEmail != contact.email {
+            contact.email = firstEmail
+            updated = true
+        }
+
+        // Website
+        if let firstUrl = cnContact.urlAddresses.first?.value as String?,
+           firstUrl != contact.website {
+            contact.website = firstUrl
+            updated = true
+        }
+
+        // Photo
+        if let imageData = cnContact.imageData, contact.photoData == nil {
+            contact.photoData = imageData
+            updated = true
+        }
+
+        if updated {
+            contact.lastSyncedAt = Date()
+        }
+
+        return updated
+    }
+
+    /// Batch sync: pull changes from iOS Contacts for all synced ReceivedContacts
+    func batchSyncFromContacts(_ contacts: [ReceivedContact]) async throws -> Int {
+        if authorizationStatus != .authorized {
+            let granted = await requestAccess()
+            if !granted { throw ContactsError.notAuthorized }
+        }
+
+        var updatedCount = 0
+        for contact in contacts where contact.cnContactIdentifier != nil {
+            if try await syncFromContacts(contact) {
+                updatedCount += 1
+            }
+        }
+        return updatedCount
+    }
 }
 
 enum ContactsError: LocalizedError {

@@ -274,6 +274,7 @@ enum L10n {
         static var monthlyPrice: String { "subscription.monthlyPrice".localized }
         static var save17: String { "subscription.save17".localized }
         static var startFreeTrial: String { "subscription.startFreeTrial".localized }
+        static var upgradeToPro: String { "subscription.upgradeToPro".localized }
         static func trialHint(_ price: String) -> String {
             "subscription.trialHint".localized(with: price)
         }

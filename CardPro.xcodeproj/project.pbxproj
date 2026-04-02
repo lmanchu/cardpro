@@ -21,6 +21,7 @@
 		2E0249E633BEC1C7FA248CCA /* PushNotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F85504705B51552928BB407B /* PushNotificationService.swift */; };
 		358CD6BFC8BCFF9196B6EC16 /* Interaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 58381B1BF8976994EF5863D0 /* Interaction.swift */; };
 		3803DC5028930B0655031256 /* BusinessCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = B30C7FC0E2236307B5CE94B4 /* BusinessCard.swift */; };
+		3DB6F12BE4A3E7702BA2905C /* ProFeatureGateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FD13F636CE119E5B87D076 /* ProFeatureGateView.swift */; };
 		4923137371A08CE62A6036C3 /* Localizable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3127651644F46B23BDB29BA9 /* Localizable.swift */; };
 		4F60821D891A693CF1DA9A1E /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = E4E9AAAF8307E59B79DE01F3 /* FirebaseFirestore */; };
 		55771C1A99A912E08A996CCB /* CRMService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB4EA913C039BCE5AD748126 /* CRMService.swift */; };
@@ -99,6 +100,7 @@
 		3127651644F46B23BDB29BA9 /* Localizable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localizable.swift; sourceTree = "<group>"; };
 		34A8F27F9185535B02032D02 /* InteractionLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractionLogView.swift; sourceTree = "<group>"; };
 		3920FDD69AF99882EE149B34 /* OCRService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCRService.swift; sourceTree = "<group>"; };
+		45FD13F636CE119E5B87D076 /* ProFeatureGateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProFeatureGateView.swift; sourceTree = "<group>"; };
 		479A82FF55F86216E7076764 /* NFCWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCWriteView.swift; sourceTree = "<group>"; };
 		498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCReadView.swift; sourceTree = "<group>"; };
 		4C72EC076DED6BF756CE5AE4 /* QRCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeGenerator.swift; sourceTree = "<group>"; };
@@ -296,6 +298,7 @@
 				897B542F1003CDC1EF2077B8 /* MyCardsView.swift */,
 				498DB98DC2FBDB762C30EBC5 /* NFCReadView.swift */,
 				479A82FF55F86216E7076764 /* NFCWriteView.swift */,
+				45FD13F636CE119E5B87D076 /* ProFeatureGateView.swift */,
 				B770527BE8C34D743D83CC86 /* ReceivedCardsView.swift */,
 				2F8471DDC22D9BDF440FB431 /* SettingsView.swift */,
 				EAE4F1FDD7991DFC4CC3D1AF /* ShareSheet.swift */,
@@ -441,6 +444,7 @@
 				EAAD352DB3CD4E0648410A38 /* NFCService.swift in Sources */,
 				5D31146FA9B519245F62076F /* NFCWriteView.swift in Sources */,
 				263399394719E9C0A057C155 /* OCRService.swift in Sources */,
+				3DB6F12BE4A3E7702BA2905C /* ProFeatureGateView.swift in Sources */,
 				80B58F2C580581E20DD01262 /* PromoCodeService.swift in Sources */,
 				2E0249E633BEC1C7FA248CCA /* PushNotificationService.swift in Sources */,
 				A84623A2063AA818C8F3D4A7 /* QRCodeGenerator.swift in Sources */,
@@ -597,7 +601,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -682,7 +686,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
-				MARKETING_VERSION = 1.3.0;
+				MARKETING_VERSION = 1.2.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;

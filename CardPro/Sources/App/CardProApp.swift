@@ -107,28 +107,27 @@ struct CardProApp: App {
             ContactGroup.self,
         ])
 
-        // Try CloudKit first, fall back to local storage if it fails
+        // CloudKit sync enabled for Pro users
+        // Uses iCloud.com.lman.cardpro container (configured in entitlements)
+        let useICloud = UserDefaults.standard.bool(forKey: "iCloudSyncEnabled")
         do {
-            // CloudKit sync for cross-device synchronization
-            let cloudConfig = ModelConfiguration(
-                schema: schema,
-                isStoredInMemoryOnly: false,
-                cloudKitDatabase: .private("iCloud.com.lman.cardpro")
-            )
-            return try ModelContainer(for: schema, configurations: [cloudConfig])
-        } catch {
-            print("⚠️ CloudKit failed, falling back to local storage: \(error)")
-            // Fallback to local storage
-            do {
-                let localConfig = ModelConfiguration(
+            let config: ModelConfiguration
+            if useICloud {
+                config = ModelConfiguration(
+                    schema: schema,
+                    isStoredInMemoryOnly: false,
+                    cloudKitDatabase: .automatic
+                )
+            } else {
+                config = ModelConfiguration(
                     schema: schema,
                     isStoredInMemoryOnly: false,
                     cloudKitDatabase: .none
                 )
-                return try ModelContainer(for: schema, configurations: [localConfig])
-            } catch {
-                fatalError("Could not create ModelContainer: \(error)")
             }
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
         }
     }()
 
